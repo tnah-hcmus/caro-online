@@ -33,7 +33,7 @@ export const getGoogleUrl = () => {
 }
 export const startLogin = (email, password, setError) => {
     return (dispatch, getState) => {
-        Axios.post('/api/users/login', {email, password})
+        Axios.post('/api/login', {email, password})
         .then((res) => {
             const {user, token} = res.data;
             dispatch(login(user._id, token));
@@ -47,7 +47,7 @@ export const startLogin = (email, password, setError) => {
 }
 export const startLoginThirdParty = (path, code, history) => {
     return (dispatch, getState) => {
-        Axios.post(`/api/users/login${path}`, {code})
+        Axios.post(`/api/login${path}`, {code})
         .then((res) => {
             const {user, token} = res.data;
             dispatch(login(user._id, token));
@@ -60,7 +60,7 @@ export const startLoginThirdParty = (path, code, history) => {
 }
 export const startSignUp = (data, setError) => {
   return (dispatch, getState) => {
-      Axios.post('/api/users/signup', {...data})
+      Axios.post('/api/users', {...data})
       .then((res) => {
           const {user, token} = res.data;
           dispatch(login(user._id, token));

@@ -18,7 +18,7 @@ const LoadingLogin = (props) => {
   const classes = useStyles();
   useEffect(() => {
     const params = queryString.parse(props.location.search);
-    const path = props.location.pathname.includes('google') ? 'Google' : 'FB';
+    const path = props.location.pathname.includes('google') ? 'Google' : 'Facebook';
     if(params.error) props.history.push('/');
     else {
       props.loginThirdParty(path, params.code, props.history);
