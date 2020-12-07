@@ -4,6 +4,7 @@ const authRouter = require("./routers/auth");
 const usersRouter = require("./routers/users");
 const adminRouter = require("./routers/admin");
 const path = require("path");
+const socketServer = require('./socket/server');
 require("dotenv").config();
 
 const port = process.env.PORT;
@@ -18,6 +19,7 @@ app.get("/google/url", (req, res) => {
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+socketServer(app);
 
 app.use(userRouter);
 app.use(usersRouter);
@@ -26,8 +28,4 @@ app.use(adminRouter);
 
 app.use((req, res, next) => {
   res.sendFile(path.join(__dirname, "../public/dist/index.html"));
-});
-
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
 });
