@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
+const validator = require("validator");
 
 router.post("/api/admin/login", async (req, res) => {
   //Login a registered admin
@@ -9,6 +10,10 @@ router.post("/api/admin/login", async (req, res) => {
     if (!email || !password) {
       return res.status(400).send({ error: "Login failed, please fill your password and your email" });
     }
+    if (!validator.isEmail(email)) return res.status(400).send({ error: "Invalid Email address" });
+    if (password.length < 7)
+      return res.status(400).send({ error: "Password is shorter than the minimum allowed length 7" });
+
     const user = await User.findByCredentials(email, password);
     if (!user) {
       return res.status(401).send({ error: "Login failed! Maybe wrong password or email" });

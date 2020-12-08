@@ -15,7 +15,7 @@ const AdminLoginPanel = (props) => {
     e.preventDefault();
     const email = e.target.elements.email.value;
     const password = e.target.elements.password.value;
-    props.startLoginAdmin(email, password, setMessage);
+    props.startLoginAdmin(email, password, props.history, setMessage);
   };
 
   return (

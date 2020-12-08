@@ -2,6 +2,7 @@ const express = require("express");
 const User = require("../models/user");
 const auth = require("../middleware/auth");
 const authAdmin = require("../middleware/authAdmin");
+const validator = require("validator");
 const router = express.Router();
 
 router
@@ -13,6 +14,9 @@ router
       const { email, name, password } = req.body;
       if (!email || !name || !password)
         return res.status(400).send({ error: "Please fill out all email, name and password" });
+      if (!validator.isEmail(email)) return res.status(400).send({ error: "Invalid Email address" });
+      if (password.length < 7)
+        return res.status(400).send({ error: "Password is shorter than the minimum allowed length 7" });
       const find = await User.findOne({ email });
       if (find) {
         return res.status(401).send({ error: "Signup failed! Already have account" });

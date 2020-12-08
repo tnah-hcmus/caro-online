@@ -46,13 +46,14 @@ export const startLogin = (email, password, setMessage) => {
       });
   };
 };
-export const startLoginAdmin = (email, password, setMessage) => {
+export const startLoginAdmin = (email, password, history, setMessage) => {
   return (dispatch, getState) => {
     Axios.post("/api/admin/login", { email, password })
       .then((res) => {
         const { user, token } = res.data;
         dispatch(login(user._id, token));
         setMessage({ type: "success", content: `Login Successfully !!!`, open: true });
+        history.push("/");
       })
       .catch((e) => {
         console.log(e);
