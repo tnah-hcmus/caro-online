@@ -25,6 +25,16 @@ const userSchema = mongoose.Schema({
     required: true,
     minLength: 7,
   },
+  coins: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  isBlocked: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
   role: {
     type: String,
     required: true,

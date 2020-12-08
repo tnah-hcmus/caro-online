@@ -1,6 +1,7 @@
 const express = require("express");
 const User = require("../models/user");
 const auth = require("../middleware/auth");
+const authAdmin = require("../middleware/authAdmin");
 const router = express.Router();
 
 router
@@ -25,17 +26,36 @@ router
       res.status(400).send(error);
     }
   })
-  .get(auth, async (req, res) => {
+  .get(auth, authAdmin, async (req, res) => {
     //GET: lấy danh sách user (phục vụ admin)
     //check quyền admin, và thực hiện
     //Tạm thời chưa apply phân quyền nên cứ gọi tới thì auto thực hiện thôi, không cần phải lăn tăn nhiều
+    try {
+      const users = await User.find().select("-password -tokens");
+      res.status(201).send({ users });
+    } catch (error) {
+      res.status(400).send(error);
+    }
   })
-  .put(auth, async (req, res) => {
-    //PUT: update 1 thuộc tính nào đó cho list user
+  .put(auth, authAdmin, async (req, res) => {
+    //PUT: update 1 thuộc tính nào đó cho list user (block or unblock for all blocked users)
     //check quyền admin
+    try {
+      const { isBlocked } = req.query;
+      const response = await User.updateMany({ isBlocked });
+      res.status(201).send({ response });
+    } catch (error) {
+      res.status(400).send(error);
+    }
   })
-  .delete(auth, async (req, res) => {
+  .delete(auth, authAdmin, async (req, res) => {
     //DELETE: xoá tất cả user
+    try {
+      const response = await User.deleteMany();
+      res.status(201).send({ response });
+    } catch (error) {
+      res.status(400).send(error);
+    }
   });
 
 module.exports = router;
