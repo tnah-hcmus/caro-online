@@ -6,7 +6,8 @@
   "scripts": {
     "client-pack": "webpack --optimize-minimize",
     "client-server": "webpack-dev-server",
-    "server": "nodemon server/app.js"
+    "server": "nodemon server/app.js",
+    "start": "node server/app.js"
   },
   "dependencies": {
     "@material-ui/core": "^4.11.0",
