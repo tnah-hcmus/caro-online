@@ -7,16 +7,22 @@ import LoadingLogin from "../components/starting/LoginWithThirdParty";
 import AdminLoginPanel from "../components/starting/AdminLoginPanel";
 import Copyright from "../components/common/Copyright";
 import NotFound from "../components/common/404";
-import MainPage from '../components/MainPage';
+import MainPage from "../components/MainPage";
+import Header from "../components/layout/Header";
+import RoomView from "../components/room/RoomView";
+
 const PrivateRoutes = (props) => {
   console.log("test", props.isAuthenticated);
   if (props.isAuthenticated) {
     return (
-      <Switch>
-        <Route path="/" component={MainPage} exact />
-        <Route path="/404" component={NotFound} />
-        <Redirect to="/404" />
-      </Switch>
+      <Header>
+        <Switch>
+          <Route path="/" component={MainPage} exact />
+          <Route path="/:id" component={RoomView} />
+          <Route path="/404" component={NotFound} />
+          <Redirect to="/404" />
+        </Switch>
+      </Header>
     );
   } else {
     return (
@@ -34,7 +40,8 @@ const PrivateRoutes = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    isAuthenticated: !!state.auth.token,
+    // isAuthenticated: !!state.auth.token,
+    isAuthenticated: true,
   };
 };
 
