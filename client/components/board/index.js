@@ -7,7 +7,7 @@ const useStyles = makeStyles({
     margin: 40,
   },
   board: {
-    padding: "10px 95px",
+    padding: "10px 60px",
     background: "#d2d2d2",
     borderRadius: 12,
   },
@@ -24,7 +24,7 @@ function Board(props) {
   };
 
   return (
-    <Grid container item xs={9} className={classes.root}>
+    <Grid container item xs={8} className={classes.root}>
       <Grid item xs={8} className={classes.board}>
         {[...Array(13).keys()].map((i) => (
           <div className="board-row" key={i}>

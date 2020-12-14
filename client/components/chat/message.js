@@ -3,34 +3,31 @@ import { Grid, makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles({
   root: {
-    margin: 10,
+    padding: "5px 10px",
   },
   info: {},
   content: {
-    border: "1px solid red",
     borderRadius: 12,
-    padding: 5,
+    color: "white",
+    padding: "5px 10px",
     width: "fit-content",
     height: "fit-content",
   },
 });
 
-function Message(props) {
+const Message = (props) => {
+  const { isMyMessage, message } = props;
   const classes = useStyles();
-  const { isMyMessage } = props;
+
+  console.log({ isMyMessage, message });
 
   return (
-    <Grid container item xs={12} className={classes.root} alignContent={isMyMessage ? "flex-start" : "flex-end"}>
-      {isMyMessage && (
-        <Grid xs={2} className={classes.info}>
-          Player 1
-        </Grid>
-      )}
-      <Grid xs={8} className={classes.content}>
-        Chicken !!!
+    <Grid container className={classes.root} justify={isMyMessage && "flex-end"}>
+      <Grid item className={classes.content} style={{ background: `${isMyMessage ? "#1d4bcd" : "#727272"}` }}>
+        {message}
       </Grid>
     </Grid>
   );
-}
+};
 
 export default Message;
