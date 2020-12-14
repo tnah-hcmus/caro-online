@@ -8,20 +8,20 @@ import ListRoom from "./room/ListRoom";
 import ListPlayer from "./player/ListPlayer";
 
 const MainPage = (props) => {
-  const [user, setUser] = useState(0);
-  //   useEffect(() => {
-  //     WSClient.connect(props.userId);
-  //     WSClient.startListenUpdateUser(setUser);
-  //     return () => {
-  //       WSClient.shutdownWS();
-  //     };
-  //   }, []);
+  const [user, setUser] = useState([]);
+  useEffect(() => {
+       WSClient.connect(props.userId);
+       WSClient.startListenUpdateUser(setUser);
+       return () => {
+         WSClient.shutdownWS();
+       };
+  }, []);
 
   return (
     <>
       <Grid container>
         <Grid item xs={12} md={10}>
-          <ListRoom />
+          <ListRoom userId = {props.userId} />
         </Grid>
         <Grid item xs={12} md={2}>
           <ListPlayer user={user} />

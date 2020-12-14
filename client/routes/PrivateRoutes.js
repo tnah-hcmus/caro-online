@@ -12,7 +12,6 @@ import Header from "../components/layout/Header";
 import RoomView from "../components/room/RoomView";
 
 const PrivateRoutes = (props) => {
-  console.log("test", props.isAuthenticated);
   if (props.isAuthenticated) {
     return (
       <Header>
@@ -40,8 +39,7 @@ const PrivateRoutes = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    // isAuthenticated: !!state.auth.token,
-    isAuthenticated: true,
+    isAuthenticated: !!state.auth.token,
   };
 };
 

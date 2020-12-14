@@ -10,6 +10,9 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
+import {addRoom} from '../../action/room/action';
+import {connect} from 'react-redux'
+
 const useStyles = makeStyles((theme) => ({
   button: {
     margin: "10px 20px",
@@ -19,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function AddRoomBtn() {
+const AddRoomBtn = (props) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
 
@@ -29,6 +32,11 @@ function AddRoomBtn() {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleSubmit = () => {
+    setOpen(false);
+    props.addRoom(props.userId);
   };
 
   return (
@@ -44,11 +52,8 @@ function AddRoomBtn() {
       </Button>
       <Dialog open={open} onClose={handleClose} className={classes.dialog}>
         <DialogTitle id="form-dialog-title">Add new room</DialogTitle>
-        <DialogContent>
-          <TextField autoFocus variant="outlined" id="name" label="Room ID" type="text" fullWidth />
-        </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} variant="contained" color="primary">
+          <Button onClick={handleSubmit} variant="contained" color="primary">
             Create
           </Button>
           <Button onClick={handleClose} color="primary">
@@ -60,4 +65,8 @@ function AddRoomBtn() {
   );
 }
 
-export default AddRoomBtn;
+const mapDispatchToProps = {
+  addRoom
+};
+export default connect(null, mapDispatchToProps)(AddRoomBtn);
+

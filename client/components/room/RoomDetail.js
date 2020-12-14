@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function RoomDetail() {
+function RoomDetail(props) {
   const classes = useStyles();
   const history = useHistory();
 
@@ -38,11 +38,11 @@ function RoomDetail() {
           //       <MoreVertIcon />
           //     </IconButton>
           //   }
-          title="Room ID: 32123"
-          subheader="0/2 player"
+          title= {"Room ID: " + props.id}
+          subheader={props.players + "/2 player"}
         />
         <CardActions className={classes.actions} disableSpacing>
-          <Button onClick={() => history.push("/123")} variant="contained" color="primary" className={classes.button}>
+          <Button onClick={() => history.push("/" + props.id)} variant="contained" color="primary" className={classes.button}>
             Join room
           </Button>
         </CardActions>

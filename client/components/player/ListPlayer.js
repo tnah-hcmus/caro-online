@@ -11,23 +11,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ListPlayer(props) {
+const ListPlayer = (props) => {
   const { user } = props;
+  console.log(user)
   const classes = useStyles();
 
   return (
     <Grid container className={classes.root}>
       <Grid item xs={12} className={classes.title}>
-        Total: {user} online
+        Total: {user.length} online
       </Grid>
-      <PlayerDetail />
-      <PlayerDetail />
-      <PlayerDetail />
-      <PlayerDetail />
-      <PlayerDetail />
-      <PlayerDetail />
-      <PlayerDetail />
-      <PlayerDetail />
+      {
+        user.map(item => <PlayerDetail name = {item}/>)
+      }
     </Grid>
   );
 }
