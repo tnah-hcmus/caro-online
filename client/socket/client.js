@@ -5,7 +5,7 @@ class WSClient {
       this.socket = null;
   }
   connect(userId) {
-    this.socket = io.connect('https://caro-online-1712039-1712121.herokuapp.com', {
+    this.socket = io.connect('http://localhost:3000/', {
       query: "userId=" + userId,
       secure: true
     });

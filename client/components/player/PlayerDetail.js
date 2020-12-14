@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function PlayerDetail() {
+const PlayerDetail =  (props) => {
   const classes = useStyles();
 
   return (
@@ -35,7 +35,7 @@ function PlayerDetail() {
       <div className={classes.root}>
         <div className={classes.label}>
           <AccountCircleIcon />
-          <div className={classes.info}>Player 01</div>
+          <div className={classes.info}>{props.name}</div>
         </div>
         <FiberManualRecordIcon size="small" className={classes.status} />
       </div>

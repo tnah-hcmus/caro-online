@@ -20,6 +20,8 @@ import AddRoomBtn from "./AddRoomBtn";
 import JoinRoomBtn from "./JoinRoomBtn";
 import RoomDetail from "./RoomDetail";
 
+import {connect} from 'react-redux';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     borderRight: "5px solid #d2d2d2",
@@ -38,25 +40,27 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function ListRoom() {
+const ListRoom = (props) => {
   const classes = useStyles();
 
   return (
     <Grid container className={classes.root}>
       <Grid container item xs={12} direction="row" justify="space-between" className={classes.functionBtn}>
-        <AddRoomBtn />
-        <JoinRoomBtn />
+        <AddRoomBtn userId = {props.userId} />
+        <JoinRoomBtn userId = {props.userId} />
       </Grid>
       <Grid container item xs={12} spacing={2} className={classes.room}>
-        <RoomDetail />
-        <RoomDetail />
-        <RoomDetail />
-        <RoomDetail />
-        <RoomDetail />
-        <RoomDetail />
-        <RoomDetail />
-        <RoomDetail />
+       {
+         props.rooms.map(item => <RoomDetail id = {item.id} players = {item.players.length}/>)
+       }
       </Grid>
     </Grid>
   );
 }
+const mapStateToProps = (state) => {
+  return {
+    rooms: state.room
+  };
+};
+
+export default connect(mapStateToProps)(ListRoom);
