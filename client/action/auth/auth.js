@@ -1,10 +1,14 @@
-import { LOGIN, LOGOUT } from "./type";
+import { LOGIN, LOGOUT, JOIN } from "./type";
 import Axios from "axios";
 import * as queryString from "query-string";
 export const login = (id, token) => ({
   type: LOGIN,
-  payload: { id, token },
+  payload: { id, token, inRoom: false },
 });
+
+export const joinState = () => ({
+  type: JOIN
+})
 
 export const logout = () => ({
   type: LOGOUT,

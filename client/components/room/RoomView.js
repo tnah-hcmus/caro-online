@@ -36,7 +36,7 @@ const useStyles = makeStyles({
   },
 });
 
-function RoomView(props) {
+const RoomView = (props) => {
   const classes = useStyles();
   const [start, setStart] = useState(true);
 

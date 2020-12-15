@@ -10,6 +10,11 @@ import { Grid } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import { useHistory } from "react-router-dom";
 
+import {addPlayer} from '../../action/room/action';
+import {joinState} from '../../action/auth/auth';
+import {connect} from 'react-redux'
+import { withRouter } from 'react-router-dom';
+
 const useStyles = makeStyles((theme) => ({
   root: {},
   avatar: {
@@ -20,9 +25,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function RoomDetail(props) {
+const RoomDetail = (props) => {
   const classes = useStyles();
   const history = useHistory();
+  const join = () => {
+    if(props.busy) {
+      props.joinState();
+      props.addPlayer(props.id, props.userId)
+      history.push("/room/" + props.id);
+    }
+    else if(props.players >= 2) {
+      //không nhận thêm player.
+    }
+  }
 
   return (
     <Grid item xs={4} className={classes.root}>
@@ -42,7 +57,7 @@ function RoomDetail(props) {
           subheader={props.players + "/2 player"}
         />
         <CardActions className={classes.actions} disableSpacing>
-          <Button onClick={() => history.push("/" + props.id)} variant="contained" color="primary" className={classes.button}>
+          <Button onClick={join} variant="contained" color="primary" className={classes.button}>
             Join room
           </Button>
         </CardActions>
@@ -50,5 +65,12 @@ function RoomDetail(props) {
     </Grid>
   );
 }
-
-export default RoomDetail;
+const mapDispatchToProps = {
+  addPlayer, joinState
+};
+const mapStateToProps = (state) => {
+  return {
+    busy: state.auth.inRoom
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(RoomDetail));

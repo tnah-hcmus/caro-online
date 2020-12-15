@@ -5,7 +5,9 @@ import TextField from "@material-ui/core/TextField";
 import { Grid } from "@material-ui/core";
 
 import {addPlayer} from '../../action/room/action';
+import {joinState} from '../../action/auth/auth';
 import {connect} from 'react-redux'
+import { withRouter } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -17,21 +19,28 @@ const JoinRoomBtn = (props) => {
   const classes = useStyles();
   const roomIdRef = useRef();
   const handleJoinRoom = () => {
-    const id = roomIdRef.current.text;
-    console.log(roomIdRef.current);
-    props.addPlayer(id, props.userId);
+    if(!props.busy) {
+      const id = roomIdRef.current.value;
+      props.addPlayer(id, props.userId);
+      props.joinState();
+      props.history.push('/room/'+id);
+    }
   }
-
   return (
     <Grid item>
-      <TextField id="roomId" size="small" type="text" label="Room ID" /> 
-      <Button variant="contained" color="primary" className={classes.button} onClick = {handleJoinRoom} ref = {roomIdRef} >
+      <TextField id="roomId" size="small" type="text" label="Room ID" inputRef = {roomIdRef}/> 
+      <Button variant="contained" color="primary" className={classes.button} onClick = {handleJoinRoom} >
         Join room
       </Button>
     </Grid>
   );
 }
 const mapDispatchToProps = {
-  addPlayer
+  addPlayer, joinState
 };
-export default connect(null, mapDispatchToProps)(JoinRoomBtn);
+const mapStateToProps = (state) => {
+  return {
+    busy: state.auth.inRoom
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(JoinRoomBtn));

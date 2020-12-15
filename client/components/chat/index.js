@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Grid, makeStyles, Button, Typography } from "@material-ui/core";
 import SendIcon from "@material-ui/icons/Send";
 import ForumIcon from "@material-ui/icons/Forum";
@@ -51,6 +51,7 @@ function BoxChat() {
       </Grid>
       <Grid item container xs={12} className={classes.content} alignItems="flex-end">
         <Grid item xs={12} className={classes.box}>
+
           <Message isMyMessage={true} message="Pro @@" />
           <Message isMyMessage={false} message="Chicken !!!" />
           <Message isMyMessage={true} message="Pro @@" />

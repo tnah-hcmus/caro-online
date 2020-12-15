@@ -11,7 +11,9 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
 import {addRoom} from '../../action/room/action';
+import {joinState} from '../../action/auth/auth';
 import {connect} from 'react-redux'
+import { withRouter } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -36,7 +38,11 @@ const AddRoomBtn = (props) => {
 
   const handleSubmit = () => {
     setOpen(false);
-    props.addRoom(props.userId);
+    if(!props.busy) {
+      const data = props.addRoom(props.userId);
+      props.joinState();
+      props.history.push('/room/' + data.payload.id);
+    }
   };
 
   return (
@@ -64,9 +70,13 @@ const AddRoomBtn = (props) => {
     </Grid>
   );
 }
-
-const mapDispatchToProps = {
-  addRoom
+const mapStateToProps = (state) => {
+  return {
+    busy: state.auth.inRoom
+  };
 };
-export default connect(null, mapDispatchToProps)(AddRoomBtn);
+const mapDispatchToProps = {
+  addRoom, joinState
+};
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(AddRoomBtn));
 

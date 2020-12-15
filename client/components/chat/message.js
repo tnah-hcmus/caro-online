@@ -18,9 +18,6 @@ const useStyles = makeStyles({
 const Message = (props) => {
   const { isMyMessage, message } = props;
   const classes = useStyles();
-
-  console.log({ isMyMessage, message });
-
   return (
     <Grid container className={classes.root} justify={isMyMessage && "flex-end"}>
       <Grid item className={classes.content} style={{ background: `${isMyMessage ? "#1d4bcd" : "#727272"}` }}>

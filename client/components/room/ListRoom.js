@@ -51,7 +51,7 @@ const ListRoom = (props) => {
       </Grid>
       <Grid container item xs={12} spacing={2} className={classes.room}>
        {
-         props.rooms.map(item => <RoomDetail id = {item.id} players = {item.players.length}/>)
+         props.rooms.map(item => <RoomDetail id = {item.id} players = {item.players.length} userId = {props.userId} />)
        }
       </Grid>
     </Grid>
