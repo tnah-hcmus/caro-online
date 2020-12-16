@@ -14,6 +14,7 @@ import {addPlayer} from '../../action/room/action';
 import {joinState} from '../../action/auth/auth';
 import {connect} from 'react-redux'
 import { withRouter } from 'react-router-dom';
+import WSClient from "../../socket/client";
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -29,7 +30,8 @@ const RoomDetail = (props) => {
   const classes = useStyles();
   const history = useHistory();
   const join = () => {
-    if(props.busy) {
+    if(!props.busy) {
+      WSClient.joinChannel();
       props.joinState();
       props.addPlayer(props.id, props.userId)
       history.push("/room/" + props.id);

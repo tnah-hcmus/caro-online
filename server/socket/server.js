@@ -20,7 +20,6 @@ module.exports = function(app) {
         if(!userPool[userId] && !Array.isArray(userPool[userId] )) userPool[userId] = {id: [socket.id], name};
         else userPool[userId].id.push(socket.id);
         let listUser = Object.keys(userPool).reduce((listUser, key) => [...listUser, userPool[key].name], []);
-        console.log(listUser, userId);
         io.sockets.emit('update-user', listUser);
         //on disconnect
         socket.on('disconnect', () => {     
@@ -31,6 +30,25 @@ module.exports = function(app) {
                 listUser = Object.keys(userPool).reduce((listUser, key) => listUser.push(userPool[key].name), []);
                 io.sockets.emit('update-user', listUser); 
             }
+        });
+        //on join room 
+        socket.on('join-room', (id) => {
+            if (socket.rooms.size === 0) {
+              socket.join(id);
+              //receive chat
+              socket.on("send-chat", (message) => {
+                socket.to(id).emit("new-message", message);
+                //save chat;
+              });
+              //receive game data
+              socket.on("game-data", (data) => {
+                socket.to(id).emit("new-game-data", data);
+                //save data;
+              });
+              socket.on("leave-room", id => {
+                  socket.leave(id);
+              })
+            }             
         });
         //on send disconnect
         socket.on('send-disconnect-request', () => {

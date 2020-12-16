@@ -21,6 +21,8 @@ import JoinRoomBtn from "./JoinRoomBtn";
 import RoomDetail from "./RoomDetail";
 
 import {connect} from 'react-redux';
+import WSClient from '../../socket/client';
+import WS from "../../socket/client";
 
 const useStyles = makeStyles((theme) => ({
   root: {

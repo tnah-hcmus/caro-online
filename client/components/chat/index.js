@@ -1,8 +1,10 @@
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 import { Grid, makeStyles, Button, Typography } from "@material-ui/core";
 import SendIcon from "@material-ui/icons/Send";
 import ForumIcon from "@material-ui/icons/Forum";
 import Message from "./message";
+import {addMessage} from '../../action/chat/action';
+import WSClient from "../../socket/client";
 
 const useStyles = makeStyles({
   root: {
@@ -36,9 +38,17 @@ const useStyles = makeStyles({
   },
 });
 
-function BoxChat() {
+const BoxChat = (props) => {
+  const chatRef = useRef();
+  const allMessages = props.chat[props.roomID];
+  WSClient.startListenUpdateChat(props.addMessage);
+  const handleChat = () => {
+    const timestamp = Date.now();
+    const text = chatRef.current.value;
+    WSClient.sendMessage({ roomID: props.roomID, text, timestamp });
+    props.addMessage(props.roomID, text, true, timestamp);
+  }
   const classes = useStyles();
-
   return (
     <Grid item container xs={4} className={classes.root}>
       <Grid item xs={12} container direction="row" className={classes.title}>
@@ -51,21 +61,16 @@ function BoxChat() {
       </Grid>
       <Grid item container xs={12} className={classes.content} alignItems="flex-end">
         <Grid item xs={12} className={classes.box}>
-
-          <Message isMyMessage={true} message="Pro @@" />
-          <Message isMyMessage={false} message="Chicken !!!" />
-          <Message isMyMessage={true} message="Pro @@" />
-          <Message isMyMessage={false} message="Chicken !!!" />
-          <Message isMyMessage={true} message="Pro @@" />
-          <Message isMyMessage={false} message="Chicken !!!" />
-          <Message isMyMessage={true} message="Chicken !!!" />
+          {allMessages.map((item) => {
+            return <Message isMyMessage = {item.isMyMessage} message = {item.message}/>
+          })}
         </Grid>
         <Grid container item xs={12} justify="flex-end" className={classes.input}>
           <Grid item style={{ margin: "auto 0" }}>
-            <input id="message" className={classes.inputBtn} />
+            <input id="message" className={classes.inputBtn} ref = {chatRef} />
           </Grid>
           <Grid item style={{ margin: "auto 5px" }}>
-            <Button startIcon={<SendIcon />} variant="contained" color="primary" margin="">
+            <Button startIcon={<SendIcon />} variant="contained" color="primary" margin="" onClick = {handleChat}>
               Send
             </Button>
           </Grid>
@@ -74,5 +79,15 @@ function BoxChat() {
     </Grid>
   );
 }
-
-export default BoxChat;
+const mapStateToProps = (state) => {
+  return {
+    chat: state.chat,
+  };
+};
+const mapDispatchToProps = {
+  addMessage
+};
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(BoxChat);;

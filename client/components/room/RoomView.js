@@ -11,6 +11,7 @@ import {
 } from "@material-ui/core";
 import Board from "../board";
 import BoxChat from "../chat";
+import WSClient from "../../socket/client";
 
 const useStyles = makeStyles({
   root: {

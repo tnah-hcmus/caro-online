@@ -2,21 +2,44 @@ import io from 'socket.io-client';
 
 class WSClient {
   constructor() {
-      this.socket = null;
+    this.socket = null;
   }
   connect(userId) {
-    this.socket = io.connect('http://localhost:3000/', {
+    this.socket = io.connect("http://localhost:3000/", {
       query: "userId=" + userId,
-      secure: true
+      secure: true,
     });
   }
   startListenUpdateUser(setUserOnline) {
-    this.socket.on('update-user', (data) => {
+    this.socket.on("update-user", (data) => {
       setUserOnline(data);
     });
   }
+  joinChannel(id) {
+    this.socket.emit("join-room", id);
+  }
+  leaveChannel(id) {
+    this.socket.emit("leave-room", id);
+  }
+  sendMessage(message) {
+    this.socket.emit("send-chat", message);
+  }
+  startListenUpdateChat(updateChat) {
+    this.socket.on("new-message", (data) => {
+      const {roomID, message, timestamp } = data;
+      updateChat(roomID, message, false, timestamp);
+    });
+  }
+  sendGameData(data) {
+    this.socket.emit("send-game-data", data);
+  }
+  startListenUpdateGameData(updateGameDate) {
+    this.socket.on("new-game-data", (data) => {
+      //update gameDataReducer
+    });
+  }
   shutdownWS() {
-    this.socket.emit('send-disconnect-request');
+    this.socket.emit("send-disconnect-request");
     this.socket = null;
   }
 }
