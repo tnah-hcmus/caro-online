@@ -32,7 +32,7 @@ const RoomDetail = (props) => {
   const join = () => {
     if(!props.busy) {
       WSClient.joinChannel();
-      props.joinState();
+      props.joinState(props.id);
       props.addPlayer(props.id, props.userId)
       history.push("/room/" + props.id);
     }

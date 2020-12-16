@@ -33,10 +33,10 @@ module.exports = function(app) {
         });
         //on join room 
         socket.on('join-room', (id) => {
-            if (socket.rooms.size === 0) {
               socket.join(id);
               //receive chat
               socket.on("send-chat", (message) => {
+                console.log(message)
                 socket.to(id).emit("new-message", message);
                 //save chat;
               });
@@ -47,8 +47,7 @@ module.exports = function(app) {
               });
               socket.on("leave-room", id => {
                   socket.leave(id);
-              })
-            }             
+              })            
         });
         //on send disconnect
         socket.on('send-disconnect-request', () => {

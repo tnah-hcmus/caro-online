@@ -2,6 +2,7 @@ import { combineReducers, createStore, applyMiddleware} from 'redux';
 import thunk from 'redux-thunk';
 import authReducer from '../reducer/authReducer';
 import roomReducer from '../reducer/roomReducer';
+import chatReducer from '../reducer/chatReducer';
 import { persistStore, persistReducer } from 'redux-persist';
 import localForage from 'localforage';
 
@@ -17,7 +18,8 @@ const _createUUID = () => {
 //map reducer -> store
 const rootReducer = combineReducers({
   auth: authReducer,
-  room: roomReducer
+  room: roomReducer,
+  chat: chatReducer
 });
 const localDB = localForage.createInstance({
   name: "RVN-data"
@@ -26,7 +28,7 @@ const localDB = localForage.createInstance({
 const persistConfig = {
   key: 'root',
   whitelist: [],
-  blacklist: ['auth', 'room'],
+  blacklist: ['auth', 'room', 'chat'],
   storage: localDB,
 }
 

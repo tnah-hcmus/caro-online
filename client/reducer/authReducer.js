@@ -6,7 +6,7 @@ export default (state = {}, action) => {
           ...action.payload
         };
       case JOIN:
-        state.inRoom = true;
+        state.inRoom = action.payload;
         return {
           ...state
         };

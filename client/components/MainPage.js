@@ -12,9 +12,6 @@ const MainPage = (props) => {
   useEffect(() => {
        WSClient.connect(props.userId);
        WSClient.startListenUpdateUser(setUser);
-       return () => {
-         WSClient.shutdownWS();
-       };
   }, []);
 
   return (

@@ -25,10 +25,13 @@ class WSClient {
     this.socket.emit("send-chat", message);
   }
   startListenUpdateChat(updateChat) {
-    this.socket.on("new-message", (data) => {
-      const {roomID, message, timestamp } = data;
-      updateChat(roomID, message, false, timestamp);
-    });
+    console.log(this.socket.hasListeners('new-message'))
+    if(!this.socket.hasListeners('new-message')) {
+      this.socket.on("new-message", (data) => {
+        const {roomID, text, timestamp } = data;
+        updateChat(roomID, text, false, timestamp);
+      });
+    }
   }
   sendGameData(data) {
     this.socket.emit("send-game-data", data);

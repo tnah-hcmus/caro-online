@@ -6,6 +6,8 @@ import Message from "./message";
 import {addMessage} from '../../action/chat/action';
 import WSClient from "../../socket/client";
 
+import {connect} from 'react-redux';
+
 const useStyles = makeStyles({
   root: {
     margin: 15,
@@ -40,11 +42,13 @@ const useStyles = makeStyles({
 
 const BoxChat = (props) => {
   const chatRef = useRef();
-  const allMessages = props.chat[props.roomID];
+  const allMessages = props.chat[props.roomID] || [];
+  console.log(allMessages);
   WSClient.startListenUpdateChat(props.addMessage);
   const handleChat = () => {
     const timestamp = Date.now();
     const text = chatRef.current.value;
+    console.log({ roomID: props.roomID, text, timestamp });
     WSClient.sendMessage({ roomID: props.roomID, text, timestamp });
     props.addMessage(props.roomID, text, true, timestamp);
   }
@@ -82,6 +86,7 @@ const BoxChat = (props) => {
 const mapStateToProps = (state) => {
   return {
     chat: state.chat,
+    roomID: state.auth.inRoom
   };
 };
 const mapDispatchToProps = {

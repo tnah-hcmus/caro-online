@@ -6,8 +6,9 @@ export const login = (id, token) => ({
   payload: { id, token, inRoom: false },
 });
 
-export const joinState = () => ({
-  type: JOIN
+export const joinState = (roomID) => ({
+  type: JOIN,
+  payload: roomID
 })
 
 export const logout = () => ({

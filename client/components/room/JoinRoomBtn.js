@@ -24,7 +24,7 @@ const JoinRoomBtn = (props) => {
       const id = roomIdRef.current.value;
       WSClient.joinChannel(id);
       props.addPlayer(id, props.userId);
-      props.joinState();
+      props.joinState(id);
       props.history.push('/room/'+id);
     }
   }

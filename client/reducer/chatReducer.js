@@ -4,9 +4,11 @@ export default (state = {}, action) => {
     case ADD_MESSAGE:
       const {roomID, message, timestamp, isMyMessage} = action.payload;
       if(!state[roomID]) state[roomID] = [{message, timestamp, isMyMessage}];
-      else state[roomID].push([{message, timestamp, isMyMessage}]);
+      else state[roomID].push({message, timestamp, isMyMessage});
       return {
         ...state
       };
+    default:
+        return state;
   }
 };

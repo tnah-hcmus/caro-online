@@ -41,9 +41,9 @@ const AddRoomBtn = (props) => {
   const handleSubmit = () => {
     setOpen(false);
     if(!props.busy) {
-      WSClient.joinChannel(data.payload.id);
       const data = props.addRoom(props.userId);
-      props.joinState();
+      WSClient.joinChannel(data.payload.id);
+      props.joinState(data.payload.id);
       props.history.push('/room/' + data.payload.id);
     }
   };
