@@ -9,7 +9,7 @@ const _createID = () => {
   }
 export const addRoom = (playerID) => ({
   type: ADD_ROOM,
-  payload: { id: _createID() , players: [playerID] },
+  payload: { id: _createID() , players: {X: playerID, Y: null} },
 });
 
 export const removeRoom = (id) => ({

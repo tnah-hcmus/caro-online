@@ -9,8 +9,13 @@ export default (state = [], action) => {
         });
       case ADD_PLAYER:
         return state.map((item) => {
-            if(item.id === action.payload.id && item.players < 2) {
+            if(item.id === action.payload.id) {
                 item.players = [...item.players, action.payload.playerID]
+                if(!item.players.Y) {
+                  item.players.Y = action.payload.playerID;
+                } else if(!item.player.X) {
+                  item.players.X = action.payload.playerID;
+                } 
             }
             return item;
         })

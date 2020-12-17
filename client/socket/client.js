@@ -25,7 +25,6 @@ class WSClient {
     this.socket.emit("send-chat", message);
   }
   startListenUpdateChat(updateChat) {
-    console.log(this.socket.hasListeners('new-message'))
     if(!this.socket.hasListeners('new-message')) {
       this.socket.on("new-message", (data) => {
         const {roomID, text, timestamp } = data;
@@ -36,10 +35,13 @@ class WSClient {
   sendGameData(data) {
     this.socket.emit("send-game-data", data);
   }
-  startListenUpdateGameData(updateGameDate) {
-    this.socket.on("new-game-data", (data) => {
-      //update gameDataReducer
-    });
+  startListenUpdateGameData(updateGameData) {
+    if (!this.socket.hasListeners("new-game-data")) {
+      this.socket.on("new-game-data", (data) => {
+        const { roomID, squares, status, player } = data;
+        updateGameData(roomID, squares, status, player);
+      });
+    }
   }
   shutdownWS() {
     this.socket.emit("send-disconnect-request");

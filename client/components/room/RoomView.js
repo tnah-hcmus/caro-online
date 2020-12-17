@@ -11,7 +11,6 @@ import {
 } from "@material-ui/core";
 import Board from "../board";
 import BoxChat from "../chat";
-import WSClient from "../../socket/client";
 
 const useStyles = makeStyles({
   root: {
@@ -40,10 +39,16 @@ const useStyles = makeStyles({
 const RoomView = (props) => {
   const classes = useStyles();
   const [start, setStart] = useState(true);
-
+  let playerStatus = null;
+  for(const item of props.rooms) {
+    if(item.id === props.roomID) {
+      if(item.players.X === props.id) playerStatus = 'X';
+      else if (item.players.Y === props.id) playerStatus = 'O';
+    }
+  }
   return (
     <Grid container direction="row" justify="flex-start" alignItems="flex-start" alignContent="stretch" wrap="nowrap">
-      <Board />
+      <Board player = {playerStatus}/>
       <BoxChat />
       <Dialog open={!start} onClose={() => setStart(false)}>
         <DialogContent className={classes.root}>
@@ -67,4 +72,13 @@ const RoomView = (props) => {
   );
 }
 
-export default RoomView;
+const mapStateToProps = (state) => {
+  return {
+    roomID: state.auth.inRoom,
+    rooms: state.room,
+    id: state.auth.id
+  };
+};
+export default connect(
+  mapStateToProps,
+)(withRouter(RoomView));
