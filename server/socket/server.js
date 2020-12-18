@@ -36,7 +36,6 @@ module.exports = function(app) {
               socket.join(id);
               //receive chat
               socket.on("send-chat", (message) => {
-                console.log(message)
                 socket.to(id).emit("new-message", message);
                 //save chat;
               });

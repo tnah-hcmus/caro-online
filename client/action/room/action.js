@@ -1,4 +1,4 @@
-import { ADD_ROOM, REMOVE_ROOM, ADD_PLAYER } from "./type";
+import { ADD_ROOM, REMOVE_ROOM, ADD_PLAYER, ADD_VIEWER } from "./type";
 const _createID = () => {
     let guid = 'xyxxyx'.replace(/[xy]/g, (c) => {
     let r = Math.random() * 16 | 0,
@@ -20,6 +20,10 @@ export const removeRoom = (id) => ({
 export const addPlayer = (id, playerID) => ({
     type: ADD_PLAYER,
     payload: {id, playerID}
+});
+export const addViewer = (id, viewerID) => ({
+  type: ADD_VIEWER,
+  payload: { id, viewerID },
 });
 
 export const joinRoom = (id, playerID) => {
