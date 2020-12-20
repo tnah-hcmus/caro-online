@@ -1,4 +1,4 @@
-import {ADD_ROOM, REMOVE_ROOM, ADD_PLAYER, ADD_VIEWER} from '../action/room/type';
+import {ADD_ROOM, REMOVE_ROOM, ADD_PLAYER, ADD_VIEWER, CHANGE_STATUS} from '../action/room/type';
 export default (state = [], action) => {
     switch (action.type) {
       case ADD_ROOM:
@@ -17,6 +17,7 @@ export default (state = [], action) => {
                   item.players.X = action.payload.playerID;
                 } 
             }
+            console.log(item);
             return item;
         })
       case ADD_VIEWER:
@@ -24,6 +25,13 @@ export default (state = [], action) => {
           if(item.id === action.payload.id) {
             if(!item.viewer) item.viewer = [action.payload.viewerID];
             else item.viewer = item.viewer.concat(action.payload.viewerID); 
+          }
+          return item;
+        })
+      case CHANGE_STATUS:
+        return state.map((item) => {
+          if(item.id === action.payload.id) {
+            item.status = action.payload.status;
           }
           return item;
         })

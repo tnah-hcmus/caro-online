@@ -5,7 +5,7 @@ const calculateWinner = (i, squares, value, size) => {
   let winArea = [];
   // check row
   for (let k = 0; k < size; k++) {
-    if (squares.squares[row * size + k] !== value) {
+    if (squares[row * size + k] !== value) {
       count = 0;
       winArea = winArea.slice(0, 0);
     }
@@ -20,7 +20,7 @@ const calculateWinner = (i, squares, value, size) => {
   }
   // check col
   for (let k = 0; k < size; k++) {
-    if (squares.squares[k * size + col] !== value) {
+    if (squares[k * size + col] !== value) {
       count = 0;
       winArea = winArea.slice(0, 0);
     }
@@ -36,7 +36,7 @@ const calculateWinner = (i, squares, value, size) => {
   // check diagonal
   let inital_pos = i % (size + 1);
   for (let k = 0; k < size; k++) {
-    if (squares.squares[inital_pos + (size + 1) * k] !== value) {
+    if (squares[inital_pos + (size + 1) * k] !== value) {
       count = 0;
       winArea = winArea.slice(0, 0);
     }
@@ -54,7 +54,7 @@ const calculateWinner = (i, squares, value, size) => {
   console.log(inital_pos_anti);
     for (let k = 0; k < size && k <= inital_pos_anti; k++) {
       console.log(inital_pos_anti + (size - 1) * k);
-    if (squares.squares[inital_pos_anti + (size - 1) * k] !== value) {
+    if (squares[inital_pos_anti + (size - 1) * k] !== value) {
       count = 0;
       winArea = winArea.slice(0, 0);
     }

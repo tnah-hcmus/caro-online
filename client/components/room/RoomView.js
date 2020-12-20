@@ -11,6 +11,8 @@ import {
 } from "@material-ui/core";
 import Board from "../board";
 import BoxChat from "../chat";
+import { connect } from "react-redux";
+import { withRouter } from 'react-router-dom';
 
 const useStyles = makeStyles({
   root: {
@@ -42,6 +44,7 @@ const RoomView = (props) => {
   let playerStatus = null;
   for(const item of props.rooms) {
     if(item.id === props.roomID) {
+      console.log(item.players);
       if(item.players.X === props.id) playerStatus = 'X';
       else if (item.players.Y === props.id) playerStatus = 'O';
     }

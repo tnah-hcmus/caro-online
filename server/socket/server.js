@@ -40,7 +40,7 @@ module.exports = function(app) {
                 //save chat;
               });
               //receive game data
-              socket.on("game-data", (data) => {
+              socket.on("send-game-data", (data) => {
                 socket.to(id).emit("new-game-data", data);
                 //save data;
               });

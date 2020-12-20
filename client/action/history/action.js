@@ -3,9 +3,9 @@ export const addBoard = (roomID, squares, status, player) => ({
   type: ADD_BOARD,
   payload: { roomID, squares, status, player},
 });
-export const createBoard = (roomID, size, player) => ({
+export const createBoard = (roomID, size) => ({
   type: CREATE_BOARD,
-  payload: { roomID, size, player },
+  payload: { roomID, size },
 });
 export const deleteGame = (roomID) => ({
     type: DELETE_GAME,

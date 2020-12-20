@@ -43,6 +43,17 @@ class WSClient {
       });
     }
   }
+  sendRoomData(data) {
+    this.socket.emit("send-room-data", data);
+  }
+  startListenUpdateRoomData(updateRoomData) {
+    if (!this.socket.hasListeners("new-room-data")) {
+      this.socket.on("new-room-data", (data) => {
+        const { roomID, newData } = data;
+        updateRoomData(roomID, newData);
+      });
+    }
+  }
   shutdownWS() {
     this.socket.emit("send-disconnect-request");
     this.socket = null;

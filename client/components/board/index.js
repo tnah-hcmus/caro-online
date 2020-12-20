@@ -6,6 +6,7 @@ import calculateWinner from '../../game-logic/calculateWinner';
 import {addBoard, createBoard} from '../../action/history/action';
 
 import WSClient from "../../socket/client";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles({
   root: {
@@ -24,6 +25,7 @@ const useStyles = makeStyles({
 const Board = (props) => {
   const classes = useStyles();
   WSClient.startListenUpdateGameData(props.addBoard);
+  console.log(props);
   const size = 20;
   let step = 0, winning = null, current = [], player = null;
   if(!props.history) {
@@ -33,9 +35,11 @@ const Board = (props) => {
     step = props.history.length - 1;
     winning = props.history[step].status;
     current = props.history[step].squares;
+    console.log(props.history);
     player = props.history[step].player;
   }
   const handleClick = (i,j) => {
+    console.log(props.player, player);
     if(props.player !== player) {
       updateBoard(i,j,props.player)
     }
@@ -43,11 +47,13 @@ const Board = (props) => {
   const updateBoard = (i,j, player) => {
     const id = i * size + j;
     const squares = current.slice();
+    console.log(squares, winning);
     if (winning || squares[id]) {
       return;
     }
     squares[id] = player;
     const isWin = calculateWinner(id, squares, squares[id], size);
+    console.log(squares, isWin);
     props.addBoard(props.roomID, squares, isWin, player);
     WSClient.sendGameData({ roomID: props.roomID, squares, status: isWin, player});
   }
