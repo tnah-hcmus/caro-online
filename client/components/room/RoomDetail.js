@@ -10,11 +10,10 @@ import { Grid } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import { useHistory } from "react-router-dom";
 
-import {addPlayer} from '../../action/room/action';
-import {joinState} from '../../action/auth/auth';
+import {joinRoom} from '../../action/room/action';
+import {joinState} from '../../action/auth/action';
 import {connect} from 'react-redux'
 import { withRouter } from 'react-router-dom';
-import WSClient from "../../socket/client";
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -31,9 +30,7 @@ const RoomDetail = (props) => {
   const history = useHistory();
   const join = () => {
     if(!props.busy) {
-      WSClient.joinChannel();
-      props.joinState(props.id);
-      props.addPlayer(props.id, props.userId)
+      props.joinRoom(props.id, props.userId)
       history.push("/room/" + props.id);
     }
     else if(props.players >= 2) {
@@ -68,7 +65,7 @@ const RoomDetail = (props) => {
   );
 }
 const mapDispatchToProps = {
-  addPlayer, joinState
+  joinRoom, joinState
 };
 const mapStateToProps = (state) => {
   return {

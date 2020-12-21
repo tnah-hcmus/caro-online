@@ -5,7 +5,8 @@ import calculateWinner from '../../game-logic/calculateWinner';
 
 import {addBoard, createBoard} from '../../action/history/action';
 
-import WSClient from "../../socket/client";
+import WSSubject from "../../socket/subject";
+import WSObserver from "../../socket/observer";
 import { connect } from "react-redux";
 
 const useStyles = makeStyles({
@@ -24,7 +25,7 @@ const useStyles = makeStyles({
 
 const Board = (props) => {
   const classes = useStyles();
-  WSClient.startListenUpdateGameData(props.addBoard);
+  WSObserver.startListenUpdateGameData(props.addBoard);
   console.log(props);
   const size = 20;
   let step = 0, winning = null, current = [], player = null;
@@ -55,7 +56,7 @@ const Board = (props) => {
     const isWin = calculateWinner(id, squares, squares[id], size);
     console.log(squares, isWin);
     props.addBoard(props.roomID, squares, isWin, player);
-    WSClient.sendGameData({ roomID: props.roomID, squares, status: isWin, player});
+    WSSubject.sendGameData({ roomID: props.roomID, squares, status: isWin, player});
   }
 
   const getGameStatus = () => {

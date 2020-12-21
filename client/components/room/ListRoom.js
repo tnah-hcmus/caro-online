@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import Card from "@material-ui/core/Card";
@@ -19,10 +19,11 @@ import { Grid } from "@material-ui/core";
 import AddRoomBtn from "./AddRoomBtn";
 import JoinRoomBtn from "./JoinRoomBtn";
 import RoomDetail from "./RoomDetail";
+import WSObserver from '../../socket/observer';
+import {updateRoomData} from '../../action/room/action';
+import WSClient from "../../socket/socket";
 
 import {connect} from 'react-redux';
-import WSClient from '../../socket/client';
-import WS from "../../socket/client";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,6 +45,11 @@ const useStyles = makeStyles((theme) => ({
 
 const ListRoom = (props) => {
   const classes = useStyles();
+  useEffect(()=> {
+    WSClient.connect(props.userId);
+    WSObserver.startListenUpdateRoomData(props.updateRoomData);
+  }, [])
+
 
   return (
     <Grid container className={classes.root}>
@@ -53,7 +59,7 @@ const ListRoom = (props) => {
       </Grid>
       <Grid container item xs={12} spacing={2} className={classes.room}>
        {
-         props.rooms.map(item => <RoomDetail id = {item.id} players = {!!item.players.X + !!item.players.Y} userId = {props.userId} />)
+         props.rooms.map(item => <RoomDetail id = {item.id} players = {!!item.players.X + !!item.players.Y} userId = {props.userId} view = {!!item.viewer} />)
        }
       </Grid>
     </Grid>
@@ -64,5 +70,7 @@ const mapStateToProps = (state) => {
     rooms: state.room
   };
 };
-
-export default connect(mapStateToProps)(ListRoom);
+const mapDispatchToProps = {
+  updateRoomData
+};
+export default connect(mapStateToProps, mapDispatchToProps)(ListRoom);

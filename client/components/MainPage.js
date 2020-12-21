@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Copyright from "./common/Copyright";
-import WSClient from "../socket/client";
+import WSClient from "../socket/socket";
+import WSObserver from '../socket/observer';
 import { connect } from "react-redux";
 import { Grid } from "@material-ui/core";
 
@@ -10,8 +11,8 @@ import ListPlayer from "./player/ListPlayer";
 const MainPage = (props) => {
   const [user, setUser] = useState([]);
   useEffect(() => {
-       WSClient.connect(props.userId);
-       WSClient.startListenUpdateUser(setUser);
+    WSClient.connect(props.userId);
+    WSObserver.startListenUpdateUser(setUser);
   }, []);
 
   return (

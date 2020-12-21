@@ -4,7 +4,7 @@ import SendIcon from "@material-ui/icons/Send";
 import ForumIcon from "@material-ui/icons/Forum";
 import Message from "./message";
 import {addMessage} from '../../action/chat/action';
-import WSClient from "../../socket/client";
+import WSObserver from "../../socket/observer";
 
 import {connect} from 'react-redux';
 
@@ -43,13 +43,10 @@ const useStyles = makeStyles({
 const BoxChat = (props) => {
   const chatRef = useRef();
   const allMessages = props.chat[props.roomID] || [];
-  console.log(allMessages);
-  WSClient.startListenUpdateChat(props.addMessage);
+  WSObserver.startListenUpdateChat(props.addMessage);
   const handleChat = () => {
     const timestamp = Date.now();
     const text = chatRef.current.value;
-    console.log({ roomID: props.roomID, text, timestamp });
-    WSClient.sendMessage({ roomID: props.roomID, text, timestamp });
     props.addMessage(props.roomID, text, true, timestamp);
   }
   const classes = useStyles();
@@ -85,8 +82,7 @@ const BoxChat = (props) => {
 }
 const mapStateToProps = (state) => {
   return {
-    chat: state.chat,
-    roomID: state.auth.inRoom
+    chat: state.chat
   };
 };
 const mapDispatchToProps = {

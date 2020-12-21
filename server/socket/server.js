@@ -31,6 +31,10 @@ module.exports = function(app) {
                 io.sockets.emit('update-user', listUser); 
             }
         });
+        socket.on('send-room-data', data => {
+            console.log(data);
+            socket.broadcast.emit('new-room-data', data);
+        }) 
         //on join room 
         socket.on('join-room', (id) => {
               socket.join(id);

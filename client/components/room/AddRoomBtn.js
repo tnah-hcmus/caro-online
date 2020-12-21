@@ -11,11 +11,9 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
 import {addRoom} from '../../action/room/action';
-import {joinState} from '../../action/auth/auth';
+import {joinState} from '../../action/auth/action';
 import {connect} from 'react-redux'
 import { withRouter } from 'react-router-dom';
-
-import WSClient from '../../socket/client';
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -25,6 +23,14 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 200,
   },
 }));
+const _createID = () => {
+  let guid = 'xyxxyx'.replace(/[xy]/g, (c) => {
+  let r = Math.random() * 16 | 0,
+  v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+  return guid.toUpperCase();
+}
 
 const AddRoomBtn = (props) => {
   const classes = useStyles();
@@ -41,10 +47,9 @@ const AddRoomBtn = (props) => {
   const handleSubmit = () => {
     setOpen(false);
     if(!props.busy) {
-      const data = props.addRoom(props.userId);
-      WSClient.joinChannel(data.payload.id);
-      props.joinState(data.payload.id);
-      props.history.push('/room/' + data.payload.id);
+      const id = _createID()
+      props.addRoom(props.userId, id);
+      props.history.push('/room/' + id);
     }
   };
 
@@ -75,7 +80,7 @@ const AddRoomBtn = (props) => {
 }
 const mapStateToProps = (state) => {
   return {
-    busy: state.auth.inRoom
+    busy: state.auth.inRoom,
   };
 };
 const mapDispatchToProps = {

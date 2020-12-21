@@ -41,6 +41,7 @@ const useStyles = makeStyles({
 const RoomView = (props) => {
   const classes = useStyles();
   const [start, setStart] = useState(true);
+  console.log(props.roomID);
   let playerStatus = null;
   for(const item of props.rooms) {
     if(item.id === props.roomID) {
@@ -52,7 +53,7 @@ const RoomView = (props) => {
   return (
     <Grid container direction="row" justify="flex-start" alignItems="flex-start" alignContent="stretch" wrap="nowrap">
       <Board player = {playerStatus}/>
-      <BoxChat />
+      <BoxChat roomID = {props.roomID} />
       <Dialog open={!start} onClose={() => setStart(false)}>
         <DialogContent className={classes.root}>
           <div className={classes.infoPlayer}>Player 1:</div>

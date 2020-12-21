@@ -5,10 +5,9 @@ import TextField from "@material-ui/core/TextField";
 import { Grid } from "@material-ui/core";
 
 import {addPlayer} from '../../action/room/action';
-import {joinState} from '../../action/auth/auth';
+import {joinState} from '../../action/auth/action';
 import {connect} from 'react-redux'
 import { withRouter } from 'react-router-dom';
-import WSClient from "../../socket/client";
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -22,9 +21,7 @@ const JoinRoomBtn = (props) => {
   const handleJoinRoom = () => {
     if(!props.busy) {
       const id = roomIdRef.current.value;
-      WSClient.joinChannel(id);
-      props.addPlayer(id, props.userId);
-      props.joinState(id);
+      props.joinRoom(id, props.userId);
       props.history.push('/room/'+id);
     }
   }

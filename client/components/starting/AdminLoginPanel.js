@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Grid, makeStyles, TextField, Typography, Button, Dialog, DialogContent } from "@material-ui/core";
-import { startLoginAdmin } from "../../action/auth/auth";
+import { startLoginAdmin } from "../../action/auth/action";
 import { connect } from "react-redux";
 import CustomizedSnackbars from "../common/CustomizedSnackbars";
 import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";

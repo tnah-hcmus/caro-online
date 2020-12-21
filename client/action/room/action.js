@@ -1,16 +1,25 @@
-import { ADD_ROOM, REMOVE_ROOM, ADD_PLAYER, ADD_VIEWER, CHANGE_STATUS } from "./type";
-const _createID = () => {
-    let guid = 'xyxxyx'.replace(/[xy]/g, (c) => {
-    let r = Math.random() * 16 | 0,
-    v = c == 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
-    return guid.toUpperCase();
-  }
-export const addRoom = (playerID) => ({
+import { ADD_ROOM, REMOVE_ROOM, ADD_PLAYER, ADD_VIEWER, CHANGE_STATUS, UPDATE_ROOM } from "./type";
+import WSSubject from '../../socket/subject';
+import {joinState} from '../auth/action';
+
+export const addNewRoom = (id, playerID) => ({
   type: ADD_ROOM,
-  payload: { id: _createID() , players: {X: playerID, Y: null}, status: 0 },
+  payload: { id , players: {X: playerID, Y: null}, status: 0 },
 });
+
+export const addExistingRoom = (data) => ({
+  type: ADD_ROOM,
+  payload: data
+})
+
+export const addRoom = (playerID, id) => {
+  return (dispatch, getState) => {
+    dispatch(addNewRoom(id, playerID));
+    dispatch(joinState(id));
+    WSSubject.joinChannel(id);
+    WSSubject.sendRoomData({type: 'CREATE', roomID: null, property: null, newData: { id , players: {X: playerID, Y: null}, status: 0 } })
+  };
+};
 
 export const removeRoom = (id) => ({
   type: REMOVE_ROOM,
@@ -38,10 +47,37 @@ export const joinRoom = (id, playerID) => {
     const {auth, room} = state;
     for(let item of room) {
       if(item.id == id && !auth.inRoom) {
-        dispatch(addPlayer(id, playerID))
+        dispatch(addPlayer(id, playerID));
+        dispatch(joinState(id));
+        WSSubject.joinChannel(id);
+        let newData = {...item.players}
+        newData.Y = playerID
+        WSSubject.sendRoomData({type: 'UPDATE', roomID: id, property: 'players', newData })
         return true;
       }
     }
     return false;
   };
 };
+
+export const updateRoom = (roomID, property, newData) => ({
+  type: UPDATE_ROOM,
+  payload: {roomID, property, newData}
+})
+
+export const updateRoomData = (type, roomID, property, newData) => {
+  return (dispatch, getState) => {
+    console.log(type);
+    switch(type) {
+      case 'CREATE':
+        dispatch(addExistingRoom(newData));
+        return;
+      case 'UPDATE':
+        dispatch(updateRoom(roomID, property, newData));
+        return;
+      case 'DELETE':
+        dispatch(removeRoom(roomID));
+        return
+    }
+  }
+}

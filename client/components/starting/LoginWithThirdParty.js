@@ -3,7 +3,7 @@ import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles } from '@material-ui/core/styles';
 import { withRouter } from 'react-router-dom';
-import {startLoginThirdParty} from '../../action/auth/auth';
+import {startLoginThirdParty} from '../../action/auth/action';
 import {connect} from 'react-redux';
 import * as queryString from 'query-string';
 
