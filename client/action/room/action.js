@@ -2,6 +2,15 @@ import { ADD_ROOM, REMOVE_ROOM, ADD_PLAYER, ADD_VIEWER, CHANGE_STATUS, UPDATE_RO
 import WSSubject from '../../socket/subject';
 import {joinState} from '../auth/action';
 
+const _createID = () => {
+  let guid = 'xyxxyx'.replace(/[xy]/g, (c) => {
+  let r = Math.random() * 16 | 0,
+  v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+  return guid.toUpperCase();
+}
+
 export const addNewRoom = (id, playerID) => ({
   type: ADD_ROOM,
   payload: { id , players: {X: playerID, Y: null}, status: 0 },
@@ -12,10 +21,12 @@ export const addExistingRoom = (data) => ({
   payload: data
 })
 
-export const addRoom = (playerID, id) => {
+export const addRoom = (playerID, callback) => {
   return (dispatch, getState) => {
+    const id = _createID();
     dispatch(addNewRoom(id, playerID));
     dispatch(joinState(id));
+    callback(id);
     WSSubject.joinChannel(id);
     WSSubject.sendRoomData({type: 'CREATE', roomID: null, property: null, newData: { id , players: {X: playerID, Y: null}, status: 0 } })
   };

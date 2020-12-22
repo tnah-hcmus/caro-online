@@ -23,14 +23,6 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 200,
   },
 }));
-const _createID = () => {
-  let guid = 'xyxxyx'.replace(/[xy]/g, (c) => {
-  let r = Math.random() * 16 | 0,
-  v = c == 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
-  return guid.toUpperCase();
-}
 
 const AddRoomBtn = (props) => {
   const classes = useStyles();
@@ -47,9 +39,7 @@ const AddRoomBtn = (props) => {
   const handleSubmit = () => {
     setOpen(false);
     if(!props.busy) {
-      const id = _createID()
-      props.addRoom(props.userId, id);
-      props.history.push('/room/' + id);
+      props.addRoom(props.userId, (id) => props.history.push('/room/' + id));
     }
   };
 

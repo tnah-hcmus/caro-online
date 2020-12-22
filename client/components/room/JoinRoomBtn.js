@@ -4,7 +4,7 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { Grid } from "@material-ui/core";
 
-import {addPlayer} from '../../action/room/action';
+import {joinRoom} from '../../action/room/action';
 import {joinState} from '../../action/auth/action';
 import {connect} from 'react-redux'
 import { withRouter } from 'react-router-dom';
@@ -35,7 +35,7 @@ const JoinRoomBtn = (props) => {
   );
 }
 const mapDispatchToProps = {
-  addPlayer, joinState
+  joinRoom, joinState
 };
 const mapStateToProps = (state) => {
   return {
