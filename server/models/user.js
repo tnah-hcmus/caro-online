@@ -40,6 +40,13 @@ const userSchema = mongoose.Schema({
     required: true,
     default: "user",
   },
+  games: [
+    {
+      id: {
+        type: String
+      }
+    }
+  ],
   tokens: [
     {
       token: {

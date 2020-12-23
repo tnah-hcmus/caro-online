@@ -9,7 +9,8 @@ const BoardView = (props) => {
                     <div key={i} className="board-row">
                         {row.map((square,j) => <Square key = {j+i*props.size} 
                                                 value = {square}
-                                                id = {{i, j}} 
+                                                i = {i}
+                                                j = {j}
                                                 winning = {props.winning}
                                                 handleClick = {props.handleClick}
                                                 />)}
