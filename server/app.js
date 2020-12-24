@@ -4,6 +4,7 @@ const authRouter = require("./routers/auth");
 const usersRouter = require("./routers/users");
 const adminRouter = require("./routers/admin");
 const path = require("path");
+const passport = require("./helper/passport")
 const socketServer = require('./socket/server');
 require("dotenv").config();
 
@@ -19,6 +20,8 @@ app.get("/google/url", (req, res) => {
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(passport.initialize());
+app.use(passport.session());
 socketServer(app);
 
 app.use(userRouter);

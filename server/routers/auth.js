@@ -3,32 +3,30 @@ const User = require("../models/user");
 const auth = require("../middleware/auth");
 const { getGoogleAccountFromCode } = require("../services/google-utils");
 const getFacebookUserData = require("../services/facebook-utils");
-const validator = require("validator");
+const passport = require('../helper/passport'); 
 const router = express.Router();
 
-router.post("/api/login", async (req, res) => {
-  //Login a registered user
-  try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).send({ error: "Login failed, please fill your password and your email" });
-    }
-    if (!validator.isEmail(email)) return res.status(400).send({ error: "Invalid Email address" });
-    if (password.length < 7)
-      return res.status(400).send({ error: "Password is shorter than the minimum allowed length 7" });
+router.post('/api/login', (req, res) => {
+    // call passport authentication passing the "local" strategy name and a callback function
+    passport.authenticate('local', function (error, user, info) {
 
-    const user = await User.findByCredentials(email, password);
-    if (!user) {
-      return res.status(401).send({ error: "Login failed! Maybe wrong password or email" });
-    } else {
-      const token = await user.generateAuthToken();
-      res.send({ user, token });
-    }
-  } catch (error) {
-    res.status(400).send(error);
-  }
-});
-router.post("/api/loginGoogle", async (req, res) => {
+      if (error) {
+        res.status(401).send(error);
+      } else if (!user) {
+        res.status(401).send('Undefined error');
+      } else {
+        const result = {
+          name: user.name,
+          email: user.email,
+          coins: user.coin,
+          role: user.role,
+          accessToken: info.accessToken,
+        }
+        res.status(200).send(result);
+      }
+    })(req, res);
+  });
+router.get("/api/loginGoogle", async (req, res) => {
   if (req.body.code) {
     const { email, password, name } = await getGoogleAccountFromCode(req.body.code);
     try {
@@ -46,6 +44,7 @@ router.post("/api/loginGoogle", async (req, res) => {
       res.status(400).send(error);
     }
   }
+  else res.status(400).send('Provide more information')
 });
 router.post("/api/loginFacebook", async (req, res) => {
   if (req.body.code) {

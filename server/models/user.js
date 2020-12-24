@@ -20,6 +20,14 @@ const userSchema = mongoose.Schema({
       }
     },
   },
+  googleId: {
+    type: String,
+    unique: true,
+  },
+  facebookId: {
+    type: String,
+    unique: true,
+  },
   password: {
     type: String,
     required: true,
@@ -36,9 +44,8 @@ const userSchema = mongoose.Schema({
     default: false,
   },
   role: {
-    type: String,
-    required: true,
-    default: "user",
+    type: [String],
+    enum: ["user", "admin"]
   },
   games: [
     {
