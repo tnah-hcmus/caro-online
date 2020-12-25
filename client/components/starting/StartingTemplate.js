@@ -22,7 +22,8 @@ const useStyles = makeStyles((theme) => ({
     backgroundPosition: "center",
   },
   paper: {
-    margin: "20px 35px",
+    margin: "auto 35px",
+    height: "100%",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",

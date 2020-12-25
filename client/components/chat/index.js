@@ -3,20 +3,21 @@ import { Grid, makeStyles, Button, Typography } from "@material-ui/core";
 import SendIcon from "@material-ui/icons/Send";
 import ForumIcon from "@material-ui/icons/Forum";
 import Message from "./message";
-import {addMessage} from '../../action/chat/action';
+import { addMessage } from "../../action/chat/action";
 import WSObserver from "../../socket/observer";
+import TextareaAutosize from "@material-ui/core/TextareaAutosize";
 
-import {connect} from 'react-redux';
+import { connect } from "react-redux";
 
 const useStyles = makeStyles({
   root: {
     margin: 15,
   },
   content: {
-    border: "1px solid black",
     borderRadius: "12px",
     background: "#d2d2d2",
     height: 480,
+    boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
   },
   title: {
     fontWeight: "bold",
@@ -38,6 +39,9 @@ const useStyles = makeStyles({
     maxHeight: 400,
     overflowY: "auto",
   },
+  icon: {
+    margin: "auto 0",
+  },
 });
 
 const BoxChat = (props) => {
@@ -48,12 +52,12 @@ const BoxChat = (props) => {
     const timestamp = Date.now();
     const text = chatRef.current.value;
     props.addMessage(props.roomID, text, true, timestamp);
-  }
+  };
   const classes = useStyles();
   return (
-    <Grid item container xs={4} className={classes.root}>
+    <Grid item container xs={3} className={classes.root}>
       <Grid item xs={12} container direction="row" className={classes.title}>
-        <Grid item>
+        <Grid item className={classes.icon}>
           <ForumIcon />
         </Grid>
         <Grid item>
@@ -63,15 +67,15 @@ const BoxChat = (props) => {
       <Grid item container xs={12} className={classes.content} alignItems="flex-end">
         <Grid item xs={12} className={classes.box}>
           {allMessages.map((item) => {
-            return <Message isMyMessage = {item.isMyMessage} message = {item.message}/>
+            return <Message isMyMessage={item.isMyMessage} message={item.message} />;
           })}
         </Grid>
         <Grid container item xs={12} justify="flex-end" className={classes.input}>
           <Grid item style={{ margin: "auto 0" }}>
-            <input id="message" className={classes.inputBtn} ref = {chatRef} />
+            <textarea id="message" className={classes.inputBtn} ref={chatRef} />
           </Grid>
           <Grid item style={{ margin: "auto 5px" }}>
-            <Button startIcon={<SendIcon />} variant="contained" color="primary" margin="" onClick = {handleChat}>
+            <Button startIcon={<SendIcon />} variant="contained" color="primary" margin="" onClick={handleChat}>
               Send
             </Button>
           </Grid>
@@ -79,16 +83,13 @@ const BoxChat = (props) => {
       </Grid>
     </Grid>
   );
-}
+};
 const mapStateToProps = (state) => {
   return {
-    chat: state.chat
+    chat: state.chat,
   };
 };
 const mapDispatchToProps = {
-  addMessage
+  addMessage,
 };
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(BoxChat);;
+export default connect(mapStateToProps, mapDispatchToProps)(BoxChat);

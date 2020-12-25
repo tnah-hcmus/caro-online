@@ -1,9 +1,10 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { Grid, makeStyles, Typography, Button } from "@material-ui/core";
 import BoardView from "./BoardView";
-import calculateWinner from '../../game-logic/calculateWinner';
+import Status from "./Status";
+import calculateWinner from "../../game-logic/calculateWinner";
 
-import {addBoard, createBoard} from '../../action/history/action';
+import { addBoard, createBoard } from "../../action/history/action";
 
 import WSSubject from "../../socket/subject";
 import WSObserver from "../../socket/observer";
@@ -11,15 +12,16 @@ import { connect } from "react-redux";
 
 const useStyles = makeStyles({
   root: {
-    margin: 40,
+    margin: "15px 5px",
   },
   board: {
-    padding: "10px 60px",
+    padding: "15px",
     background: "#d2d2d2",
     borderRadius: 12,
+    boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
   },
   status: {
-    padding: "0px 50px",
+    padding: "0px 10px 0 30px",
   },
 });
 
@@ -28,10 +30,13 @@ const Board = (props) => {
   WSObserver.startListenUpdateGameData(props.addBoard);
   console.log(props);
   const size = 20;
-  let step = 0, winning = null, current = [], player = null;
-  if(!props.history) {
+  let step = 0,
+    winning = null,
+    current = [],
+    player = null;
+  if (!props.history) {
     props.createBoard(props.roomID, size, props.player);
-    current = Array(size*size).fill(null);
+    current = Array(size * size).fill(null);
   } else {
     step = props.history.length - 1;
     winning = props.history[step].status;
@@ -39,13 +44,13 @@ const Board = (props) => {
     console.log(props.history);
     player = props.history[step].player;
   }
-  const handleClick = (i,j) => {
+  const handleClick = (i, j) => {
     console.log(props.player, player);
-    if(props.player !== player) {
-      updateBoard(i,j,props.player)
+    if (props.player !== player) {
+      updateBoard(i, j, props.player);
     }
-  }
-  const updateBoard = (i,j, player) => {
+  };
+  const updateBoard = (i, j, player) => {
     const id = i * size + j;
     const squares = current.slice();
     console.log(squares, winning);
@@ -56,29 +61,24 @@ const Board = (props) => {
     const isWin = calculateWinner(id, squares, squares[id], size);
     console.log(squares, isWin);
     props.addBoard(props.roomID, squares, isWin, player);
-    WSSubject.sendGameData({ roomID: props.roomID, squares, status: isWin, player});
-  }
+    WSSubject.sendGameData({ roomID: props.roomID, squares, status: isWin, player });
+  };
 
   const getGameStatus = () => {
-    if(winning) {
-      return 'Winner: ' + winning.winner;
-    } else if (step >= size*size) {
-      return 'Two player draw!'
-    } else return 'Playing..';
-  }
+    if (winning) {
+      return "Winner: " + winning.winner;
+    } else if (step >= size * size) {
+      return "Two player draw!";
+    } else return "Playing..";
+  };
 
   return (
-    <Grid container item xs={8} className={classes.root}>
+    <Grid container item xs={9} className={classes.root}>
       <Grid item xs={8} className={classes.board}>
-        <BoardView
-          squares={current}
-          size={size}
-          handleClick={handleClick}
-          winning={winning}
-        />
+        <BoardView squares={current} size={size} handleClick={handleClick} winning={winning} />
       </Grid>
       <Grid item xs={4} className={classes.status}>
-        <Typography variant="h6" color="initial">
+        {/* <Typography variant="h6" color="initial">
           Turn: {getGameStatus()}
         </Typography>
         <Typography variant="h6" color="initial">
@@ -93,18 +93,20 @@ const Board = (props) => {
         </div>
         <Button variant="contained" color="secondary" size="small">
           Leave Room
-        </Button>
+        </Button> */}
+        <Status />
       </Grid>
     </Grid>
   );
-}
+};
 const mapStateToProps = (state) => {
   return {
     history: state.history[state.auth.inRoom],
-    roomID: state.auth.inRoom
+    roomID: state.auth.inRoom,
   };
 };
 const mapDispatchToProps = {
-  addBoard, createBoard
+  addBoard,
+  createBoard,
 };
-export default connect(mapStateToProps, mapDispatchToProps)(Board);;
+export default connect(mapStateToProps, mapDispatchToProps)(Board);

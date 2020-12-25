@@ -12,7 +12,7 @@ import {
 import Board from "../board";
 import BoxChat from "../chat";
 import { connect } from "react-redux";
-import { withRouter } from 'react-router-dom';
+import { withRouter } from "react-router-dom";
 
 const useStyles = makeStyles({
   root: {
@@ -43,17 +43,17 @@ const RoomView = (props) => {
   const [start, setStart] = useState(true);
   console.log(props.roomID);
   let playerStatus = null;
-  for(const item of props.rooms) {
-    if(item.id === props.roomID) {
+  for (const item of props.rooms) {
+    if (item.id === props.roomID) {
       console.log(item.players);
-      if(item.players.X === props.id) playerStatus = 'X';
-      else if (item.players.Y === props.id) playerStatus = 'O';
+      if (item.players.X === props.id) playerStatus = "X";
+      else if (item.players.Y === props.id) playerStatus = "O";
     }
   }
   return (
     <Grid container direction="row" justify="flex-start" alignItems="flex-start" alignContent="stretch" wrap="nowrap">
-      <Board player = {playerStatus}/>
-      <BoxChat roomID = {props.roomID} />
+      <Board player={playerStatus} />
+      <BoxChat roomID={props.roomID} />
       <Dialog open={!start} onClose={() => setStart(false)}>
         <DialogContent className={classes.root}>
           <div className={classes.infoPlayer}>Player 1:</div>
@@ -74,15 +74,13 @@ const RoomView = (props) => {
       </Dialog>
     </Grid>
   );
-}
+};
 
 const mapStateToProps = (state) => {
   return {
     roomID: state.auth.inRoom,
     rooms: state.room,
-    id: state.auth.id
+    id: state.auth.id,
   };
 };
-export default connect(
-  mapStateToProps,
-)(withRouter(RoomView));
+export default connect(mapStateToProps)(withRouter(RoomView));

@@ -18,6 +18,8 @@ const PrivateRoutes = (props) => {
         <Switch>
           <Route path="/" component={MainPage} exact />
           <Route path="/room/:id" component={RoomView} />
+          {/* <Route path="/" component={MainPage} exact />
+          <Route path="/:id" component={RoomView} /> */}
           <Route path="/404" component={NotFound} />
           <Redirect to="/404" />
         </Switch>
@@ -39,6 +41,7 @@ const PrivateRoutes = (props) => {
 const mapStateToProps = (state) => {
   return {
     isAuthenticated: !!state.auth.token,
+    // isAuthenticated: true,
   };
 };
 

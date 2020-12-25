@@ -24,14 +24,20 @@ ul {
   float: left;
   font-size: 24px;
   font-weight: bold;
-  line-height: 34px;
-  height: 34px;
+  line-height: 32px;
+  height: 32px;
   margin-right: -1px;
   margin-top: -1px;
   padding: 0;
   text-align: center;
-  width: 34px;
+  width: 32px;
+  cursor: pointer;
 }
+
+.square:hover {
+  background-color: rgb(219, 219, 219);
+}
+
 .square-winning {
   border: 3px solid red;
 }

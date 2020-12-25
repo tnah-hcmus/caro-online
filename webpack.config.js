@@ -1,8 +1,8 @@
-const path = require('path');
-const webpack = require('webpack');
-const dotenv = require('dotenv');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const path = require("path");
+const webpack = require("webpack");
+const dotenv = require("dotenv");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 //Get env data
 const env = dotenv.config().parsed;
@@ -14,23 +14,23 @@ const envKeys = Object.keys(env).reduce((prev, next) => {
 
 module.exports = () => {
   return {
-  devtool: 'eval-cheap-source-map',
-  mode: 'production',
-  entry: {
-    main: './client/app.js'
-  },
-  output: {
-    path: path.join(__dirname, './public/dist'),
-    filename: '[name].[hash].js',
-    publicPath: '/',
-  },
-  plugins: [
-    new webpack.HashedModuleIdsPlugin(),
-    new webpack.DefinePlugin(envKeys),
-    //new BundleAnalyzerPlugin(),
-    new HtmlWebpackPlugin({
-      inject: false,
-      templateContent: ({htmlWebpackPlugin}) => `
+    devtool: "eval-cheap-source-map",
+    mode: "production",
+    entry: {
+      main: "./client/app.js",
+    },
+    output: {
+      path: path.join(__dirname, "./public/dist"),
+      filename: "[name].[hash].js",
+      publicPath: "/",
+    },
+    plugins: [
+      new webpack.HashedModuleIdsPlugin(),
+      new webpack.DefinePlugin(envKeys),
+      //new BundleAnalyzerPlugin(),
+      new HtmlWebpackPlugin({
+        inject: false,
+        templateContent: ({ htmlWebpackPlugin }) => `
       <!DOCTYPE html>
       <html>      
       <head>
@@ -44,56 +44,59 @@ module.exports = () => {
         ${htmlWebpackPlugin.tags.bodyTags}
       </body>
       </html>      
-      `
-    }) // so that file hashes don't change unexpectedly
-  ],
-  module: {
-    rules: [
+      `,
+      }), // so that file hashes don't change unexpectedly
+    ],
+    module: {
+      rules: [
         {
-          loader: 'babel-loader', 
-          test: /\.js$/, 
-          exclude: /node_modules/
+          loader: "babel-loader",
+          test: /\.js$/,
+          exclude: /node_modules/,
         },
         {
           test: /\.css$/,
-          use: [
-            'style-loader',
-            'css-loader',
-          ]
-        }
-      ]
-  },
-  optimization: {
-    runtimeChunk: 'single',
-    splitChunks: {
-      chunks: 'all',
-      maxInitialRequests: Infinity,
-      cacheGroups: {
-        vendor: {
-          test: /[\\/]node_modules[\\/]/,
-          name(module) {
-            // get the name. E.g. node_modules/packageName/not/this/part.js
-            // or node_modules/packageName
-            const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
+          use: ["style-loader", "css-loader"],
+        },
+        {
+          test: /\.(jpg|png)$/,
+          use: {
+            loader: "url-loader",
+          },
+        },
+      ],
+    },
+    optimization: {
+      runtimeChunk: "single",
+      splitChunks: {
+        chunks: "all",
+        maxInitialRequests: Infinity,
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name(module) {
+              // get the name. E.g. node_modules/packageName/not/this/part.js
+              // or node_modules/packageName
+              const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
 
-            // npm package names are URL-safe, but some servers don't like @ symbols
-            return `npm.${packageName.replace('@', '')}`;
+              // npm package names are URL-safe, but some servers don't like @ symbols
+              return `npm.${packageName.replace("@", "")}`;
+            },
           },
         },
       },
     },
-  },
-  devServer: {
-    port: 8080,
-    proxy: {
-      "*": {
-        "changeOrigin": true,
-        "target": "http://localhost:3000"
-      }
+    devServer: {
+      port: 8080,
+      proxy: {
+        "*": {
+          changeOrigin: true,
+          target: "http://localhost:3000",
+        },
+      },
+      hot: true,
+      contentBase: path.join(__dirname, "public/dist"),
+      historyApiFallback: true,
     },
-    hot: true,
-    contentBase: path.join(__dirname, 'public/dist'),
-    historyApiFallback: true
-  }
-}
+  };
 };
