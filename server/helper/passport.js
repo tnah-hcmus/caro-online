@@ -16,6 +16,15 @@ const _createRandomPassword = () => {
     return password;
 }
 
+const _createRandomUID= () => {
+  let UID = "xyyyx-yxxyx-xxxy-xyxxx".replace(/[xy]/g, (c) => {
+    let r = (Math.random() * 16) | 0,
+      v = c == "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+  return UID;
+};
+
 const generateToken = async (user) => {
   if(user) return await user.generateAuthToken();
 }
@@ -35,9 +44,10 @@ const thirdPartyStrategy = async (strategyType, profile, done) => {
   }
   else {
     const user = new User({
+        gameId: _createRandomUID(),
         name: profile.displayName,
         [strategyType]: profile.id,
-        email: profile.email,
+        email: profile.emails[0].value,
         password: _createRandomPassword(),
         roles: ['user']
     })

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Link from "@material-ui/core/Link";
@@ -23,11 +23,7 @@ const useStyles = makeStyles((theme) => ({
 
 const SignUpPanel = (props) => {
   const classes = useStyles();
-  const [googleUrl, setGoogleUrl] = useState("#");
   const [message, setMessage] = useState(null);
-  useEffect(() => {
-    props.getGoogleUrl().then((url) => setGoogleUrl(url));
-  }, []);
   const handleSubmitSignUp = (e) => {
     e.preventDefault();
     const name = e.target.elements.fname.value.trim() + " " + e.target.elements.lname.value.trim();
@@ -93,7 +89,7 @@ const SignUpPanel = (props) => {
           Sign Up
         </Button>
         <Button
-          href={googleUrl}
+          href={'/auth/google'}
           startIcon={
             <img
               width="20px"
@@ -110,7 +106,7 @@ const SignUpPanel = (props) => {
           Log In With Google
         </Button>
         <Button
-          href={props.facebookUrl}
+          href={'/auth/facebook'}
           startIcon={<FacebookIcon color="primary" style={{ fontSize: 28 }} />}
           fullWidth
           variant="contained"

@@ -5,6 +5,15 @@ const authAdmin = require("../middleware/authAdmin");
 const validator = require("validator");
 const router = express.Router();
 
+const _createRandomUID= () => {
+  let UID = "xyyyx-yxxyx-xxxy-xyxxx".replace(/[xy]/g, (c) => {
+    let r = (Math.random() * 16) | 0,
+      v = c == "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+  return UID;
+};
+
 router
   .route("/api/users")
   .post(async (req, res) => {
@@ -21,10 +30,18 @@ router
       if (find) {
         return res.status(401).send({ error: "Signup failed! Already have account" });
       } else {
-        const user = new User(req.body);
+        const user = new User({...req.body, gameId: _createRandomUID()});
         await user.save();
         const token = await user.generateAuthToken();
-        res.status(201).send({ user, token });
+        const result = {
+          id: user.gameId,
+          name: user.name,
+          email: user.email,
+          coins: user.coin,
+          role: user.role,
+          accessToken: token,
+        }
+        res.status(200).send(result)
       }
     } catch (error) {
       res.status(400).send(error);

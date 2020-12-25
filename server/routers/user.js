@@ -3,7 +3,17 @@ const User = require("../models/user");
 const auth = require("../middleware/auth");
 const authAdmin = require("../middleware/authAdmin");
 const router = express.Router();
-
+router.get("/api/users/me", auth, (req, res) => { //lấy thông tin cá nhân từ token (không biết trước id);
+  const result = {
+    id: req.user.gameId,
+    name: req.user.name,
+    email: req.user.email,
+    coins: req.user.coin,
+    role: req.user.role,
+    accessToken: req.token,
+  };
+  res.status(200).send(result)
+})
 router
   .route("/api/users/:id")
   .post((req, res) => {

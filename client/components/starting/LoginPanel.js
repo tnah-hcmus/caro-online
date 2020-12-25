@@ -69,7 +69,7 @@ const LoginPanel = (props) => {
           Log In
         </Button>
         <Button
-          href={googleUrl}
+          href={'/auth/google'}
           startIcon={
             <img
               width="20px"
@@ -86,7 +86,7 @@ const LoginPanel = (props) => {
           Log In With Google
         </Button>
         <Button
-          href={props.facebookUrl}
+          href={'/auth/facebook'}
           startIcon={<FacebookIcon color="primary" style={{ fontSize: 28 }} />}
           fullWidth
           variant="contained"

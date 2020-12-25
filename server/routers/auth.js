@@ -1,21 +1,18 @@
 const express = require("express");
-const User = require("../models/user");
 const auth = require("../middleware/auth");
-const { getGoogleAccountFromCode } = require("../services/google-utils");
-const getFacebookUserData = require("../services/facebook-utils");
 const passport = require('../helper/passport'); 
 const router = express.Router();
 
-router.post('/api/login', (req, res) => {
+router.post('/api/auth/local', (req, res) => {
     // call passport authentication passing the "local" strategy name and a callback function
-    passport.authenticate('local', function (error, user, info) {
-
-      if (error) {
+    passport.authenticate('local', (error, user, info) => {
+      if (error) { //easy for debug
         res.status(401).send(error);
       } else if (!user) {
         res.status(401).send('Undefined error');
       } else {
         const result = {
+          id: user.gameId,
           name: user.name,
           email: user.email,
           coins: user.coin,
@@ -26,45 +23,33 @@ router.post('/api/login', (req, res) => {
       }
     })(req, res);
   });
-router.get("/api/loginGoogle", async (req, res) => {
-  if (req.body.code) {
-    const { email, password, name } = await getGoogleAccountFromCode(req.body.code);
-    try {
-      const find = await User.findOne({ email });
-      if (find) {
-        const token = await find.generateAuthToken();
-        res.status(201).send({ user: find, token });
-      } else {
-        const user = new User({ email, password, name });
-        await user.save();
-        const token = await user.generateAuthToken();
-        res.send({ user, token });
-      }
-    } catch (error) {
-      res.status(400).send(error);
-    }
+
+router.get("/auth/facebook", passport.authenticate("facebook"));
+router.get("/auth/facebook/callback",
+  passport.authenticate("facebook", {
+    failureRedirect: "/",
+    session: false,
+  }),
+  (req, res) => {
+    const token = req.user.generateAuthToken();//could pass by info from passport - must check
+    res.cookie("x-auth-cookie", token);
+    res.redirect('/oauth/success');
   }
-  else res.status(400).send('Provide more information')
-});
-router.post("/api/loginFacebook", async (req, res) => {
-  if (req.body.code) {
-    const { email, password, name } = await getFacebookUserData(req.body.code);
-    try {
-      const find = await User.findOne({ email });
-      if (find) {
-        const token = await find.generateAuthToken();
-        res.status(201).send({ user: find, token });
-      } else {
-        const user = new User({ email, password, name });
-        await user.save();
-        const token = await user.generateAuthToken();
-        res.send({ user, token });
-      }
-    } catch (error) {
-      res.status(400).send(error);
-    }
+);
+
+router.get("/auth/google", passport.authenticate("google"));
+router.get(
+  "/auth/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/",
+    session: false,
+  }),
+  (req, res) => {
+    const token = req.user.generateAuthToken();
+    res.cookie("x-auth-cookie", token);
+    res.redirect('/oauth/success');
   }
-});
+);
 router.post("/api/logout", auth, async (req, res) => {
   // Log user out of the application
   try {

@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { withRouter } from 'react-router-dom';
 import {startLoginThirdParty} from '../../action/auth/action';
 import {connect} from 'react-redux';
-import * as queryString from 'query-string';
+import Cookies from "js-cookie";
 
 const useStyles = makeStyles((theme) => ({
   backdrop: {
@@ -17,13 +17,15 @@ const useStyles = makeStyles((theme) => ({
 const LoadingLogin = (props) => {
   const classes = useStyles();
   useEffect(() => {
-    const params = queryString.parse(props.location.search);
-    const path = props.location.pathname.includes('google') ? 'Google' : 'Facebook';
-    if(params.error) props.history.push('/');
-    else {
-      props.loginThirdParty(path, params.code, props.history);
+    if (window.location.hash === "#_=_") window.location.hash = "";
+
+    const cookieJwt = Cookies.get("x-auth-cookie");
+    if (cookieJwt) {
+      Cookies.remove("x-auth-cookie");
+      props.loginThirdParty(cookieJwt, props.history);
     }
-  })
+    else props.history.push('/');
+  }, [])
   return (
     <div>
       <Backdrop className={classes.backdrop} open={true}>

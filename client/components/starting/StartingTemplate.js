@@ -7,10 +7,9 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from "@material-ui/core/styles";
 import SignUpPanel from "./SignUpPanel";
 import LoginPanel from "./LoginPanel";
-import { getFacebookUrl, startLogin, startSignUp, getGoogleUrl } from "../../action/auth/action";
+import { startLogin, startSignUp } from "../../action/auth/action";
 import { connect } from "react-redux";
 
-const facebookUrl = getFacebookUrl();
 const useStyles = makeStyles((theme) => ({
   root: {
     height: "100vh",
@@ -49,16 +48,12 @@ const StartPage = (props) => {
           </Avatar>
           {panel ? (
             <LoginPanel
-              facebookUrl={facebookUrl}
               login={props.startLogin}
-              getGoogleUrl={getGoogleUrl}
               toSignUp={() => SetPanel(false)}
             />
           ) : (
             <SignUpPanel
-              facebookUrl={facebookUrl}
               signup={props.startSignUp}
-              getGoogleUrl={getGoogleUrl}
               toLogin={() => SetPanel(true)}
             />
           )}
