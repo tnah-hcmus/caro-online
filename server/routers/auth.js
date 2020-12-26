@@ -10,6 +10,8 @@ router.post('/api/auth/local', (req, res) => {
         res.status(401).send(error);
       } else if (!user) {
         res.status(401).send('Undefined error');
+      } else if (!user.isVerified){
+        res.status(401).json({ type: 'not-verified', message: 'Your account has not been verified.' });
       } else {
         const result = {
           id: user.gameId,
@@ -32,7 +34,7 @@ router.get("/auth/facebook/callback",
   }),
   (req, res) => { //could pass by info from passport - must check
     res.cookie("x-auth-cookie", req.authInfo.accessToken);
-    res.redirect('/oauth/success');
+    res.redirect('/auth/success');
   }
 );
 
@@ -47,7 +49,7 @@ router.get(
   }),
   (req, res) => {
     res.cookie("x-auth-cookie", req.authInfo.accessToken);
-    res.redirect('/oauth/success');
+    res.redirect('/auth/success');
   }
 );
 router.post("/api/logout", auth, async (req, res) => {

@@ -4,15 +4,9 @@ const auth = require("../middleware/auth");
 const authAdmin = require("../middleware/authAdmin");
 const validator = require("validator");
 const router = express.Router();
-
-const _createRandomUID= () => {
-  let UID = "xyyyx-yxxyx-xxxy-xyxxx".replace(/[xy]/g, (c) => {
-    let r = (Math.random() * 16) | 0,
-      v = c == "x" ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-  return UID;
-};
+const {_createRandomUID} = require('../helper/generator');
+const {sendVerificationEmail, sendRecoverEmail, sendSuccessUpdateEmail} = require('../helper/emailSender');
+const jwt = require('jsonwebtoken')
 
 router
   .route("/api/users")
@@ -30,18 +24,11 @@ router
       if (find) {
         return res.status(401).send({ error: "Signup failed! Already have account" });
       } else {
-        const user = new User({...req.body, gameId: _createRandomUID()});
+        const user = new User({...req.body, gameId: _createRandomUID(), isVerified: false});
         await user.save();
         const token = await user.generateAuthToken();
-        const result = {
-          id: user.gameId,
-          name: user.name,
-          email: user.email,
-          coins: user.coin,
-          role: user.role,
-          accessToken: token,
-        }
-        res.status(200).send(result)
+        const {message, code} = await sendVerificationEmail(user, token); 
+        res.status(code).send(message);
       }
     } catch (error) {
       res.status(400).send(error);
@@ -78,5 +65,106 @@ router
       res.status(400).send(error);
     }
   });
+
+//Verify account
+router.get("/api/token/verify/:token", async (req, res) => {
+  if(!req.params.token) return res.status(400).json({message: "We were unable to find a user for this token."});
+  try {
+      // Find a matching token
+      const data = jwt.verify(req.params.token, process.env.JWT_KEY);
+      const user = await User.findOne({ _id: data._id })
+      if (!user) return res.status(400).json({ message: 'We were unable to find your token.' });
+      if (user.isVerified) return res.status(400).json({ message: 'This user has already been verified.' });
+      user.isVerified = true;
+      await user.save();
+      res.cookie("x-auth-cookie", req.params.token);
+      res.redirect('/auth/success');
+      //res.status(200).send("The account has been verified. Please log in."); -> for mobile
+  } catch (error) {
+      res.status(500).json({message: error.message})
+  }
+})
+router.post("/api/token/resend", async (req, res) => {
+  try {
+      const { email } = req.body;
+      const user = await User.findOne({ email });
+      if (!user) return res.status(401).json({ message: 'The email address ' + email + ' is not associated with any account. Double-check your email address and try again.'});
+      if (user.isVerified) return res.status(400).json({ message: 'This account has already been verified. Please log in.'});
+      const token = await user.generateAuthToken();
+      const {message, code} = await sendVerificationEmail(user, token); 
+      res.status(code).send(message);
+  } catch (error) {
+      res.status(500).json({message: error.message})
+  }
+});
+//Recover password concept:
+/*
+   1. User request recover password with email, POST to /api/recover/request
+   2. Server generate reset-password token (expires in 1 hour), send verify link to user email
+   3. User click on verify link,  go to /api/recover/verify/ with token params
+   4. Server verify token, generate allow-update-password token, set in 'x-update-token' header and redirect to update password page
+   5. User update password and post from form (newPass + token in 'x-update-token' header), POST to /api/recover/update
+   6. Server update password, clear all token and lock resetPassword
+   7. If server can't update password, hook pre-save will lock resetPassword next times it trigger
+ */
+
+//Recover password
+router.post('/api/recover/request', async (req, res) => { //send email to recover password
+  try {
+      const { email } = req.body;
+      const user = await User.findOne({ email });
+      if (!user) return res.status(401).json({ message: 'The email address ' + email + ' is not associated with any account. Double-check your email address and try again.'});
+      //Generate and set password reset token
+      user.generatePasswordReset();
+      await user.save();
+     //send email
+      const {message, code} = await sendRecoverEmail(user); 
+      res.status(code).send(message); 
+  } catch (error) {
+      res.status(500).json({message: error.message})
+  }
+});
+//Verified and redirect
+router.get('/api/recover/verify/:token', async (req, res) => {
+  if(!req.params.token) return res.status(400).json({message: "We were unable to find a user for this reset password token."});
+  try {
+      const { token } = req.params;
+      const user = await User.findOne({resetPasswordToken: token, resetPasswordExpires: {$gt: Date.now()}});
+      if (!user) return res.status(401).json({message: 'Password reset token is invalid or has expired.'});
+      const updateToken = user.generateAcceptChangePasswordToken();
+      res.setHeader('x-update-token', updateToken);
+      res.redirect('/password/update');
+  } catch (error) {
+      res.status(500).json({message: error.message})
+  }
+})
+
+//Reset password
+router.post('/api/recover/update', async (req, res) => {
+  try {
+      const { token, password } = req.body;
+      if(!token) return res.status(400).json({message: 'Update token is required'});
+      const {reset, allow} = jwt.verify(token, process.env.JWT_KEY);
+      if(!reset ||  !allow) return res.status(400).json({message: 'Unable to parse token'});
+      const user = await User.findOne({resetPasswordToken: reset, resetPasswordExpires: {$gt: Date.now()}});
+      if (!user) return res.status(401).json({message: 'Password reset token is invalid or has expired.'});
+
+      //Set the new password
+      user.password = password;
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpires = undefined;
+      user.allowResetPassword = false;
+      user.isVerified = true;
+
+      // Save the updated user object
+      await user.save();
+
+      //send email
+      const {message, code} = await sendSuccessUpdateEmail(user); 
+      res.status(code).send(message);
+  } catch (error) {
+      res.status(500).json({message: error.message})
+  }
+})
 
 module.exports = router;

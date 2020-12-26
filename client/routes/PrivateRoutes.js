@@ -30,7 +30,7 @@ const PrivateRoutes = (props) => {
       <Switch>
         <Route path="/" component={StartPage} exact />
         <Route path="/admin" component={AdminLoginPanel} />
-        <Route path="/oauth/success" component={LoadingLogin} />
+        <Route path="/auth/success" component={LoadingLogin} />
         <Route path="/404" component={NotFound} />
         <Redirect to="/404" />
       </Switch>

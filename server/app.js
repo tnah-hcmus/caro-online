@@ -6,11 +6,7 @@ const adminRouter = require("./routers/admin");
 const path = require("path");
 const passport = require("./helper/passport")
 const socketServer = require('./socket/server');
-require("dotenv").config();
-
-const port = process.env.PORT;
 require("./db/db");
-const { urlGoogle } = require("./services/google-utils");
 
 const app = express();
 app.use(express.static(path.join(__dirname, "../public/dist")));

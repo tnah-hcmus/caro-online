@@ -9,23 +9,7 @@ const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
 
 const serverUrl = process.env.NODE_ENV === 'production' ? process.env.PROD_SERVER_URL : process.env.DEV_SERVER_URL;
 
-const _createRandomPassword = () => {
-    let password = 'xyxxyxxxxxxyxxy'.replace(/[xy]/g, (c) => {
-    let r = Math.random() * 16 | 0,
-    v = c == 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
-    return password;
-}
-
-const _createRandomUID= () => {
-  let UID = "xyyyx-yxxyx-xxxy-xyxxx".replace(/[xy]/g, (c) => {
-    let r = (Math.random() * 16) | 0,
-      v = c == "x" ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-  return UID;
-};
+const {_createRandomPassword, _createRandomUID} = require('../helper/generator')
 
 const generateToken = async (user) => {
   if(user) return await user.generateAuthToken();
@@ -51,7 +35,8 @@ const thirdPartyStrategy = async (strategyType, profile, done) => {
         [strategyType]: profile.id,
         email: profile.emails[0].value,
         password: _createRandomPassword(),
-        roles: ['user']
+        roles: ['user'],
+        isVerified: false
     })
     await user.save();
     userDB = user;
