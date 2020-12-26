@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Grid, Button, makeStyles, Typography, withStyles } from "@material-ui/core";
 import SettingsIcon from "@material-ui/icons/Settings";
 import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
@@ -12,6 +12,7 @@ import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import FiberNewIcon from "@material-ui/icons/FiberNew";
 import InfoIcon from "@material-ui/icons/Info";
 import Countdown from "./Countdown";
+import CustomizedSnackbars from "../common/CustomizedSnackbars";
 
 // IMPORT ICON
 import vsIcon from "../../assets/images/icons8-vs-button-96.png";
@@ -19,6 +20,7 @@ import XIcon from "../../assets/images/icons8-X.png";
 import OIcon from "../../assets/images/icons8-O.png";
 import DinosaurIcon from "../../assets/images/icon-dinosaur.png";
 import CrocodileIcon from "../../assets/images/icon-crocodile.png";
+import MedalIcon from "../../assets/images/icon-medal.png";
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -52,9 +54,13 @@ const StyledBadge = withStyles((theme) => ({
 const Status = (props) => {
   const { onGetStatus } = props;
   const classes = useStyles();
+  const [message, setMessage] = useState(null);
+
+  const handleTimeOut = () => setMessage({ type: "error", content: `Time's Up !!!`, open: true });
 
   return (
     <Grid container className={classes.root}>
+      <CustomizedSnackbars message={message} />
       <Grid container item xs={12} className={classes.section}>
         <Grid item xs={12} container direction="row" className={classes.title}>
           <Grid item className={classes.icon}>
@@ -66,7 +72,18 @@ const Status = (props) => {
         </Grid>
         <Grid container item xs={12} className={classes.statusWrapper}>
           <Grid container item={12} justify="space-around" className={classes.infoPlayer}>
-            <Grid item xs={5}>
+            <Grid item xs={5} className="rainbow">
+              {/* Win add className rainbow */}
+              <Grid container direction="row" justify="center" style={{ marginTop: 5 }}>
+                <Grid item>
+                  <img src={MedalIcon} width={24} height={24} />
+                </Grid>
+                <Grid item>
+                  <Typography variant="subtitle2" color="secondary">
+                    5
+                  </Typography>
+                </Grid>
+              </Grid>
               {/* Turn's player */}
               <StyledBadge
                 overlap="circle"
@@ -86,9 +103,19 @@ const Status = (props) => {
               <img src={XIcon} width={24} height={24} />
             </Grid>
             <Grid item xs={2} fontSize="large" className={classes.iconRed}>
-              <img src={vsIcon} width={50} height={50} />
+              <img src={vsIcon} width={40} height={48} />
             </Grid>
             <Grid item xs={5}>
+              <Grid container direction="row" justify="center" style={{ marginTop: 5 }}>
+                <Grid item>
+                  <img src={MedalIcon} width={24} height={24} />
+                </Grid>
+                <Grid item>
+                  <Typography variant="subtitle2" color="secondary">
+                    5
+                  </Typography>
+                </Grid>
+              </Grid>
               <StyledBadge
                 overlap="circle"
                 anchorOrigin={{
@@ -108,7 +135,8 @@ const Status = (props) => {
             </Grid>
           </Grid>
           <Grid item xs={12} className={classes.countdown}>
-            <Countdown time={30} />
+            <Countdown time={5} onTimeOut={handleTimeOut} />
+            <Typography variant="h6">Winner: Player 1</Typography>
           </Grid>
         </Grid>
       </Grid>
@@ -156,76 +184,57 @@ const Status = (props) => {
           </Grid>
         </Grid>
         <Grid container item xs={12} className={classes.statusWrapper} style={{ maxHeight: 140, overflow: "auto" }}>
-          <Grid container item xs={12}>
-            <Grid item>
-              <Avatar
-                alt="avatar"
-                src={Math.round(Math.random()) ? DinosaurIcon : CrocodileIcon}
-                className={classes.small}
-              />
+          <Grid container item xs={12} direction="row">
+            <Grid container item xs={9}>
+              <Grid item>
+                <Avatar
+                  alt="avatar"
+                  src={Math.round(Math.random()) ? DinosaurIcon : CrocodileIcon}
+                  className={classes.small}
+                />
+              </Grid>
+              <Grid item style={{ margin: "auto 0" }}>
+                <Typography variant="subtitle2">Viewer 1</Typography>
+              </Grid>
             </Grid>
-            <Grid item>
-              <Typography variant="subtitle2">Viewer 1</Typography>
-            </Grid>
-          </Grid>
-          <Grid container item xs={12}>
-            <Grid item>
-              <Avatar
-                alt="avatar"
-                src={Math.round(Math.random()) ? DinosaurIcon : CrocodileIcon}
-                className={classes.small}
-              />
-            </Grid>
-            <Grid item>
-              <Typography variant="subtitle2">Viewer 1</Typography>
-            </Grid>
-          </Grid>
-          <Grid container item xs={12}>
-            <Grid item>
-              <Avatar
-                alt="avatar"
-                src={Math.round(Math.random()) ? DinosaurIcon : CrocodileIcon}
-                className={classes.small}
-              />
-            </Grid>
-            <Grid item>
-              <Typography variant="subtitle2">Viewer 1</Typography>
+
+            <Grid container item xs={3} justify="flex-end">
+              <Grid item>
+                <img src={MedalIcon} width={24} height={24} />
+              </Grid>
+
+              <Grid item style={{ margin: "auto 0" }}>
+                <Typography variant="subtitle2" color="secondary">
+                  5
+                </Typography>
+              </Grid>
             </Grid>
           </Grid>
-          <Grid container item xs={12}>
-            <Grid item>
-              <Avatar
-                alt="avatar"
-                src={Math.round(Math.random()) ? DinosaurIcon : CrocodileIcon}
-                className={classes.small}
-              />
+
+          <Grid container item xs={12} direction="row">
+            <Grid container item xs={9}>
+              <Grid item>
+                <Avatar
+                  alt="avatar"
+                  src={Math.round(Math.random()) ? DinosaurIcon : CrocodileIcon}
+                  className={classes.small}
+                />
+              </Grid>
+              <Grid item style={{ margin: "auto 0" }}>
+                <Typography variant="subtitle2">Viewer 1</Typography>
+              </Grid>
             </Grid>
-            <Grid item>
-              <Typography variant="subtitle2">Viewer 1</Typography>
-            </Grid>
-          </Grid>
-          <Grid container item xs={12}>
-            <Grid item>
-              <Avatar
-                alt="avatar"
-                src={Math.round(Math.random()) ? DinosaurIcon : CrocodileIcon}
-                className={classes.small}
-              />
-            </Grid>
-            <Grid item>
-              <Typography variant="subtitle2">Viewer 1</Typography>
-            </Grid>
-          </Grid>
-          <Grid container item xs={12}>
-            <Grid item>
-              <Avatar
-                alt="avatar"
-                src={Math.round(Math.random()) ? DinosaurIcon : CrocodileIcon}
-                className={classes.small}
-              />
-            </Grid>
-            <Grid item>
-              <Typography variant="subtitle2">Viewer 1</Typography>
+
+            <Grid container item xs={3} justify="flex-end">
+              <Grid item>
+                <img src={MedalIcon} width={24} height={24} />
+              </Grid>
+
+              <Grid item style={{ margin: "auto 0" }}>
+                <Typography variant="subtitle2" color="secondary">
+                  5
+                </Typography>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
@@ -283,5 +292,6 @@ const useStyles = makeStyles((theme) => ({
   },
   countdown: {
     textAlign: "center",
+    overflow: "hidden",
   },
 }));

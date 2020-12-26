@@ -18,15 +18,18 @@ const useStyles = makeStyles({
 });
 
 const Message = (props) => {
-  const { isMyMessage, message } = props;
+  const { message } = props;
   const classes = useStyles();
+  const isMyMessage = Math.round(Math.random());
   return (
     <Grid container className={classes.root} justify={isMyMessage && "flex-end"}>
-      {/* <Grid item xs={12}>
-        <Typography variant="subtitle2" color="initial">
-          player1
-        </Typography>
-      </Grid> */}
+      {!isMyMessage && (
+        <Grid item xs={12}>
+          <Typography variant="subtitle2" color="initial">
+            player1
+          </Typography>
+        </Grid>
+      )}
       <Grid item className={classes.content} style={{ background: `${isMyMessage ? "#1d4bcd" : "#727272"}` }}>
         {message}
       </Grid>
