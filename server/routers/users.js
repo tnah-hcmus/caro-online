@@ -112,6 +112,9 @@ router.post("/api/token/resend", async (req, res) => {
 router.post('/api/recover/request', async (req, res) => { //send email to recover password
   try {
       const { email } = req.body;
+      if (!validator.isEmail(email)) {
+        return res.status(401).json({ message: 'The email address is not valid. Re-check the email you provided and try again.'});
+      }
       const user = await User.findOne({ email });
       if (!user) return res.status(401).json({ message: 'The email address ' + email + ' is not associated with any account. Double-check your email address and try again.'});
       //Generate and set password reset token
@@ -132,8 +135,8 @@ router.get('/api/recover/verify/:token', async (req, res) => {
       const user = await User.findOne({resetPasswordToken: token, resetPasswordExpires: {$gt: Date.now()}});
       if (!user) return res.status(401).json({message: 'Password reset token is invalid or has expired.'});
       const updateToken = user.generateAcceptChangePasswordToken();
-      res.setHeader('x-update-token', updateToken);
-      res.redirect('/password/update');
+      res.cookie('x-update-token', updateToken);
+      res.redirect('/password/reset');
   } catch (error) {
       res.status(500).json({message: error.message})
   }
@@ -161,7 +164,11 @@ router.post('/api/recover/update', async (req, res) => {
 
       //send email
       const {message, code} = await sendSuccessUpdateEmail(user); 
-      res.status(code).send(message);
+      if(code !== 200) res.status(code).send({message});
+      else {
+        const newToken = await user.generateAuthToken();
+        res.status(code).send(newToken);
+      }
   } catch (error) {
       res.status(500).json({message: error.message})
   }

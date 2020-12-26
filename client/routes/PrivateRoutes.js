@@ -10,6 +10,8 @@ import NotFound from "../components/common/404";
 import MainPage from "../components/MainPage";
 import Header from "../components/layout/Header";
 import RoomView from "../components/room/RoomView";
+import ResetPasswordPanel from '../components/starting/ResetPassword';
+import ForgotPasswordPanel from '../components/starting/ForgotPassword';
 
 const PrivateRoutes = (props) => {
   if (props.isAuthenticated) {
@@ -31,6 +33,8 @@ const PrivateRoutes = (props) => {
         <Route path="/" component={StartPage} exact />
         <Route path="/admin" component={AdminLoginPanel} />
         <Route path="/auth/success" component={LoadingLogin} />
+        <Route path="/password/forgot" component={ForgotPasswordPanel} />
+        <Route path="/password/reset" component={ResetPasswordPanel} />
         <Route path="/404" component={NotFound} />
         <Redirect to="/404" />
       </Switch>
