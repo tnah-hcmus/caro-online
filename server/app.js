@@ -14,9 +14,6 @@ const { urlGoogle } = require("./services/google-utils");
 
 const app = express();
 app.use(express.static(path.join(__dirname, "../public/dist")));
-app.get("/google/url", (req, res) => {
-  res.send(urlGoogle());
-});
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());

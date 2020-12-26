@@ -25,11 +25,7 @@ const useStyles = makeStyles((theme) => ({
 
 const LoginPanel = (props) => {
   const classes = useStyles();
-  const [googleUrl, setGoogleUrl] = useState("#");
   const [message, setMessage] = useState(null);
-  useEffect(() => {
-    props.getGoogleUrl().then((url) => setGoogleUrl(url));
-  }, []);
   const handleSubmitLogin = (e) => {
     e.preventDefault();
     const email = e.target.elements.email.value;

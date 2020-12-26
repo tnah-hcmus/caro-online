@@ -3,7 +3,7 @@ const User = require("../models/user");
 
 module.exports = function(app) {
     const getUserInfo = async (id) => {
-        const user = await User.findById(id);
+        const user = await User.findOne({gameId: id});
         if(user) return user.name;
         else return 'Anonymous';
     }
@@ -32,7 +32,6 @@ module.exports = function(app) {
             }
         });
         socket.on('send-room-data', data => {
-            console.log(data);
             socket.broadcast.emit('new-room-data', data);
         }) 
         //on join room 

@@ -30,14 +30,15 @@ router.get("/auth/facebook/callback",
     failureRedirect: "/",
     session: false,
   }),
-  (req, res) => {
-    const token = req.user.generateAuthToken();//could pass by info from passport - must check
-    res.cookie("x-auth-cookie", token);
+  (req, res) => { //could pass by info from passport - must check
+    res.cookie("x-auth-cookie", req.authInfo.accessToken);
     res.redirect('/oauth/success');
   }
 );
 
-router.get("/auth/google", passport.authenticate("google"));
+router.get("/auth/google", passport.authenticate("google", {
+  scope: ['profile', 'email'],
+}));
 router.get(
   "/auth/google/callback",
   passport.authenticate("google", {
@@ -45,8 +46,7 @@ router.get(
     session: false,
   }),
   (req, res) => {
-    const token = req.user.generateAuthToken();
-    res.cookie("x-auth-cookie", token);
+    res.cookie("x-auth-cookie", req.authInfo.accessToken);
     res.redirect('/oauth/success');
   }
 );

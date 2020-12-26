@@ -46,6 +46,7 @@ export const startLoginAdmin = (email, password, history, setMessage) => {
   };
 };
 export const startLoginThirdParty = (token, history) => {
+  console.log(token)
   return (dispatch) => {
     Axios.post("/api/users/me", { }, {
       headers: { Authorization: `Bearer ${token}` }

@@ -7,6 +7,8 @@ const LocalStrategy = require('passport-local').Strategy
 const FacebookStrategy = require('passport-facebook').Strategy
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
 
+const serverUrl = process.env.NODE_ENV === 'production' ? process.env.PROD_SERVER_URL : process.env.DEV_SERVER_URL;
+
 const _createRandomPassword = () => {
     let password = 'xyxxyxxxxxxyxxy'.replace(/[xy]/g, (c) => {
     let r = Math.random() * 16 | 0,
@@ -31,9 +33,9 @@ const generateToken = async (user) => {
 const thirdPartyStrategy = async (strategyType, profile, done) => {
   const [existThirdParty, existEmail] = await Promise.all([
     User.findOne({[strategyType]: profile.id}),
-    User.findOne({email: profile.email})
+    User.findOne({email: profile.emails[0].value})
   ]);
-  let userDB = null
+  let userDB = null;
   if(existThirdParty) {
     userDB = existThirdParty;
   }
@@ -68,7 +70,6 @@ passport.deserializeUser((user, done) => {
 //Authenticated với email/password
 passport.use(new LocalStrategy({usernameField: 'email', passwordField: 'password'}, async(email, password, done)=>{
     //Login a registered user
-    console.log(email, password);
     try {
         if (!email || !password) {
           done({ error: "Login failed, please fill your password and your email" }, null);
@@ -91,7 +92,7 @@ passport.use(new LocalStrategy({usernameField: 'email', passwordField: 'password
 passport.use(new FacebookStrategy({
   clientID: process.env.FB_APP_ID,
   clientSecret: process.env.FB_APP_SECRET,
-  callbackURL: process.env.FB_REDIRECT_URL,
+  callbackURL: `${serverUrl}${process.env.FB_REDIRECT_URL}`,
   profileFields:['id','displayName','email']
 },async(accessToken, refreshToken, profile, done)=>{
   await thirdPartyStrategy('facebookId', profile, done); 
@@ -101,7 +102,7 @@ passport.use(new FacebookStrategy({
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: process.env.GOOGLE_REDIRECT_URL,
+  callbackURL: `${serverUrl}${process.env.GOOGLE_REDIRECT_URL}`,
 },async(accessToken, refreshToken, err , profile, done)=>{
   await thirdPartyStrategy('googleId', profile, done);
 }))
