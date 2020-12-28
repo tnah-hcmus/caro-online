@@ -51,7 +51,7 @@ const RoomView = (props) => {
     }
   }
   return (
-    <Grid container direction="row" justify="flex-start" alignItems="flex-start" alignContent="stretch" wrap="nowrap">
+    <Grid container direction="row" justify="flex-start" alignItems="flex-start" alignContent="stretch">
       <Board player={playerStatus} />
       <BoxChat roomID={props.roomID} />
       <Dialog open={!start} onClose={() => setStart(false)}>
@@ -81,6 +81,9 @@ const mapStateToProps = (state) => {
     roomID: state.auth.inRoom,
     rooms: state.room,
     id: state.auth.id,
+    // roomID: "123",
+    // rooms: "1",
+    // id: "123",
   };
 };
 export default connect(mapStateToProps)(withRouter(RoomView));

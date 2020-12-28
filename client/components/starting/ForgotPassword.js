@@ -3,7 +3,7 @@ import { Grid, makeStyles, TextField, Typography, Button, Dialog, DialogContent 
 import CustomizedSnackbars from "../common/CustomizedSnackbars";
 import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
 import Avatar from "@material-ui/core/Avatar";
-import Axios from 'axios'
+import Axios from "axios";
 
 const ForgotPasswordPanel = (props) => {
   const classes = useStyles();
@@ -11,18 +11,22 @@ const ForgotPasswordPanel = (props) => {
   const handleSubmitRequest = (e) => {
     e.preventDefault();
     const email = e.target.elements.email.value;
-    if(!email) setMessage({ type: "error", content: 'Email is not fill', open: true });    
-    Axios.post('/api/recover/request', {
-        email
+    if (!email) setMessage({ type: "error", content: "Email is not fill", open: true });
+    Axios.post("/api/recover/request", {
+      email,
     })
-    .then((res) => {
+      .then((res) => {
         const success = res.response && res.response.data && res.response.data.message;
-        setMessage({ type: "success", content: `${success || "A verification email is sent to your email, following to recover your account"}`, open: true });
-    })
-    .catch((e) => {
+        setMessage({
+          type: "success",
+          content: `${success || "A verification email is sent to your email, following to recover your account"}`,
+          open: true,
+        });
+      })
+      .catch((e) => {
         const error = e.response && e.response.data && e.response.data.message;
         setMessage({ type: "error", content: `${error || e.response.statusText}`, open: true });
-    })
+      });
   };
 
   return (
@@ -47,7 +51,7 @@ const ForgotPasswordPanel = (props) => {
                   fullWidth
                   margin="normal"
                   required
-                  label="email"
+                  label="Email"
                   variant="outlined"
                   type="text"
                   className={classes.textFiled}

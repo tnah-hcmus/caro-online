@@ -13,12 +13,13 @@ import MenuList from "@material-ui/core/MenuList";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import { Link } from "@material-ui/core";
 import { Link as RouterLink, useHistory } from "react-router-dom";
+import iconLogo from "../../assets/images/icon-logo.png";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     "&>header": {
-      backgroundColor: "#2196F3",
+      backgroundColor: "#d2d2d2",
     },
   },
   menuButton: {
@@ -28,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     fontSize: 24,
     fontFamily: "Playball",
+    justifyContent: "center",
     "& > a": {
       color: "white",
       "&:hover": {
@@ -76,6 +78,7 @@ const Header = (props) => {
           <Toolbar>
             <Typography variant="h6" className={classes.title}>
               <Link component={RouterLink} to="/">
+                {/* <img src={iconLogo} width={50} height={50} /> */}
                 Caro Online
               </Link>
             </Typography>
@@ -94,7 +97,7 @@ const Header = (props) => {
                       <ClickAwayListener onClickAway={handleClose}>
                         <MenuList autoFocusItem={open} id="menu-list-grow">
                           <MenuItem onClick={() => history.push("/profile")}>Profile</MenuItem>
-                          {/* <MenuItem onClick={() => history.push("/changepassword")}>Change password</MenuItem> */}
+                          <MenuItem onClick={() => history.push("/changepassword")}>Change password</MenuItem>
                           <MenuItem onClick={handleSignout}>Logout</MenuItem>
                         </MenuList>
                       </ClickAwayListener>

@@ -11,7 +11,7 @@ import { connect } from "react-redux";
 
 const useStyles = makeStyles({
   root: {
-    margin: 15,
+    padding: 15,
   },
   content: {
     borderRadius: "12px",
@@ -33,6 +33,7 @@ const useStyles = makeStyles({
     borderRadius: 5,
     border: "1px solid #dedede",
     fontSize: 16,
+    width: "100%",
   },
   box: {
     height: 400,
@@ -70,11 +71,11 @@ const BoxChat = (props) => {
             return <Message isMyMessage={item.isMyMessage} message={item.message} />;
           })}
         </Grid>
-        <Grid container item xs={12} justify="flex-end" className={classes.input}>
-          <Grid item style={{ margin: "auto 0" }}>
+        <Grid container item xs={12} alignItems="flex-end" direction="row" className={classes.input}>
+          <Grid item xs={8} style={{ padding: "0 10px" }}>
             <textarea id="message" className={classes.inputBtn} ref={chatRef} />
           </Grid>
-          <Grid item style={{ margin: "auto 5px" }}>
+          <Grid item xs={4} style={{ margin: "auto", padding: 0 }}>
             <Button startIcon={<SendIcon />} variant="contained" color="primary" margin="" onClick={handleChat}>
               Send
             </Button>

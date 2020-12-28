@@ -12,9 +12,10 @@ import { connect } from "react-redux";
 
 const useStyles = makeStyles({
   root: {
-    margin: "15px 5px",
+    // margin: "15px 5px",
   },
   board: {
+    marginTop: 45,
     padding: "15px",
     background: "#d2d2d2",
     borderRadius: 12,
@@ -73,7 +74,7 @@ const Board = (props) => {
   };
 
   return (
-    <Grid container item xs={9} className={classes.root}>
+    <Grid container item xs={12} md={9} className={classes.root}>
       <Grid item xs={8} className={classes.board}>
         <BoardView squares={current} size={size} handleClick={handleClick} winning={winning} />
       </Grid>

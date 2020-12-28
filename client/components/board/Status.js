@@ -15,7 +15,8 @@ import Countdown from "./Countdown";
 import CustomizedSnackbars from "../common/CustomizedSnackbars";
 
 // IMPORT ICON
-import vsIcon from "../../assets/images/icons8-vs-button-96.png";
+import vsIcon from "../../assets/images/icons8-vs-button.png";
+import vsIconReverse from "../../assets/images/icons8-vs-button-reverse.png";
 import XIcon from "../../assets/images/icons8-X.png";
 import OIcon from "../../assets/images/icons8-O.png";
 import DinosaurIcon from "../../assets/images/icon-dinosaur.png";
@@ -61,7 +62,7 @@ const Status = (props) => {
   return (
     <Grid container className={classes.root}>
       <CustomizedSnackbars message={message} />
-      <Grid container item xs={12} className={classes.section}>
+      <Grid container item xs={12} className={classes.section} style={{ padding: "15px 0 0" }}>
         <Grid item xs={12} container direction="row" className={classes.title}>
           <Grid item className={classes.icon}>
             <InfoIcon />

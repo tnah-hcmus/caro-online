@@ -65,7 +65,7 @@ const LoginPanel = (props) => {
           Log In
         </Button>
         <Button
-          href={'/auth/google'}
+          href={"/auth/google"}
           startIcon={
             <img
               width="20px"
@@ -82,7 +82,7 @@ const LoginPanel = (props) => {
           Log In With Google
         </Button>
         <Button
-          href={'/auth/facebook'}
+          href={"/auth/facebook"}
           startIcon={<FacebookIcon color="primary" style={{ fontSize: 28 }} />}
           fullWidth
           variant="contained"
@@ -94,7 +94,7 @@ const LoginPanel = (props) => {
         <CustomizedSnackbars message={message} />
         <Grid container>
           <Grid item xs>
-            <Link href = {'/password/forgot'} variant="body2">
+            <Link href={"/password/forgot"} variant="body2">
               Forgot password?
             </Link>
           </Grid>

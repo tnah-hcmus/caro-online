@@ -57,6 +57,10 @@ const AddRoomBtn = (props) => {
       </Button>
       <Dialog open={open} onClose={handleClose} className={classes.dialog}>
         <DialogTitle id="form-dialog-title">Add new room</DialogTitle>
+        <DialogContent>
+          <TextField autoFocus variant="outlined" label="Password" id="password" type="password" fullWidth />
+          <TextField variant="outlined" label="Time" id="time" type="number" fullWidth />
+        </DialogContent>
         <DialogActions>
           <Button onClick={handleSubmit} variant="contained" color="primary">
             Create
