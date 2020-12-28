@@ -3,9 +3,10 @@ const userRouter = require("./routers/user");
 const authRouter = require("./routers/auth");
 const usersRouter = require("./routers/users");
 const adminRouter = require("./routers/admin");
+const gameRouter = require("./routers/game");
 const path = require("path");
-const passport = require("./helper/passport")
-const socketServer = require('./socket/server');
+const passport = require("./helper/passport");
+const socketServer = require("./socket/server");
 require("./db/db");
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(userRouter);
 app.use(usersRouter);
 app.use(authRouter);
 app.use(adminRouter);
+app.use(gameRouter);
 
 app.use((req, res, next) => {
   res.sendFile(path.join(__dirname, "../public/dist/index.html"));
