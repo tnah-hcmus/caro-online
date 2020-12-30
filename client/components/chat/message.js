@@ -17,16 +17,14 @@ const useStyles = makeStyles({
   },
 });
 
-const Message = (props) => {
-  const { message } = props;
+const Message = ({message, isMyMessage, owner}) => {
   const classes = useStyles();
-  const isMyMessage = Math.round(Math.random());
   return (
     <Grid container className={classes.root} justify={isMyMessage && "flex-end"}>
       {!isMyMessage && (
         <Grid item xs={12}>
           <Typography variant="subtitle2" color="initial">
-            player1
+            {owner}
           </Typography>
         </Grid>
       )}

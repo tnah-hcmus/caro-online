@@ -6,8 +6,8 @@ class WSObserver {
   }
   startListenUpdateChat(updateChat) {
     WS.onNewData("new-message", (data) => {
-      const {roomID, text, timestamp } = data;
-      updateChat(roomID, text, false, timestamp);
+      const {roomID, text, timestamp, owner } = data;
+      updateChat(roomID, text, false, timestamp, owner);
     })
   }
   startListenUpdateGameData(updateGameData) {

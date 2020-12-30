@@ -4,6 +4,7 @@ import authReducer from '../reducer/authReducer';
 import roomReducer from '../reducer/roomReducer';
 import chatReducer from '../reducer/chatReducer';
 import historyReducer from '../reducer/historyReducer';
+import userReducer from "../reducer/userReducer";
 import { persistStore, persistReducer } from 'redux-persist';
 import localForage from 'localforage';
 
@@ -21,7 +22,8 @@ const rootReducer = combineReducers({
   auth: authReducer,
   room: roomReducer,
   chat: chatReducer,
-  history: historyReducer
+  history: historyReducer,
+  user: userReducer
 });
 const localDB = localForage.createInstance({
   name: "RVN-data"
@@ -30,7 +32,7 @@ const localDB = localForage.createInstance({
 const persistConfig = {
   key: 'root',
   whitelist: [],
-  blacklist: ['auth', 'room', 'chat', 'history'],
+  blacklist: ['auth', 'room', 'chat', 'history', 'user'],
   storage: localDB,
 }
 

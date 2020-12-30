@@ -52,7 +52,7 @@ const BoxChat = (props) => {
   const handleChat = () => {
     const timestamp = Date.now();
     const text = chatRef.current.value;
-    props.addMessage(props.roomID, text, true, timestamp);
+    props.addMessage(props.roomID, text, true, timestamp, props.user.name);
   };
   const classes = useStyles();
   return (
@@ -68,7 +68,7 @@ const BoxChat = (props) => {
       <Grid item container xs={12} className={classes.content} alignItems="flex-end">
         <Grid item xs={12} className={classes.box}>
           {allMessages.map((item) => {
-            return <Message isMyMessage={item.isMyMessage} message={item.message} />;
+            return <Message isMyMessage={item.isMyMessage} message={item.message} owner={item.owner} />;
           })}
         </Grid>
         <Grid container item xs={12} alignItems="flex-end" direction="row" className={classes.input}>
@@ -88,6 +88,7 @@ const BoxChat = (props) => {
 const mapStateToProps = (state) => {
   return {
     chat: state.chat,
+    user: state.user
   };
 };
 const mapDispatchToProps = {
