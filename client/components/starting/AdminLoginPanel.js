@@ -61,7 +61,7 @@ const AdminLoginPanel = (props) => {
               </form>
             </Grid>
             <Grid container justify="center">
-              <Link href="#" variant="body2">
+              <Link href="/password/forgot" variant="body2">
                 Forgot password?
               </Link>
             </Grid>
