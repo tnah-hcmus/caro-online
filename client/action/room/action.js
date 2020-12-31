@@ -11,9 +11,9 @@ const _createID = () => {
   return guid.toUpperCase();
 }
 
-export const addNewRoom = (id, playerID) => ({
+export const addNewRoom = (id, playerID, playerName, password, timer) => ({
   type: ADD_ROOM,
-  payload: { id , players: {X: playerID, Y: null}, status: 0 },
+  payload: { id , players: {X: {id: playerID, name: playerName}, Y: {id: null, name: null}}, status: 0, password, timer },
 });
 
 export const addExistingRoom = (data) => ({
@@ -21,14 +21,17 @@ export const addExistingRoom = (data) => ({
   payload: data
 })
 
-export const addRoom = (playerID, callback) => {
+export const addRoom = (playerID, playerName, passwordRaw, timerRaw, callback) => {
   return (dispatch, getState) => {
     const id = _createID();
-    dispatch(addNewRoom(id, playerID));
+    const password = passwordRaw || '';
+    const timer = timerRaw || 30;
+    console.log(id, playerID, password, timer)
+    dispatch(addNewRoom(id, playerID, playerName ,password, timer));
     dispatch(joinState(id));
     callback(id);
     WSSubject.joinChannel(id);
-    WSSubject.sendRoomData({type: 'CREATE', roomID: null, property: null, newData: { id , players: {X: playerID, Y: null}, status: 0 } })
+    WSSubject.sendRoomData({type: 'CREATE', roomID: null, property: null, newData: { id , players: {X: playerID, Y: null}, status: 0, password, timer } })
   };
 };
 
@@ -37,37 +40,44 @@ export const removeRoom = (id) => ({
   payload: {id}
 });
 
-export const addPlayer = (id, playerID) => ({
+export const addPlayer = (id, playerID, playerName) => ({
     type: ADD_PLAYER,
-    payload: {id, playerID}
+    payload: {id, playerID, playerName}
 });
-export const addViewer = (id, viewerID) => ({
+export const addViewer = (id, viewerID, viewerName) => ({
   type: ADD_VIEWER,
-  payload: { id, viewerID },
+  payload: { id, viewerID, viewerName },
 });
 
-//status: 0 - waiting, 1 ready, 2 playing
+//status: 0 - waiting, 1 playing
 export const changeStatus = (id, status) => ({
   type: CHANGE_STATUS,
   payload: {id, status}
 })
 
-export const joinRoom = (id, playerID) => {
+
+export const joinRoom = (id, playerID, playerName, password) => {
   return (dispatch, getState) => {
     const state = getState();
     const {auth, room} = state;
     for(let item of room) {
-      if(item.id == id && !auth.inRoom) {
-        dispatch(addPlayer(id, playerID));
-        dispatch(joinState(id));
-        WSSubject.joinChannel(id);
-        let newData = {...item.players}
-        newData.Y = playerID
-        WSSubject.sendRoomData({type: 'UPDATE', roomID: id, property: 'players', newData })
-        return true;
+      if(item.id == id) {
+        console.log(item);
+        if (auth.inRoom) return {status: false, msg: `You already in ${auth.inRoom == item.id ? 'this ': ''}room`};
+        if(item.password == '' || item.password == password) {
+          dispatch(addPlayer(id, playerID, playerName));
+          dispatch(joinState(id));
+          WSSubject.joinChannel(id);
+          let newData = {...item.players}
+          newData.Y = {id: playerID, name: playerName}
+          WSSubject.sendRoomData({type: 'UPDATE', roomID: id, property: 'players', newData })
+          return {status: true, msg: "Success join"};
+        }
+        else return {status: false, msg: "Wrong password"};
+
       }
     }
-    return false;
+    return {status: false, msg: "Can't find room"};
   };
 };
 

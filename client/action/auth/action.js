@@ -21,7 +21,7 @@ export const startLogin = (email, password, setMessage) => {
       .then((res) => {
         const user = res.data;
         dispatch(login(user.id, user.accessToken));
-        getInfo(user.accessToken);
+        dispatch(getInfo(user.accessToken));
         setMessage({ type: "success", content: `Login Successfully !!!`, open: true });
       })
       .catch((e) => {
@@ -69,7 +69,7 @@ export const startSignUp = (data, setMessage) => {
       .then((res) => {
         const user = res.data;
         dispatch(login(user.id, user.token));
-        getInfo(user.token);
+        dispatch(getInfo(user.accessToken));
         setMessage({ type: "success", content: `Signup Successfully !!!`, open: true });
       })
       .catch((e) => {

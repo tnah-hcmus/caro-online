@@ -67,8 +67,8 @@ const BoxChat = (props) => {
       </Grid>
       <Grid item container xs={12} className={classes.content} alignItems="flex-end">
         <Grid item xs={12} className={classes.box}>
-          {allMessages.map((item) => {
-            return <Message isMyMessage={item.isMyMessage} message={item.message} owner={item.owner} />;
+          {allMessages.map((item, i) => {
+            return <Message key = {i} isMyMessage={item.isMyMessage} message={item.message} owner={item.owner} />;
           })}
         </Grid>
         <Grid container item xs={12} alignItems="flex-end" direction="row" className={classes.input}>

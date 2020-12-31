@@ -4,10 +4,7 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import { Grid } from "@material-ui/core";
 
-import {joinRoom} from '../../action/room/action';
-import {joinState} from '../../action/auth/action';
-import {connect} from 'react-redux'
-import { withRouter } from 'react-router-dom';
+import {connect} from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -22,7 +19,6 @@ const JoinRoomBtn = (props) => {
     if(!props.busy) {
       const id = roomIdRef.current.value;
       props.joinRoom(id, props.userId);
-      props.history.push('/room/'+id);
     }
   }
   return (
@@ -34,12 +30,9 @@ const JoinRoomBtn = (props) => {
     </Grid>
   );
 }
-const mapDispatchToProps = {
-  joinRoom, joinState
-};
 const mapStateToProps = (state) => {
   return {
     busy: state.auth.inRoom
   };
 };
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(JoinRoomBtn));
+export default connect(mapStateToProps)(JoinRoomBtn);

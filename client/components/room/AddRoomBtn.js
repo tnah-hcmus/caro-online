@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
@@ -11,7 +11,6 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
 import { addRoom } from "../../action/room/action";
-import { joinState } from "../../action/auth/action";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 
@@ -28,6 +27,8 @@ const useStyles = makeStyles((theme) => ({
 const AddRoomBtn = (props) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const timerRef = useRef();
+  const passwordRef = useRef();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -40,7 +41,11 @@ const AddRoomBtn = (props) => {
   const handleSubmit = () => {
     setOpen(false);
     if (!props.busy) {
-      props.addRoom(props.userId, (id) => props.history.push("/room/" + id));
+      const password = passwordRef.current.value || '';
+      const timer = Number(timerRef.current.value) || 30;
+      console.log(timer)
+      if(timer < 15) return false //k cho phép < 15s suy nghĩ
+      else props.addRoom(props.userId, props.name, password || null, timer, (id) => props.history.push("/room/" + id));
     }
   };
 
@@ -58,8 +63,8 @@ const AddRoomBtn = (props) => {
       <Dialog open={open} onClose={handleClose} className={classes.dialog}>
         <DialogTitle id="form-dialog-title">Add new room</DialogTitle>
         <DialogContent>
-          <TextField autoFocus variant="outlined" label="Password" id="password" type="password" fullWidth />
-          <TextField variant="outlined" label="Time" id="time" type="number" fullWidth />
+          <TextField inputRef = {passwordRef} autoFocus variant="outlined" label="Password" id="password" type="password" fullWidth />
+          <TextField inputRef = {timerRef}  variant="outlined" label="Time" id="time" type="number" fullWidth />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleSubmit} variant="contained" color="primary">
@@ -76,10 +81,10 @@ const AddRoomBtn = (props) => {
 const mapStateToProps = (state) => {
   return {
     busy: state.auth.inRoom,
+    name: state.user.name
   };
 };
 const mapDispatchToProps = {
   addRoom,
-  joinState,
 };
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(AddRoomBtn));

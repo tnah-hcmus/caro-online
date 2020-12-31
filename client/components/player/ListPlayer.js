@@ -22,7 +22,7 @@ const ListPlayer = (props) => {
         Total: {user.length} online
       </Grid>
       {
-        user.map(item => <PlayerDetail name = {item}/>)
+        user.map((item,i) => <PlayerDetail key = {i} name = {item}/>)
       }
     </Grid>
   );

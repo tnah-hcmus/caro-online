@@ -8,12 +8,7 @@ import { red } from "@material-ui/core/colors";
 import { Grid } from "@material-ui/core";
 
 import Button from "@material-ui/core/Button";
-import { useHistory } from "react-router-dom";
-
-import {joinRoom} from '../../action/room/action';
-import {joinState} from '../../action/auth/action';
 import {connect} from 'react-redux'
-import { withRouter } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -27,11 +22,9 @@ const useStyles = makeStyles((theme) => ({
 
 const RoomDetail = (props) => {
   const classes = useStyles();
-  const history = useHistory();
   const join = () => {
     if(!props.busy) {
-      props.joinRoom(props.id, props.userId)
-      history.push("/room/" + props.id);
+      props.joinRoom(props.id, props.userId);
     }
     else if(props.players >= 2) {
       //không nhận thêm player.
@@ -64,12 +57,10 @@ const RoomDetail = (props) => {
     </Grid>
   );
 }
-const mapDispatchToProps = {
-  joinRoom, joinState
-};
+
 const mapStateToProps = (state) => {
   return {
     busy: state.auth.inRoom
   };
 };
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(RoomDetail));
+export default connect(mapStateToProps)(RoomDetail);
