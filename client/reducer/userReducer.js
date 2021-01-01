@@ -2,7 +2,6 @@ import { INIT_INFO, UPDATE_INFO, CLEAR_INFO } from "../action/user/type";
 export default (state = {}, action) => {
   switch (action.type) {
     case INIT_INFO:
-      console.log(action.payload);
       return {
         ...action.payload
       };

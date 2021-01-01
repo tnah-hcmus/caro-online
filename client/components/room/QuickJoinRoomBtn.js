@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import { Grid } from "@material-ui/core";
@@ -10,12 +10,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const QuickJoinRoomBtn = () => {
+const QuickJoinRoomBtn = ({onPress}) => {
   const classes = useStyles();
-  const roomIdRef = useRef();
-
-  const handleJoinRoom = () => {};
-
+  const [content, setContent] = useState("Quick Join");
   return (
     <Grid item>
       <Button
@@ -23,9 +20,9 @@ const QuickJoinRoomBtn = () => {
         variant="contained"
         color="primary"
         className={classes.button}
-        onClick={handleJoinRoom}
+        onClick={() => {onPress(); setContent("Đang tìm trận...");}}
       >
-        Quick Join
+        {content}
       </Button>
     </Grid>
   );

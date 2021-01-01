@@ -1,4 +1,4 @@
-import { ADD_BOARD, CREATE_BOARD, DELETE_GAME } from "../action/history/type";
+import { ADD_BOARD, CREATE_BOARD, RESET_GAME } from "../action/history/type";
 export default (state = {}, action) => {
   switch (action.type) {
     case CREATE_BOARD:
@@ -17,10 +17,11 @@ export default (state = {}, action) => {
       return {
         ...state,
       };
-    case DELETE_GAME:
-      if (state[action.payload.roomID]) delete state[action.payload.roomID];
+    case RESET_GAME:
+      if (state[action.payload.roomID]) state[action.payload.roomID] =  [{ squares: Array(action.payload.size * action.payload.size).fill(null), status: null, player: null }];
+      console.log("state", state);
       return {
-        ...state,
+        ...state
       };
     default:
       return state;

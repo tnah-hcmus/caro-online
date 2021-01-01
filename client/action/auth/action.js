@@ -22,7 +22,7 @@ export const startLogin = (email, password, setMessage) => {
         const user = res.data;
         dispatch(login(user.id, user.accessToken));
         dispatch(getInfo(user.accessToken));
-        setMessage({ type: "success", content: `Login Successfully !!!`, open: true });
+        //setMessage({ type: "success", content: `Login Successfully !!!`, open: true });
       })
       .catch((e) => {
         console.log(e);

@@ -6,8 +6,9 @@ import JoinRoomBtn from "./JoinRoomBtn";
 import QuickJoinRoomBtn from "./QuickJoinRoomBtn";
 import RoomDetail from "./RoomDetail";
 import WSObserver from "../../socket/observer";
-import { updateRoomData, joinRoom } from "../../action/room/action";
+import { updateRoomData, joinRoom, addRoom } from "../../action/room/action";
 import WSClient from "../../socket/socket";
+import WSSubject from '../../socket/subject';
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
@@ -37,11 +38,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const _createID = () => {
+  let guid = 'xyxxyx'.replace(/[xy]/g, (c) => {
+  let r = Math.random() * 16 | 0,
+  v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+  return guid.toUpperCase();
+}
+
 const ListRoom = (props) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const passwordRef = useRef();
-  let data = {id: null, userId: null};
+  const [data, setData] = useState({id: null, userId: null});
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -49,7 +59,7 @@ const ListRoom = (props) => {
 
   const handleClose = () => {
     setOpen(false);
-    data = {id: null, userId: null};
+    setData({id: null, userId: null});
   };
   useEffect(() => {
     WSClient.connect(props.userId);
@@ -60,15 +70,15 @@ const ListRoom = (props) => {
     else callbackFailure();
   }
   const joinRoom = (id, userId) => {
-    for(let item of props.rooms) {
-      if(item.id == id) {
-        if(item.password !== '') {
-          handleClickOpen();
-          data = {id, userId};
-        }
-        else afterJoin(id, userId)
+    const item = props.rooms[id];
+    if(item) {
+      if(item.password !== '') {
+        handleClickOpen();
+        setData({id, userId});
       }
-    }  
+      else afterJoin(id, userId)
+    }
+    else console.log("Not valid");
   }
   const handleSubmit = () => {
     const password = passwordRef.current.value;
@@ -82,20 +92,32 @@ const ListRoom = (props) => {
     console.log("Failed");
     handleClose();
   }
+  const randomRoom = () => {
+    const room = Object.values(props.rooms).find((item) => item.roomType === 'hidden');
+    if(room) {
+      joinRoom(room.id, props.userId);
+      WSSubject.sendJoinGame({roomID: room.id});
+    }
+    else {
+      const id = _createID();
+      props.addRoom(props.userId, props.name, null, 30, null, 'hidden', id);
+      WSObserver.startListenQuickGame(() => props.history.push('/room/' + id), id);
+    }
+  }
 
   return (
     <Grid container className={classes.root}>
       <Grid container item xs={12} direction="row" justify="space-between" className={classes.functionBtn}>
         <AddRoomBtn userId={props.userId} />
-        <QuickJoinRoomBtn />
+        <QuickJoinRoomBtn onPress = {randomRoom} />
         <JoinRoomBtn userId={props.userId} joinRoom = {joinRoom} />
       </Grid>
       <Grid container item xs={12} spacing={2} className={classes.room}>
-        {props.rooms.map((item, i) => (
+        {Object.values(props.rooms).filter(item => item.roomType !== 'hidden').map((item, i) => (
           <RoomDetail
             id={item.id}
             key = {i}
-            players={!!item.players.X + !!item.players.Y}
+            players={!!item.players.X.id + !!item.players.Y.id}
             userId={props.userId}
             view={!!item.viewer}
             joinRoom = {joinRoom}
@@ -120,13 +142,12 @@ const ListRoom = (props) => {
   );
 };
 const mapStateToProps = (state) => {
-  console.log("Debuz", state.user);
   return {
     rooms: state.room,
     name: state.user.name
   };
 };
 const mapDispatchToProps = {
-  updateRoomData, joinRoom
+  updateRoomData, joinRoom, addRoom
 };
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ListRoom));

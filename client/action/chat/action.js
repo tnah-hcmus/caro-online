@@ -9,6 +9,6 @@ export const addNewMessage = (roomID, message, isOwn, timestamp, owner) => ({
 export const addMessage = (roomID, message, isOwn, timestamp, owner) => {
   return (dispatch, getState) => {
     dispatch(addNewMessage(roomID, message, isOwn, timestamp, owner));
-    WSSubject.sendMessage({ roomID, text: message, timestamp, owner });
+    if(isOwn) WSSubject.sendMessage({ roomID, text: message, timestamp, owner });
   };
 };

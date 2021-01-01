@@ -10,6 +10,15 @@ class WSObserver {
       updateChat(roomID, text, false, timestamp, owner);
     })
   }
+  startListenQuickGame(goToGame, id) {
+    WS.onNewData("new-join-game", (data) => {
+      const { roomID } = data;
+      if(id === roomID) {
+        goToGame(roomID)
+        WS.unsubscribe("new-join-game")
+      };
+    })
+  }
   startListenUpdateGameData(updateGameData) {
     WS.onNewData("new-game-data", (data) => {
       const { roomID, squares, status, player } = data;
@@ -18,7 +27,6 @@ class WSObserver {
   }
   startListenUpdateRoomData(updateRoomData) {
     WS.onNewData("new-room-data", (data) => {
-      console.log(data);
       const { roomID, newData, type , property } = data;
       updateRoomData(type, roomID, property, newData);
     });

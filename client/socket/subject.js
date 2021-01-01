@@ -16,6 +16,9 @@ class WSSubject {
   sendRoomData(data) {
     WS.pushData("send-room-data", data);
   }
+  sendJoinGame(data) {
+    WS.pushData("send-join-game", data);
+  }
 
 }
 const Subject = new WSSubject();

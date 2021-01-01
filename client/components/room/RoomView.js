@@ -9,9 +9,9 @@ import {
   DialogTitle,
   makeStyles,
 } from "@material-ui/core";
-import Board from "../board";
+import Board from "../game";
 import BoxChat from "../chat";
-import {changeStatus} from '../../action/room/action';
+import {startGame, leaveRoom} from '../../action/room/action';
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 
@@ -41,17 +41,15 @@ const useStyles = makeStyles({
 
 const RoomView = (props) => {
   const classes = useStyles();
-  let current = {players: {X: null, Y: null}, status: 0};
-  let playerStatus = null;
-  for (const item of props.rooms) {
-    if (item.id === props.roomID) {
-      current = item;
-      if (item.players.X.id === props.id) playerStatus = "X";
-      else if (item.players.Y.id === props.id) playerStatus = "O";
-    }
+  let playerStatus = "";
+  let current = props.rooms[props.roomID];
+  if(current) {
+    if (current.players.X.id === props.id) playerStatus = "X";
+    else if (current.players.Y.id === props.id) playerStatus = "O";
   }
-  console.log(current);
+  else current = {players: {X: null, Y: null}, status: 0};
   const [start, setStart] = useState(!!current.status);
+  if(!!start !== !!current.status) setStart(!!current.status);
   const startGame = () => {
     if(current) {
       if(current.players.X.id === props.id) {
@@ -62,11 +60,9 @@ const RoomView = (props) => {
       }
       else console.log('k có quyền');
     }
-    
   }
   return (
     <Grid container direction="row" justify="flex-start" alignItems="flex-start" alignContent="stretch">
-      
       {
         start 
         ? (
@@ -97,7 +93,14 @@ const RoomView = (props) => {
               ?(<Button onClick={startGame} size="large" variant="contained" color="primary">
                 Start
               </Button>)
-              : <p>Chờ đối thủ vào trận</p>
+              : (
+                <>
+                  <p>Chờ đối thủ vào trận</p>
+                  <Button onClick={() => props.leaveRoom(props.roomID, "X" , () => props.history.push('/'))} size="large" variant="contained" color="primary">
+                    Leave room
+                  </Button>
+                </>
+              )
             )
 
           : <p>Chờ chủ phòng bắt đầu trận</p>
@@ -118,6 +121,6 @@ const mapStateToProps = (state) => {
   };
 };
 const mapDispatchToProps = {
-  startGame: (id) => changeStatus(id, 1)
+  startGame, leaveRoom
 };
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(RoomView));

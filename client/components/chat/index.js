@@ -52,7 +52,7 @@ const BoxChat = (props) => {
   const handleChat = () => {
     const timestamp = Date.now();
     const text = chatRef.current.value;
-    props.addMessage(props.roomID, text, true, timestamp, props.user.name);
+    props.addMessage(props.roomID, text, true, timestamp, props.name);
   };
   const classes = useStyles();
   return (
@@ -88,7 +88,7 @@ const BoxChat = (props) => {
 const mapStateToProps = (state) => {
   return {
     chat: state.chat,
-    user: state.user
+    name: state.user.name
   };
 };
 const mapDispatchToProps = {

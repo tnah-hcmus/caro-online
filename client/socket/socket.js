@@ -5,14 +5,12 @@ class WSClient {
     this.socket = null;
   }
   connect(userId) {
-    console.log("connecting")
     if(!this.socket) {
         this.socket = io.connect("http://localhost:3000/", {
             query: "userId=" + userId,
             secure: true,
           });
     }
-    console.log("connected")
   }
   pushData(channel, data) {
     if(this.socket) {
@@ -25,17 +23,15 @@ class WSClient {
           return false
       }
   }
+  unsubscribe(channel) {
+    this.socket.off(channel);
+  }
   onNewData(channel, callback) {
-    console.log('registering', channel);
-    console.log(!this.hasListeners(channel));
-    console.log(this.socket);
     if(!this.hasListeners(channel) && this.socket) {
-        console.log('registered', channel);
         this.socket.on(channel, (data) => {
-            console.log(data)
+            data.client = this.socket.id;
             callback(data);
-        })
-        console.log(this.socket);
+        });
     }
   }
   shutdownWS() {

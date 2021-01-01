@@ -13,7 +13,6 @@ const useStyles = makeStyles((theme) => ({
 
 const ListPlayer = (props) => {
   const { user } = props;
-  console.log(user)
   const classes = useStyles();
 
   return (

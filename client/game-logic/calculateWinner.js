@@ -51,16 +51,13 @@ const calculateWinner = (i, squares, value, size) => {
   }
   // check anti-diagonal
     let inital_pos_anti = i % size + row;
-  console.log(inital_pos_anti);
     for (let k = 0; k < size && k <= inital_pos_anti; k++) {
-      console.log(inital_pos_anti + (size - 1) * k);
     if (squares[inital_pos_anti + (size - 1) * k] !== value) {
       count = 0;
       winArea = winArea.slice(0, 0);
     }
     else {
       count++;
-      console.log(`count ${value}: ${count}`);
       winArea.push(inital_pos_anti + (size - 1) * k);
     }
     if (count === 4) {

@@ -25,7 +25,6 @@ export const getInfo = (token) => {
     )
       .then((res) => {
         const user = res.data;
-        console.log(user);
         dispatch(initInfo({name: user.name, email: user.email}));
       })
       .catch((e) => {

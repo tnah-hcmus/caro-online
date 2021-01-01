@@ -13,6 +13,7 @@ const MainPage = (props) => {
   useEffect(() => {
     WSClient.connect(props.userId);
     WSObserver.startListenUpdateUser(setUser);
+    return () => WSClient.unsubscribe("update-user");
   }, []);
 
   return (

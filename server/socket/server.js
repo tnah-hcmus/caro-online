@@ -34,11 +34,16 @@ module.exports = function(app) {
         socket.on('send-room-data', data => {
             socket.broadcast.emit('new-room-data', data);
         }) 
+        //on quick match
+        socket.on('send-join-game', (data) => {
+            socket.broadcast.emit('new-join-game', data);
+        })
         //on join room 
         socket.on('join-room', (id) => {
               socket.join(id);
               //receive chat
               socket.on("send-chat", (message) => {
+                message.socket = socket.id;
                 socket.to(id).emit("new-message", message);
                 //save chat here;
               });

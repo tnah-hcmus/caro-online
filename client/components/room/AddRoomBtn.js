@@ -43,7 +43,6 @@ const AddRoomBtn = (props) => {
     if (!props.busy) {
       const password = passwordRef.current.value || '';
       const timer = Number(timerRef.current.value) || 30;
-      console.log(timer)
       if(timer < 15) return false //k cho phép < 15s suy nghĩ
       else props.addRoom(props.userId, props.name, password || null, timer, (id) => props.history.push("/room/" + id));
     }
