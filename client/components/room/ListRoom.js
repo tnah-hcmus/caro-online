@@ -6,7 +6,7 @@ import JoinRoomBtn from "./JoinRoomBtn";
 import QuickJoinRoomBtn from "./QuickJoinRoomBtn";
 import RoomDetail from "./RoomDetail";
 import WSObserver from "../../socket/observer";
-import { updateRoomData, joinRoom, addRoom } from "../../action/room/action";
+import { updateRoomData, joinRoom, addRoom, leaveRoom } from "../../action/room/action";
 import WSClient from "../../socket/socket";
 import WSSubject from '../../socket/subject';
 import Button from "@material-ui/core/Button";
@@ -17,6 +17,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { connect } from "react-redux";
 import {withRouter} from 'react-router-dom'
+import CustomizedSnackbars from "../common/CustomizedSnackbars";
 const useStyles = makeStyles((theme) => ({
   root: {
     borderRight: "5px solid #d2d2d2",
@@ -52,6 +53,7 @@ const ListRoom = (props) => {
   const [open, setOpen] = useState(false);
   const passwordRef = useRef();
   const [data, setData] = useState({id: null, userId: null});
+  const [message, setMessage] = useState(null);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -66,8 +68,9 @@ const ListRoom = (props) => {
     WSObserver.startListenUpdateRoomData(props.updateRoomData);
   }, []);
   const afterJoin = (id, userId, password) => {
-    if(props.joinRoom(id, userId, props.name, password || null)) callbackSuccess(id);
-    else callbackFailure();
+    const result = props.joinRoom(id, userId, props.name, password || null);
+    if(result.status) callbackSuccess(id);
+    else callbackFailure(result.msg);
   }
   const joinRoom = (id, userId) => {
     const item = props.rooms[id];
@@ -78,7 +81,7 @@ const ListRoom = (props) => {
       }
       else afterJoin(id, userId)
     }
-    else console.log("Not valid");
+    else setMessage({ type: "error", content: "Mã phòng không hợp lệ", open: true })
   }
   const handleSubmit = () => {
     const password = passwordRef.current.value;
@@ -88,29 +91,35 @@ const ListRoom = (props) => {
     props.history.push('/room/'+id);
     handleClose();
   }
-  const callbackFailure = () => {
-    console.log("Failed");
+  const callbackFailure = (err) => {
+    setMessage({ type: "error", content: err, open: true })
     handleClose();
   }
-  const randomRoom = () => {
+  const timeOut = 10*1000;
+  const randomRoom = (timeOutHandler) => {
     const room = Object.values(props.rooms).find((item) => item.roomType === 'hidden');
     if(room) {
       joinRoom(room.id, props.userId);
       WSSubject.sendJoinGame({roomID: room.id});
+      clearTimeout(timeOutHandler);
     }
     else {
       const id = _createID();
       props.addRoom(props.userId, props.name, null, 30, null, 'hidden', id);
-      WSObserver.startListenQuickGame(() => props.history.push('/room/' + id), id);
+      const timer = setTimeout(() => {
+        //hết thời gian chờ trận;
+        props.leaveRoom(id, "X", () => setMessage({ type: "error", content: "Tạm thời không tìm thấy đối thủ, vui lòng thử lại sau", open: true }));
+      }, timeOut);
+      WSObserver.startListenQuickGame(() => props.history.push('/room/' + id), id, [timeOutHandler, timer]);
     }
   }
 
   return (
     <Grid container className={classes.root}>
       <Grid container item xs={12} direction="row" justify="space-between" className={classes.functionBtn}>
-        <AddRoomBtn userId={props.userId} />
-        <QuickJoinRoomBtn onPress = {randomRoom} />
-        <JoinRoomBtn userId={props.userId} joinRoom = {joinRoom} />
+        <AddRoomBtn userId={props.userId} setMessage = {setMessage} />
+        <QuickJoinRoomBtn onPress = {randomRoom} timeOut = {timeOut} setMessage = {setMessage} />
+        <JoinRoomBtn userId={props.userId} joinRoom = {joinRoom} setMessage = {setMessage}/>
       </Grid>
       <Grid container item xs={12} spacing={2} className={classes.room}>
         {Object.values(props.rooms).filter(item => item.roomType !== 'hidden').map((item, i) => (
@@ -121,6 +130,7 @@ const ListRoom = (props) => {
             userId={props.userId}
             view={!!item.viewer}
             joinRoom = {joinRoom}
+            setMessage = {setMessage}
           />
         ))}
       </Grid>
@@ -138,6 +148,7 @@ const ListRoom = (props) => {
           </Button>
         </DialogActions>
       </Dialog>
+      <CustomizedSnackbars message={message} />
     </Grid>
   );
 };
@@ -148,6 +159,6 @@ const mapStateToProps = (state) => {
   };
 };
 const mapDispatchToProps = {
-  updateRoomData, joinRoom, addRoom
+  updateRoomData, joinRoom, addRoom, leaveRoom
 };
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ListRoom));

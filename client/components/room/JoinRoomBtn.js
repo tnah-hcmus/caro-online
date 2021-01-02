@@ -16,10 +16,10 @@ const JoinRoomBtn = (props) => {
   const classes = useStyles();
   const roomIdRef = useRef();
   const handleJoinRoom = () => {
+    const id = roomIdRef.current.value;
     if(!props.busy) {
-      const id = roomIdRef.current.value;
       props.joinRoom(id, props.userId);
-    }
+    } else props.setMessage({ type: "error", content: `You already in ${props.busy == id ? 'this ': 'another'}room`, open: true});
   }
   return (
     <Grid item>

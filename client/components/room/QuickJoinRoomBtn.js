@@ -10,9 +10,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const QuickJoinRoomBtn = ({onPress}) => {
+const QuickJoinRoomBtn = ({onPress, timeOut, setMessage}) => {
   const classes = useStyles();
   const [content, setContent] = useState("Quick Join");
+  const handleClick = () => {
+    if(content === "Quick Join") {
+      setContent("Đang tìm trận..."); 
+      const timer = setTimeout(() => setContent("Quick Join"), timeOut); 
+      onPress(timer);
+    } else setMessage({ type: "error", content: `Đang tìm trận, vui lòng chờ`, open: true});
+  }
   return (
     <Grid item>
       <Button
@@ -20,7 +27,7 @@ const QuickJoinRoomBtn = ({onPress}) => {
         variant="contained"
         color="primary"
         className={classes.button}
-        onClick={() => {onPress(); setContent("Đang tìm trận...");}}
+        onClick={handleClick}
       >
         {content}
       </Button>

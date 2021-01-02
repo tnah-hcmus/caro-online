@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Grid, makeStyles, Typography } from "@material-ui/core";
+import { Grid, makeStyles, Typography, Button } from "@material-ui/core";
 import SettingsIcon from "@material-ui/icons/Settings";
 import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
 import PanToolIcon from "@material-ui/icons/PanTool";
@@ -7,10 +7,15 @@ import ThumbUpIcon from "@material-ui/icons/ThumbUp";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import FiberNewIcon from "@material-ui/icons/FiberNew";
 import InfoIcon from "@material-ui/icons/Info";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogTitle from "@material-ui/core/DialogTitle";
 import Countdown from "../Countdown";
-import CustomizedSnackbars from "../../common/CustomizedSnackbars";
 import { updateGameResult, newGame, leaveRoom } from "../../../action/room/action";
 import {connect} from 'react-redux';
+import WSObserver from '../../../socket/observer';
+import WSSubject from '../../../socket/subject';
 // IMPORT ICON
 import vsIcon from "../../../assets/images/icons8-vs-button.png";
 import vsIconReverse from '../../../assets/images/icons8-vs-button-reverse.png';
@@ -21,12 +26,77 @@ import {withRouter} from 'react-router-dom';
 
 const Status = (props) => {
   const classes = useStyles();
-  const [message, setMessage] = useState(null);
-  const handleTimeOut = () => setMessage({ type: "error", content: `Time's Up !!!`, open: true });
+  const [request, setRequest] = useState(0);
+  const [open, setOpen] = useState(false);
+  const [requestType, setRequestType] = useState({type: null, content: null});
+  const handleClose = () => setOpen(false);
+  const handleDecline = () => {
+    WSSubject.sendGameReply({accept: false, type: requestType.type});
+    setRequestType({type: null, content: null});
+    handleClose();
+  }
+  const handleAccept = () => {
+    const type = requestType.type;
+    WSSubject.sendGameReply({accept: true, type});
+    setRequestType({type: null, content: null});
+    handleClose();
+    handleReply(type);
+  }
+  const handleShowRequestPopup = (type, content, name) => {
+    if(props.player) {
+      setRequestType({type, content});
+      setOpen(true);
+    } else props.setMessage({ type: "success", content: `Player ${name} request ${type == 'NEW' ? 'start a new game' : 'this game will be draw.'}`, open: true });
+  }
+  WSObserver.startListenGameRequest(handleShowRequestPopup);
+  const handleTimeOut = () => {
+    props.setMessage({ type: "error", content: `Time's Up !!!`, open: true });
+    //props.updateGameResult(props.roomID, (props.player !== "X" ? 2 : 1));
+  }
+  const handleNewgame = () => {
+    if(!props.player || props.player == "") props.setMessage({ type: "error", content: `Only player can use this function`, open: true })
+    else if(request < 5) {
+      if(props.isOwner && props.winning) applyNewGame();
+      else {
+        setRequest(request+1);
+        WSSubject.sendGameRequest({type: 'NEW', content: 'Đối thủ yêu cầu bắt đầu một ván mới. Bạn có đồng ý không ?', name: props.player});
+        WSObserver.startListenGameReply(handleReply, props.setMessage);
+      };
+    }
+    else props.setMessage({ type: "error", content: `Request new game too much, you was banned and can't request anymore`, open: true })
+  }
+  const applyNewGame = () => props.newGame(props.roomID, props.size);
+  const applyDraw = () => props.updateGameResult(props.roomID, 3);
+  const handleReply = (type) => {
+    switch(type) {
+      case 'NEW':
+        applyNewGame();
+        break;
+      case 'DRAW':
+        applyDraw();
+        break;
+    }
+  }
+  const requestDraw = () => {
+    if(!props.player || props.player === "") props.setMessage({ type: "error", content: `Only player can use this function`, open: true });
+    else if(props.winning) props.setMessage({ type: "error", content: `Game đã kết thúc`, open: true });
+    else if(request < 5) {
+      setRequest(request+1);
+      WSSubject.sendGameRequest({type: 'DRAW', content: 'Đối thủ xin hoà. Bạn có đồng ý không?', name: props.player});
+      WSObserver.startListenGameReply(handleReply, props.setMessage);
+    }
+    else props.setMessage({ type: "error", content: `Request draw too much, you was banned and can't request anymore`, open: true });    
+  }
+  const handleSurrender = () => {
+    if(!props.winning) props.updateGameResult(props.roomID, (props.player !== "X" ? 1 : 2));
+    else props.setMessage({ type: "error", content: `Game has been end, you can't surrender anymore`, open: true })
+  }
+  const handleLeaveRoom = () => {
+    props.leaveRoom(props.roomID, props.player, () => props.history.push('/'))
+  }
 
   return (
     <Grid container className={classes.root}>
-      <CustomizedSnackbars message={message} />
       <Grid container item xs={12} className={classes.section} style={{ padding: "15px 0 0" }}>
         <Grid item xs={12} container direction="row" className={classes.title}>
           <Grid item className={classes.icon}>
@@ -61,10 +131,10 @@ const Status = (props) => {
           </Grid>
         </Grid>
         <Grid container item xs={12} justify="center" className={classes.statusWrapper}>
-          <FunctionalButton icon = {<FiberNewIcon />} title = {'New Game'} onPress = {() => props.newGame(props.roomID, props.size)} />
-          <FunctionalButton icon = {<ThumbUpIcon />} title = {'Please Draw'} onPress = {() => props.updateGameResult(props.roomID, 3)}/>
-          <FunctionalButton icon = {<PanToolIcon />} title = {'Give Up'} onPress = {() => props.updateGameResult(props.roomID, (props.player !== "X" ? 2 : 1))}/>
-          <FunctionalButton icon = {<ExitToAppIcon />} title = {'Leave Room'} onPress = {() => props.leaveRoom(props.roomID, props.player, () => props.history.push('/'))}/>
+          <FunctionalButton icon = {<FiberNewIcon />} title = {'New Game'} onPress = {handleNewgame} />
+          <FunctionalButton icon = {<ThumbUpIcon />} title = {'Please Draw'} onPress = {requestDraw}/>
+          <FunctionalButton icon = {<PanToolIcon />} title = {'Give Up'} onPress = {handleSurrender}/>
+          <FunctionalButton icon = {<ExitToAppIcon />} title = {'Leave Room'} onPress = {handleLeaveRoom}/>
         </Grid>
       </Grid>
 
@@ -82,6 +152,23 @@ const Status = (props) => {
           <ViewerDetail/>
         </Grid>
       </Grid>
+      {(props.player && props.player !== "") &&
+        <Dialog open={open} onClose={handleDecline} className={classes.dialog}>
+          <DialogTitle id="form-dialog-title">New request</DialogTitle>
+          <DialogContent>
+            {requestType.content}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleAccept} variant="contained" color="primary">
+              Accept
+            </Button>
+            <Button onClick={handleDecline} color="primary">
+              Decline
+            </Button>
+          </DialogActions>
+        </Dialog>
+      }
+      
     </Grid>
   );
 };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { Grid, makeStyles, Typography, Button } from "@material-ui/core";
 import BoardView from "../board/BoardView";
 import Status from "./status/GameStatus";
@@ -9,7 +9,8 @@ import { addBoard, createBoard } from "../../action/history/action";
 import WSSubject from "../../socket/subject";
 import WSObserver from "../../socket/observer";
 import { connect } from "react-redux";
-const drawFlag = "___NO_BODY_WIN___"
+import CustomizedSnackbars from "../common/CustomizedSnackbars";
+const drawFlag = "___NO_BODY_WIN___";
 
 const useStyles = makeStyles({
   root: {
@@ -29,6 +30,7 @@ const useStyles = makeStyles({
 
 const Game = (props) => {
   const classes = useStyles();
+  const [message, setMessage] = useState();
   WSObserver.startListenUpdateGameData(props.addBoard);
   const size = 20;
   const roomInfo = props.rooms[props.roomID];
@@ -57,21 +59,21 @@ const Game = (props) => {
       break;
   }
   const handleClick = (i, j) => {
-    if (props.player !== player && props.player !== "") {
-      updateBoard(i, j, props.player);
-    }
+    if (props.player === "") setMessage({ type: "error", content: "Bạn không phải là người chơi", open: true })
+    else if (props.player === player) setMessage({ type: "error", content: "Hãy chờ tới lượt của bạn", open: true })
+    else updateBoard(i, j, props.player);
   };
   const updateBoard = (i, j, player) => {
     const id = i * size + j;
     const squares = current.slice();
-    if (winning || squares[id]) {
-      return;
+    if(winning) setMessage({ type: "error", content: "Game đã kết thúc", open: true })
+    else if(squares[id]) setMessage({ type: "error", content: "Ô này đã được đánh", open: true })
+    else {
+      squares[id] = player;
+      const isWin = calculateWinner(id, squares, squares[id], size);  
+      props.addBoard(props.roomID, squares, isWin, player);
+      WSSubject.sendGameData({ roomID: props.roomID, squares, status: isWin, player });
     }
-    squares[id] = player;
-    const isWin = calculateWinner(id, squares, squares[id], size);
-
-    props.addBoard(props.roomID, squares, isWin, player);
-    WSSubject.sendGameData({ roomID: props.roomID, squares, status: isWin, player });
   };
 
   const getGameStatus = () => {
@@ -86,11 +88,12 @@ const Game = (props) => {
   return (
     <Grid container item xs={12} md={9} className={classes.root}>
       <Grid item xs={8} className={classes.board}>
-        <BoardView squares={current} size={size} handleClick={handleClick} winning={winning} />
+        <BoardView squares={current} size={size} handleClick={handleClick} winning={winning} setMessage = {setMessage}/>
       </Grid>
       <Grid item xs={4} className={classes.status}>
-        <Status X = {roomInfo.players.X} O = {roomInfo.players.Y} status = {getGameStatus()} winning = {winning} isTurn = {roomInfo.players.X.id === props.userId ? props.player !== player : props.player === player} roomID = {props.roomID} player = {props.player} size = {size}/>
+        <Status X = {roomInfo.players.X} O = {roomInfo.players.Y} status = {getGameStatus()} winning = {winning} isTurn = {roomInfo.players.X.id === props.userId ? props.player !== player : props.player === player} roomID = {props.roomID} player = {props.player} size = {size} setMessage = {setMessage} isOWner = {roomInfo.players.X.id === props.userId}/>
       </Grid>
+      <CustomizedSnackbars message = {message}/>
     </Grid>
   );
 };

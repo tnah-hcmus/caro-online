@@ -52,6 +52,12 @@ module.exports = function(app) {
                 socket.to(id).emit("new-game-data", data);
                 //save move here;
               });
+              socket.on("send-game-request", (data) => {
+                socket.to(id).emit("new-game-request", data);
+              });
+              socket.on("send-game-reply", (data) => {
+                socket.to(id).emit("new-game-reply", data);
+              })
               socket.on("leave-room", id => {
                   socket.leave(id);
               })            

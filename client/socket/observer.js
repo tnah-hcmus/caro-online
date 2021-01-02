@@ -10,12 +10,28 @@ class WSObserver {
       updateChat(roomID, text, false, timestamp, owner);
     })
   }
-  startListenQuickGame(goToGame, id) {
+  startListenGameRequest(handleRequest) {
+    if(WS.hasListeners("new-game-request")) WS.unsubscribe("new-game-request");
+    WS.onNewData("new-game-request", (data) => {
+      const {type, content, name} = data;
+      handleRequest(type, content, name);
+    })
+  }
+  startListenGameReply(applyCallback, errHandle) {
+    if(WS.hasListeners("new-game-reply")) WS.unsubscribe("new-game-reply");
+    WS.onNewData("new-game-reply", (data) => {
+      const {accept, type} = data;
+      if(accept) applyCallback(type);
+      else errHandle({type: "error", content: "Đối thủ không đồng ý yêu cầu của bạn", open: true });
+    })
+  }
+  startListenQuickGame(goToGame, id, timeOutHandlers) {
     WS.onNewData("new-join-game", (data) => {
       const { roomID } = data;
       if(id === roomID) {
-        goToGame(roomID)
-        WS.unsubscribe("new-join-game")
+        goToGame(roomID);
+        WS.unsubscribe("new-join-game");
+        for(const item of timeOutHandlers) clearTimeout(item);
       };
     })
   }

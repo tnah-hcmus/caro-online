@@ -14,6 +14,7 @@ import BoxChat from "../chat";
 import {startGame, leaveRoom} from '../../action/room/action';
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
+import CustomizedSnackbars from "../common/CustomizedSnackbars";
 
 const useStyles = makeStyles({
   root: {
@@ -41,6 +42,7 @@ const useStyles = makeStyles({
 
 const RoomView = (props) => {
   const classes = useStyles();
+  const [message, setMessage] = useState(null);
   let playerStatus = "";
   let current = props.rooms[props.roomID];
   if(current) {
@@ -56,9 +58,9 @@ const RoomView = (props) => {
         if(current.players.Y.id && current.players.X.id) {
           props.startGame(props.roomID);
           setStart(true);
-        } else console.log("thiếu người, k start game được");
+        } else setMessage({ type: "error", content: "Chưa đủ người để bắt đầu trận", open: true })
       }
-      else console.log('k có quyền');
+      else setMessage({ type: "error", content: "Chỉ có chủ phòng mới có quyền bắt đầu trận", open: true })
     }
   }
   return (
@@ -108,7 +110,8 @@ const RoomView = (props) => {
         </DialogActions>
       </Dialog>
         )
-      }      
+      }
+      <CustomizedSnackbars message={message} />      
     </Grid>
   );
 };

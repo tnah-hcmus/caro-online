@@ -100,6 +100,9 @@ export const leaveRoom = (roomID, player, callback) => {
         setTimeout(() => {
           WSSubject.sendRoomData({type: 'UPDATE', roomID, property: 'status', newData: 0});
         }, 200);
+        setTimeout(() => {
+          WSSubject.leaveChannel(roomID);
+        }, 300);
       }
       else {
         WSSubject.sendRoomData({type: 'DELETE', roomID , property: null, newData: null});
@@ -124,7 +127,8 @@ export const joinRoom = (id, playerID, playerName, password) => {
     const state = getState();
     const {auth, room} = state;
     if(room[id]) {
-      if (auth.inRoom) return {status: false, msg: `You already in ${auth.inRoom == item.id ? 'this ': ''}room`};
+      if (auth.inRoom) return {status: false, msg: `You already in ${auth.inRoom == item.id ? 'this ': 'another'}room`};
+      if(room[id].players.X.id && room[id].players.Y.id) return {status: false, msg: `Phòng đã đủ số lượng người chơi`};
       if(room[id].password == '' || room[id].password == password) {
         dispatch(addPlayer(id, playerID, playerName));
         dispatch(joinState(id));
@@ -134,8 +138,8 @@ export const joinRoom = (id, playerID, playerName, password) => {
         WSSubject.sendRoomData({type: 'UPDATE', roomID: id, property: 'players', newData })
         return {status: true, msg: "Success join"};
       }
-      else return {status: false, msg: "Wrong password"};
-    } else return {status: false, msg: "Can't find room"};
+      else return {status: false, msg: "Tham gia phòng thất bại, kiểm tra lại mật khẩu của bạn"};
+    } else return {status: false, msg: "Không thể tìm thấy phòng"};
   };
 };
 
