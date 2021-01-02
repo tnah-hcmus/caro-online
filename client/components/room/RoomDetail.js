@@ -51,6 +51,9 @@ const RoomDetail = (props) => {
           <Button onClick={join} variant="contained" color="primary" className={classes.button}>
             Join room
           </Button>
+          <Button onClick={() => props.viewRoom(props.id, props.userId, props.name)} variant="contained" color="primary" className={classes.button}>
+            View room
+          </Button>
         </CardActions>
       </Card>
     </Grid>

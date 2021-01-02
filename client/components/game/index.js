@@ -91,7 +91,7 @@ const Game = (props) => {
         <BoardView squares={current} size={size} handleClick={handleClick} winning={winning} setMessage = {setMessage}/>
       </Grid>
       <Grid item xs={4} className={classes.status}>
-        <Status X = {roomInfo.players.X} O = {roomInfo.players.Y} status = {getGameStatus()} winning = {winning} isTurn = {roomInfo.players.X.id === props.userId ? props.player !== player : props.player === player} roomID = {props.roomID} player = {props.player} size = {size} setMessage = {setMessage} isOWner = {roomInfo.players.X.id === props.userId}/>
+        <Status X = {roomInfo.players.X} O = {roomInfo.players.Y} status = {getGameStatus()} winning = {winning} isTurn = {roomInfo.players.X.id === props.userId ? props.player !== player : props.player === player} roomID = {props.roomID} player = {props.player} size = {size} setMessage = {setMessage} isOWner = {roomInfo.players.X.id === props.userId} handleLeave = {props.handleLeave} viewers = {roomInfo.viewer}/>
       </Grid>
       <CustomizedSnackbars message = {message}/>
     </Grid>

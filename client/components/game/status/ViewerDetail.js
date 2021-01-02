@@ -4,7 +4,7 @@ import Avatar from "@material-ui/core/Avatar";
 import DinosaurIcon from "../../../assets/images/icon-dinosaur.png";
 import CrocodileIcon from "../../../assets/images/icon-crocodile.png";
 import MedalIcon from "../../../assets/images/icon-medal.png";
-const ViewerDetail = (props) => {
+const ViewerDetail = ({name}) => {
   const classes = useStyles();
   return (
     <Grid container item xs={12} direction="row">
@@ -17,7 +17,7 @@ const ViewerDetail = (props) => {
             />
           </Grid>
           <Grid item style={{ margin: "auto 0" }}>
-            <Typography variant="subtitle2">{props.name || 'Anonymous'}</Typography>
+            <Typography variant="subtitle2">{name || 'Anonymous'}</Typography>
           </Grid>
         </Grid>
     

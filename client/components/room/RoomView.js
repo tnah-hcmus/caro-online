@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core";
 import Board from "../game";
 import BoxChat from "../chat";
-import {startGame, leaveRoom} from '../../action/room/action';
+import {startGame, leaveRoom, leaveViewRoom} from '../../action/room/action';
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import CustomizedSnackbars from "../common/CustomizedSnackbars";
@@ -63,13 +63,17 @@ const RoomView = (props) => {
       else setMessage({ type: "error", content: "Chỉ có chủ phòng mới có quyền bắt đầu trận", open: true })
     }
   }
+  const handleLeave = (player) => {
+    if(player !== "") props.leaveRoom(props.roomID, "X" , () => props.history.push('/'));
+    else props.leaveViewRoom(props.roomID, props.id,  () => props.history.push('/'));
+  }
   return (
     <Grid container direction="row" justify="flex-start" alignItems="flex-start" alignContent="stretch">
       {
         start 
         ? (
           <>
-            <Board player={playerStatus} />
+            <Board player={playerStatus} handleLeave = {handleLeave} />
             <BoxChat roomID={props.roomID} />
           </>
         )
@@ -98,14 +102,21 @@ const RoomView = (props) => {
               : (
                 <>
                   <p>Chờ đối thủ vào trận</p>
-                  <Button onClick={() => props.leaveRoom(props.roomID, "X" , () => props.history.push('/'))} size="large" variant="contained" color="primary">
+                  <Button onClick={() => handleLeave(playerStatus)} size="large" variant="contained" color="primary">
                     Leave room
                   </Button>
                 </>
               )
             )
 
-          : <p>Chờ chủ phòng bắt đầu trận</p>
+          : (
+            <>
+              <p>Chờ chủ phòng bắt đầu trận</p>
+              <Button onClick={() => handleLeave(playerStatus)} size="large" variant="contained" color="primary">
+                Leave room
+              </Button>
+            </>            
+          )
         }          
         </DialogActions>
       </Dialog>
@@ -117,6 +128,7 @@ const RoomView = (props) => {
 };
 
 const mapStateToProps = (state) => {
+  console.log(state.room);
   return {
     roomID: state.auth.inRoom,
     rooms: state.room,
@@ -124,6 +136,6 @@ const mapStateToProps = (state) => {
   };
 };
 const mapDispatchToProps = {
-  startGame, leaveRoom
+  startGame, leaveRoom, leaveViewRoom
 };
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(RoomView));

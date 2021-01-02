@@ -1,4 +1,4 @@
-import { ADD_ROOM, REMOVE_ROOM, ADD_PLAYER, ADD_VIEWER, CHANGE_STATUS, UPDATE_ROOM, UPDATE_RESULT, REMOVE_PLAYER } from "./type";
+import { ADD_ROOM, REMOVE_ROOM, ADD_PLAYER, ADD_VIEWER, CHANGE_STATUS, UPDATE_ROOM, UPDATE_RESULT, REMOVE_PLAYER, REMOVE_VIEWER } from "./type";
 import WSSubject from '../../socket/subject';
 import {joinState} from '../auth/action';
 import {deleteGame} from '../history/action';
@@ -51,6 +51,35 @@ export const addViewer = (id, viewerID, viewerName) => ({
   payload: { id, viewerID, viewerName },
 });
 
+export const removeViewer = (id, viewerID) => ({
+  type: REMOVE_VIEWER,
+  payload: { id, viewerID},
+});
+
+export const viewRoom = (id, viewerID, viewerName, password) => {
+  return (dispatch, getState) => {
+    const state = getState();
+    const rooms = state.room;
+    if(rooms[id].password == '' || rooms[id].password == password) {
+      WSSubject.joinChannel(id);
+      WSSubject.sendRoomData({type: 'SPECIFIC', roomID: id, property: ADD_VIEWER, newData: {viewerName, viewerID}});
+      dispatch(addViewer(id, viewerID, viewerName));
+      dispatch(joinState(id));
+      return {status: true, msg: "Success join"};
+    }
+    else return {status: false, msg: "Sai mật khẩu, kiểm tra lại mật khẩu của bạn"};
+  }
+}
+export const leaveViewRoom = (id, viewerID, callback) => {
+  return dispatch => {
+    WSSubject.leaveChannel(id);
+    WSSubject.sendRoomData({type: 'SPECIFIC', roomID: id, property: REMOVE_VIEWER, newData: {viewerID}});
+    dispatch(removeViewer(id, viewerID));
+    dispatch(joinState(null));
+    callback();
+  }
+}
+
 //status: 0 - waiting, 1 playing
 export const changeStatus = (id, status) => ({
   type: CHANGE_STATUS,
@@ -71,6 +100,9 @@ export const startGame = (id) => {
 
 export const newGame = (id, size) => {
   return (dispatch) => {
+    WSSubject.sendRoomData({type: 'UPDATE', roomID: id, property: 'result', newData: 0 });
+    WSSubject.sendRoomData({type: 'SPECIFIC', roomID: id, property: 'GAME_RESET', newData: {size} })
+    WSSubject.sendRoomData({type: 'UPDATE', roomID: id, property: 'status', newData: 0 })
     dispatch(updateResult(id, 0));
     dispatch(deleteGame(id, size));
     dispatch(changeStatus(id, 0));
@@ -147,7 +179,21 @@ export const updateRoom = (roomID, property, newData) => ({
   type: UPDATE_ROOM,
   payload: {roomID, property, newData}
 })
+export const runSpecificAction = (roomID, methodName, data) => {
+  return dispatch => {
+    switch(methodName) {
+      case ADD_VIEWER:
+        dispatch(addViewer(roomID, data.viewerID, data.viewerName));
+        break;
+      case REMOVE_VIEWER:
+        dispatch(removeViewer(roomID, data.viewerID))
+        break;
+      case 'RESET_GAME':
+        dispatch(deleteGame(roomID, data.size))
+    }
+  }
 
+}
 export const updateRoomData = (type, roomID, property, newData) => {
   return (dispatch, getState) => {
     switch(type) {
@@ -157,9 +203,12 @@ export const updateRoomData = (type, roomID, property, newData) => {
       case 'UPDATE':
         dispatch(updateRoom(roomID, property, newData));
         return;
+      case 'SPECIFIC':
+        dispatch(runSpecificAction(roomID, property, newData))
+        return;
       case 'DELETE':
         dispatch(removeRoom(roomID));
-        return
+        return;
     }
   }
 }

@@ -40,7 +40,6 @@ const Status = (props) => {
     WSSubject.sendGameReply({accept: true, type});
     setRequestType({type: null, content: null});
     handleClose();
-    handleReply(type);
   }
   const handleShowRequestPopup = (type, content, name) => {
     if(props.player) {
@@ -88,11 +87,9 @@ const Status = (props) => {
     else props.setMessage({ type: "error", content: `Request draw too much, you was banned and can't request anymore`, open: true });    
   }
   const handleSurrender = () => {
-    if(!props.winning) props.updateGameResult(props.roomID, (props.player !== "X" ? 1 : 2));
+    if(!props.player || props.player === "") props.setMessage({ type: "error", content: `Only player can use this function`, open: true });
+    else if(!props.winning) props.updateGameResult(props.roomID, (props.player !== "X" ? 1 : 2));
     else props.setMessage({ type: "error", content: `Game has been end, you can't surrender anymore`, open: true })
-  }
-  const handleLeaveRoom = () => {
-    props.leaveRoom(props.roomID, props.player, () => props.history.push('/'))
   }
 
   return (
@@ -134,7 +131,7 @@ const Status = (props) => {
           <FunctionalButton icon = {<FiberNewIcon />} title = {'New Game'} onPress = {handleNewgame} />
           <FunctionalButton icon = {<ThumbUpIcon />} title = {'Please Draw'} onPress = {requestDraw}/>
           <FunctionalButton icon = {<PanToolIcon />} title = {'Give Up'} onPress = {handleSurrender}/>
-          <FunctionalButton icon = {<ExitToAppIcon />} title = {'Leave Room'} onPress = {handleLeaveRoom}/>
+          <FunctionalButton icon = {<ExitToAppIcon />} title = {'Leave Room'} onPress = {() => props.handleLeave(props.player)}/>
         </Grid>
       </Grid>
 
@@ -148,8 +145,9 @@ const Status = (props) => {
           </Grid>
         </Grid>
         <Grid container item xs={12} className={classes.statusWrapper} style={{ maxHeight: 140, overflow: "auto" }}>
-          <ViewerDetail/>
-          <ViewerDetail/>
+          {
+            props.viewers && props.viewers.map((item, i) => <ViewerDetail name = {item.name} key = {i}/>)
+          }
         </Grid>
       </Grid>
       {(props.player && props.player !== "") &&

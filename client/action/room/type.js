@@ -3,6 +3,7 @@ export const REMOVE_ROOM = "remove_room";
 export const ADD_PLAYER = "add_player";
 export const REMOVE_PLAYER = "remove_player";
 export const ADD_VIEWER = 'add_viewer';
+export const REMOVE_VIEWER = 'remove_viewer';
 export const CHANGE_STATUS = 'change_status';
 export const UPDATE_ROOM = 'update_room';
 export const RESET_ROOM = 'reset_room';
