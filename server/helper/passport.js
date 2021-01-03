@@ -34,9 +34,7 @@ const thirdPartyStrategy = async (strategyType, profile, done) => {
         name: profile.displayName,
         [strategyType]: profile.id,
         email: profile.emails[0].value,
-        password: _createRandomPassword(),
-        roles: ['user'],
-        isVerified: false
+        password: _createRandomPassword()
     })
     await user.save();
     userDB = user;

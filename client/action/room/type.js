@@ -1,3 +1,4 @@
+export const INIT_ROOM = "init_room";
 export const ADD_ROOM = "add_room";
 export const REMOVE_ROOM = "remove_room";
 export const ADD_PLAYER = "add_player";
@@ -8,3 +9,4 @@ export const CHANGE_STATUS = 'change_status';
 export const UPDATE_ROOM = 'update_room';
 export const RESET_ROOM = 'reset_room';
 export const UPDATE_RESULT = 'update_result';
+export const UPDATE_COIN = 'update_coins';

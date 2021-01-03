@@ -1,7 +1,9 @@
-import { ADD_ROOM, REMOVE_ROOM, ADD_PLAYER, ADD_VIEWER, CHANGE_STATUS, UPDATE_ROOM, UPDATE_RESULT, REMOVE_PLAYER, REMOVE_VIEWER } from "./type";
+import { INIT_ROOM, ADD_ROOM, REMOVE_ROOM, ADD_PLAYER, ADD_VIEWER, CHANGE_STATUS, UPDATE_ROOM, UPDATE_RESULT, REMOVE_PLAYER, REMOVE_VIEWER, UPDATE_COIN } from "./type";
 import WSSubject from '../../socket/subject';
 import {joinState} from '../auth/action';
 import {deleteGame} from '../history/action';
+import {updateInfo} from '../user/action';
+import Axios from 'axios';
 
 const _createID = () => {
   let guid = 'xyxxyx'.replace(/[xy]/g, (c) => {
@@ -12,27 +14,49 @@ const _createID = () => {
   return guid.toUpperCase();
 }
 
-export const addNewRoom = (id, playerID, playerName, password, timer, roomType) => ({
+export const addNewRoom = (id, playerID, playerName, playerCoins, password, timer, coins, roomType) => ({
   type: ADD_ROOM,
-  payload: { id , players: {X: {id: playerID, name: playerName}, Y: {id: null, name: null}}, status: (roomType === 'hidden' ? 1 : 0), password, timer, result: 0, roomType },
+  payload: { id , players: {X: {id: playerID, name: playerName, coins: playerCoins}, Y: {id: null, name: null}}, status: (roomType === 'hidden' ? 1 : 0), password, timer, result: 0, coins, roomType },
 });
+
+export const initRoom = (data) => ({
+  type: INIT_ROOM,
+  payload: {data}
+})
+
+export const fetchRoom = (token, ignore) => {
+  return(dispatch) => {
+    if(!ignore)
+    Axios.get("/api/rooms", {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    .then((res) => {
+        dispatch(initRoom(res.data));
+    })
+    .catch((e) => {
+        console.log(e.response);
+    });
+  }
+
+};
 
 export const addExistingRoom = (data) => ({
   type: ADD_ROOM,
   payload: data
 })
 
-export const addRoom = (playerID, playerName, passwordRaw, timerRaw, callback, type, roomId) => {
+export const addRoom = (playerID, playerName, playerCoins, passwordRaw, timerRaw, coins, callback, type, roomId) => {
+  console.log(playerID, playerName, playerCoins, passwordRaw, timerRaw, coins, callback, type, roomId);
   return (dispatch, getState) => {
     const id = roomId || _createID();
     const roomType = type || 'public';
     const password = passwordRaw || '';
     const timer = timerRaw || 30;
-    dispatch(addNewRoom(id, playerID, playerName ,password, timer, roomType));
+    dispatch(addNewRoom(id, playerID, playerName, playerCoins, password, timer, coins, roomType));
     dispatch(joinState(id));
     if(callback) callback(id);
-    WSSubject.joinChannel(id);
-    WSSubject.sendRoomData({type: 'CREATE', roomID: null, property: null, newData: { id , players: {X: {id: playerID, name: playerName}, Y: {id: null, name: null}}, status: (type === 'hidden' ? 1 : 0), password, timer, roomType } })
+    WSSubject.joinChannel(id, playerID, playerName, playerCoins, roomType, timer, coins, password);
+    WSSubject.sendRoomData({type: 'CREATE', roomID: null, property: null, newData: { id , players: {X: {id: playerID, name: playerName, coins: playerCoins}, Y: {id: null, name: null}}, status: (type === 'hidden' ? 1 : 0), password, timer, coins, roomType } })
   };
 };
 
@@ -42,9 +66,9 @@ export const removeRoom = (id) => ({
 });
 
 
-export const addPlayer = (id, playerID, playerName) => ({
+export const addPlayer = (id, playerID, playerName, playerCoins) => ({
     type: ADD_PLAYER,
-    payload: {id, playerID, playerName}
+    payload: {id, playerID, playerName, playerCoins}
 });
 export const addViewer = (id, viewerID, viewerName) => ({
   type: ADD_VIEWER,
@@ -100,7 +124,7 @@ export const startGame = (id) => {
 
 export const newGame = (id, size) => {
   return (dispatch) => {
-    WSSubject.sendRoomData({type: 'UPDATE', roomID: id, property: 'result', newData: 0 });
+    WSSubject.sendRoomData({type: 'UPDATE', roomID: id, property: 'result', newData: 0 });    
     WSSubject.sendRoomData({type: 'SPECIFIC', roomID: id, property: 'GAME_RESET', newData: {size} })
     WSSubject.sendRoomData({type: 'UPDATE', roomID: id, property: 'status', newData: 0 })
     dispatch(updateResult(id, 0));
@@ -120,6 +144,7 @@ export const leaveRoom = (roomID, player, callback) => {
     player = (player === "O" ? "Y" : player);
     const state = getState();
     const rooms = state.room;
+    const userId = rooms[roomID].players[player].id;
     if(rooms[roomID]) {
       if(rooms[roomID].players.X.id && rooms[roomID].players.Y.id) {
         let newData = rooms[roomID].players;
@@ -133,40 +158,50 @@ export const leaveRoom = (roomID, player, callback) => {
           WSSubject.sendRoomData({type: 'UPDATE', roomID, property: 'status', newData: 0});
         }, 200);
         setTimeout(() => {
-          WSSubject.leaveChannel(roomID);
+          WSSubject.leaveChannel(roomID, userId);
         }, 300);
       }
       else {
         WSSubject.sendRoomData({type: 'DELETE', roomID , property: null, newData: null});
         dispatch(removeRoom(roomID));
         dispatch(joinState(null));
+        setTimeout(() => {
+          WSSubject.leaveChannel(roomID, userId);
+        }, 300);
       }
-      callback();
+      callback(roomID);
     }
   }
 }
 
 export const updateGameResult = (id, result) => {
-  return (dispatch) => {
-    dispatch(updateResult(id, result))
+  return (dispatch, getState) => {
+    dispatch(updateResult(id, result));
     WSSubject.sendRoomData({type: 'UPDATE', roomID: id, property: 'result', newData: result })
+    WSSubject.sendResultData({roomID: id, result})
+    if(result == 3) {
+      const user = getState().user;
+      dispatch(updateInfo('draw', user.draw + 1));
+    }
+
   }
 }
 
 
-export const joinRoom = (id, playerID, playerName, password) => {
+export const joinRoom = (id, playerID, playerName, playerCoins, password) => {
   return (dispatch, getState) => {
     const state = getState();
-    const {auth, room} = state;
+    const {auth, room, user} = state;
     if(room[id]) {
       if (auth.inRoom) return {status: false, msg: `You already in ${auth.inRoom == item.id ? 'this ': 'another'}room`};
+      if (user.coins < room[id].coins) return {status: false, msg: `This room need ${room[id].coins} coin${room[id].coins > 1 ? 's' : ''} to play. You just have only ${user.coins} coins`};
       if(room[id].players.X.id && room[id].players.Y.id) return {status: false, msg: `Phòng đã đủ số lượng người chơi`};
       if(room[id].password == '' || room[id].password == password) {
-        dispatch(addPlayer(id, playerID, playerName));
+        dispatch(addPlayer(id, playerID, playerName, playerCoins));
         dispatch(joinState(id));
-        WSSubject.joinChannel(id);
+        WSSubject.joinChannel(id, playerID, playerCoins);
         let newData = {...room[id].players}
-        newData.Y = {id: playerID, name: playerName}
+        newData.Y = {id: playerID, name: playerName, coins: playerCoins}
         WSSubject.sendRoomData({type: 'UPDATE', roomID: id, property: 'players', newData })
         return {status: true, msg: "Success join"};
       }
@@ -179,6 +214,11 @@ export const updateRoom = (roomID, property, newData) => ({
   type: UPDATE_ROOM,
   payload: {roomID, property, newData}
 })
+
+export const updateCoins = (roomID, player, newNumber) => ({
+  type: UPDATE_COIN,
+  payload: {roomID, player, newNumber}
+})
 export const runSpecificAction = (roomID, methodName, data) => {
   return dispatch => {
     switch(methodName) {
@@ -188,7 +228,7 @@ export const runSpecificAction = (roomID, methodName, data) => {
       case REMOVE_VIEWER:
         dispatch(removeViewer(roomID, data.viewerID))
         break;
-      case 'RESET_GAME':
+      case 'GAME_RESET':
         dispatch(deleteGame(roomID, data.size))
     }
   }

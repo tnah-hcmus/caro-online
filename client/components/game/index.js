@@ -5,6 +5,8 @@ import Status from "./status/GameStatus";
 import calculateWinner from "../../game-logic/calculateWinner";
 
 import { addBoard, createBoard } from "../../action/history/action";
+import {updateCoins} from '../../action/room/action';
+import {updateUserAfterGame} from '../../action/user/action';
 
 import WSSubject from "../../socket/subject";
 import WSObserver from "../../socket/observer";
@@ -34,6 +36,7 @@ const Game = (props) => {
   WSObserver.startListenUpdateGameData(props.addBoard);
   const size = 20;
   const roomInfo = props.rooms[props.roomID];
+  console.log(roomInfo, props.roomID);
   let step = 0,
     winning = null,
     current = [],
@@ -63,6 +66,18 @@ const Game = (props) => {
     else if (props.player === player) setMessage({ type: "error", content: "Hãy chờ tới lượt của bạn", open: true })
     else updateBoard(i, j, props.player);
   };
+  const updateCoin = (winner) => {
+    if (props.player !== "") props.updateUserAfterGame(roomInfo.coins, winner == props.player);
+    if(winner == "X") {
+      props.updateCoins(props.roomID, "X", roomInfo.players.X.coins + roomInfo.coins);
+      props.updateCoins(props.roomID, "Y", roomInfo.players.Y.coins - roomInfo.coins);
+    }
+    if(winner == "O") {
+      props.updateCoins(props.roomID, "X", roomInfo.players.X.coins - roomInfo.coins);
+      props.updateCoins(props.roomID, "Y", roomInfo.players.Y.coins + roomInfo.coins);
+    }
+  }
+  WSObserver.startListenGameResult(updateCoin);
   const updateBoard = (i, j, player) => {
     const id = i * size + j;
     const squares = current.slice();
@@ -70,9 +85,10 @@ const Game = (props) => {
     else if(squares[id]) setMessage({ type: "error", content: "Ô này đã được đánh", open: true })
     else {
       squares[id] = player;
-      const isWin = calculateWinner(id, squares, squares[id], size);  
+      const isWin = calculateWinner(id, squares, squares[id], size);
+      if(isWin) updateCoin(isWin.winner);
       props.addBoard(props.roomID, squares, isWin, player);
-      WSSubject.sendGameData({ roomID: props.roomID, squares, status: isWin, player });
+      WSSubject.sendGameData({ roomID: props.roomID, squares, status: isWin, player, x: i, y: j});
     }
   };
 
@@ -91,7 +107,7 @@ const Game = (props) => {
         <BoardView squares={current} size={size} handleClick={handleClick} winning={winning} setMessage = {setMessage}/>
       </Grid>
       <Grid item xs={4} className={classes.status}>
-        <Status X = {roomInfo.players.X} O = {roomInfo.players.Y} status = {getGameStatus()} winning = {winning} isTurn = {roomInfo.players.X.id === props.userId ? props.player !== player : props.player === player} roomID = {props.roomID} player = {props.player} size = {size} setMessage = {setMessage} isOWner = {roomInfo.players.X.id === props.userId} handleLeave = {props.handleLeave} viewers = {roomInfo.viewer}/>
+        <Status X = {roomInfo.players.X} O = {roomInfo.players.Y} status = {getGameStatus()} winning = {winning} isTurn = {roomInfo.players.X.id === props.userId ? props.player !== player : props.player === player} roomID = {props.roomID} player = {props.player} size = {size} setMessage = {setMessage} isOWner = {roomInfo.players.X.id === props.userId} handleLeave = {props.handleLeave} viewers = {roomInfo.viewer} updateCoin = {updateCoin}/>
       </Grid>
       <CustomizedSnackbars message = {message}/>
     </Grid>
@@ -108,5 +124,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = {
   addBoard,
   createBoard,
+  updateCoins,
+  updateUserAfterGame
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Game);

@@ -6,8 +6,15 @@ class WSObserver {
   }
   startListenUpdateChat(updateChat) {
     WS.onNewData("new-message", (data) => {
-      const {roomID, text, timestamp, owner } = data;
-      updateChat(roomID, text, false, timestamp, owner);
+      const {roomID, message, timestamp, owner } = data;
+      updateChat(roomID, message, false, timestamp, owner);
+    })
+  }
+  startListenGameResult(updateCoins) {
+    WS.onNewData("new-result-data", (data) => {
+      const { result } = data;
+      if(result == 1) updateCoins("X");
+      if(result == 2) updateCoins("O");
     })
   }
   startListenGameRequest(handleRequest) {
@@ -20,6 +27,7 @@ class WSObserver {
   startListenGameReply(applyCallback, errHandle) {
     if(WS.hasListeners("new-game-reply")) WS.unsubscribe("new-game-reply");
     WS.onNewData("new-game-reply", (data) => {
+      WS.pushData("game-reply-to-server", data)
       const {accept, type} = data;
       if(accept) applyCallback(type);
       else errHandle({type: "error", content: "Đối thủ không đồng ý yêu cầu của bạn", open: true });

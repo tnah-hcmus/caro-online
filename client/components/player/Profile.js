@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useState } from "react";
 import { Grid, Typography, TextField, Button, Breadcrumbs, Link, makeStyles } from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import HomeIcon from "@material-ui/icons/Home";
@@ -7,6 +7,8 @@ import { Link as RouteLink } from "react-router-dom";
 import iconMedal from "../../assets/images/icon-medal.png";
 import iconDinosaur from "../../assets/images/icon-dinosaur.png";
 import EditIcon from "@material-ui/icons/Edit";
+import {updateName} from '../../action/user/action';
+import {connect} from 'react-redux';
 
 const useStyles = makeStyles((theme) => ({
   link: {
@@ -32,38 +34,28 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Profile() {
+const Profile = ({user, updateName, token, userId}) => {
   const classes = useStyles();
-  //   const user = useSelector((state) => state.app.user);
-  //   const token = useSelector((state) => state.app.token);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  //   const dispatch = useDispatch();
+  let names = user.name.split(" ");
+  const userFirstName = names.pop();
+  const userLastName = names.join(" ");
+  const [firstName, setFirstName] = useState(userFirstName);
+  const [lastName, setLastName] = useState(userLastName);
   const [isEditing, setIsEditing] = useState(false);
 
-  //   useEffect(() => {
-  //     if (user) {
-  //       setFirstName(user.first_name);
-  //       setLastName(user.last_name);
-  //     }
-  //   }, [user]);
-
-  const submitChangeProfile = async (data, token) => {
-    // try {
-    //   await authApi.updateProfile(data, token);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+  const handleChangeName = () => {
+    const newFirstName = firstName.trim();
+    const newLastName = lastName.trim();
+    const name = [newLastName, newFirstName].join(" ");
+    updateName(name, token, userId);
+    setIsEditing(false);
+    
   };
-
-  const handleChangeProfile = () => {
-    // const newFirstName = firstName.trim();
-    // const newLastName = lastName.trim();
-    // const data = { id: user.id, first_name: newFirstName, last_name: newLastName };
-    // dispatch(actions.updateProfile({ first_name: newFirstName, last_name: newLastName }));
-    // localStorage.setItem("user", JSON.stringify({ ...user, first_name: newFirstName, last_name: newLastName }));
-    // submitChangeProfile(data, token);
-  };
+  const declineChangeName = () => {
+    setFirstName(userFirstName);
+    setLastName(userLastName);
+    setIsEditing(false);
+  }
 
   return (
     <div>
@@ -104,7 +96,7 @@ function Profile() {
               </Grid>
               <Grid item>
                 <Typography variant="h6" color="secondary">
-                  5
+                  {user.coins}
                 </Typography>
               </Grid>
             </Grid>
@@ -114,7 +106,7 @@ function Profile() {
               </Grid>
               <Grid item>
                 <Typography variant="h6" color="secondary">
-                  20
+                  {user.win}
                 </Typography>
               </Grid>
             </Grid>
@@ -124,7 +116,27 @@ function Profile() {
               </Grid>
               <Grid item>
                 <Typography variant="h6" color="primary">
-                  5
+                  {user.lose}
+                </Typography>
+              </Grid>
+            </Grid>
+            <Grid item container direction="row" spacing={1}>
+              <Grid item>
+                <Typography variant="h6">{"Draw: "}</Typography>
+              </Grid>
+              <Grid item>
+                <Typography variant="h6" color="secondary">
+                  {user.draw}
+                </Typography>
+              </Grid>
+            </Grid>
+            <Grid item container direction="row" spacing={1}>
+              <Grid item>
+                <Typography variant="h6">{"Total: "}</Typography>
+              </Grid>
+              <Grid item>
+                <Typography variant="h6" color="secondary">
+                  {user.total}
                 </Typography>
               </Grid>
             </Grid>
@@ -182,12 +194,12 @@ function Profile() {
           <Grid container item xs={12}>
             <Grid item className={classes.label}></Grid>
             <Grid item style={{ width: 90, paddingLeft: 8 }}>
-              <Button onClick={handleChangeProfile} variant="contained" color="primary" fullWidth>
+              <Button onClick={handleChangeName} variant="contained" color="primary" fullWidth>
                 Save
               </Button>
             </Grid>
             <Grid item style={{ width: 90, paddingLeft: 8 }}>
-              <Button onClick={() => setIsEditing(false)} variant="contained" fullWidth>
+              <Button onClick={declineChangeName} variant="contained" fullWidth>
                 Cancel
               </Button>
             </Grid>
@@ -197,5 +209,14 @@ function Profile() {
     </div>
   );
 }
-
-export default Profile;
+const mapStateToProps = (state) => {
+  return {
+    token: state.auth.token,
+    userId: state.auth.id,
+    user: state.user
+  };
+};
+const mapDispatchToProps = {
+  updateName
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);

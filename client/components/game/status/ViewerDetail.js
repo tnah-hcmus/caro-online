@@ -28,7 +28,7 @@ const ViewerDetail = ({name}) => {
     
           <Grid item style={{ margin: "auto 0" }}>
             <Typography variant="subtitle2" color="secondary">
-              {5}
+              Private
             </Typography>
           </Grid>
         </Grid>

@@ -24,7 +24,7 @@ router
       if (find) {
         return res.status(401).send({ error: "Signup failed! Already have account" });
       } else {
-        const user = new User({...req.body, gameId: _createRandomUID(), isVerified: false});
+        const user = new User({...req.body, gameId: _createRandomUID()});
         await user.save();
         const token = await user.generateAuthToken();
         const {message, code} = await sendVerificationEmail(user, token); 

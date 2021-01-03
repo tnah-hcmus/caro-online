@@ -29,6 +29,7 @@ const AddRoomBtn = (props) => {
   const [open, setOpen] = useState(false);
   const timerRef = useRef();
   const passwordRef = useRef();
+  const coinRef = useRef();
   const minTimer = 30;
 
   const handleClickOpen = () => {
@@ -44,11 +45,12 @@ const AddRoomBtn = (props) => {
     if (!props.busy) {
       const password = passwordRef.current.value || '';
       const timer = Number(timerRef.current.value) || 30;
+      const coins = Number(coinRef.current.value) || 1;
       if(timer < minTimer) {
         props.setMessage({ type: "error", content: "Thời gian suy nghĩ quá ngắn, thời gian suy nghĩ tối thiểu phải tối thiểu " + minTimer + " giây.", open: true });
         return false;
       }
-      else props.addRoom(props.userId, props.name, password || null, timer, (id) => props.history.push("/room/" + id));
+      else props.addRoom(props.userId, props.user.name, props.user.coins, password || null, timer, coins , (id) => props.history.push("/room/" + id));
     } else props.setMessage({ type: "error", content: `You already in another room`, open: true});
   };
 
@@ -68,6 +70,7 @@ const AddRoomBtn = (props) => {
         <DialogContent>
           <TextField inputRef = {passwordRef} autoFocus variant="outlined" label="Password" id="password" type="password" fullWidth />
           <TextField inputRef = {timerRef}  variant="outlined" label="Time" id="time" type="number" fullWidth />
+          <TextField inputRef = {coinRef}  variant="outlined" label="Coins" id="coin" type="number" fullWidth />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleSubmit} variant="contained" color="primary">
@@ -84,7 +87,7 @@ const AddRoomBtn = (props) => {
 const mapStateToProps = (state) => {
   return {
     busy: state.auth.inRoom,
-    name: state.user.name
+    user: state.user
   };
 };
 const mapDispatchToProps = {

@@ -44,7 +44,7 @@ const RoomDetail = (props) => {
           //       <MoreVertIcon />
           //     </IconButton>
           //   }
-          title= {"Room ID: " + props.id}
+          title= {"Room ID: " + props.id + " | Cược: " + props.coins}
           subheader={props.players + "/2 player"}
         />
         <CardActions className={classes.actions} disableSpacing>

@@ -8,39 +8,67 @@ const gameSchema = mongoose.Schema({
     trim: true,
   },
   start: { //time start game
-    type: String,
+    type: Date,
     required: true,
   },
-  status: { //0: Corrupt game, 1: has winner, 2: draw game
+  status: { //0: Game not end yet, 1: X win, 2: O win, 3 draw, 4 corrupt
     type: Number,
     required: true,
   },
   winner: {
     type: String,
   },
-  duration: { //total time of game, seconds
-    type: Number,
-  },
   history: [ //all moves in game
     {
-      move: {
-        x: {
+      x: {
           type: Number,
           required: true
         },
-        y: {
+      y: {
           type: Number,
           required: true
-        }
+      },
+      player: {
+        type: String
       },
       timestamp: {
-        type: String,
+        type: Date,
         required: true
       }
     },
-  ]
-});
+  ],
+  chat: [
+    {
+      timestamp: {
+        type: Date,
+        required: true
+      },
+      message: {
+        type: String,
+        required: true
+      },
+      owner: {
+        type: String,
+        required: true
+      }
+    }
+  ],
+  timerId: {
+    type: Number
+  }
+}, {timestamp: true});
 
+gameSchema.pre("save", async function(next) {
+  const game = this;
+  if(this.timerId) clearTimeout(this.timerId);
+  const id = setTimeout(function() {
+    if(!game.status) game.status = 4;
+    game.save();
+  }, 3600000);
+  this.timerId = id;
+  next();
+})
 const Game = mongoose.model("Game", gameSchema);
+
 
 module.exports = Game;

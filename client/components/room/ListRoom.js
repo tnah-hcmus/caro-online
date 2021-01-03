@@ -6,7 +6,7 @@ import JoinRoomBtn from "./JoinRoomBtn";
 import QuickJoinRoomBtn from "./QuickJoinRoomBtn";
 import RoomDetail from "./RoomDetail";
 import WSObserver from "../../socket/observer";
-import { updateRoomData, joinRoom, addRoom, leaveRoom, viewRoom } from "../../action/room/action";
+import { updateRoomData, joinRoom, addRoom, leaveRoom, viewRoom, fetchRoom } from "../../action/room/action";
 import WSClient from "../../socket/socket";
 import WSSubject from '../../socket/subject';
 import Button from "@material-ui/core/Button";
@@ -54,6 +54,7 @@ const ListRoom = (props) => {
   const passwordRef = useRef();
   const [data, setData] = useState({id: null, userId: null});
   const [message, setMessage] = useState(null);
+  const ignoreID = props.history.location.state?.ignore || null;
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -66,22 +67,25 @@ const ListRoom = (props) => {
   useEffect(() => {
     WSClient.connect(props.userId);
     WSObserver.startListenUpdateRoomData(props.updateRoomData);
+    props.fetchRoom(props.token, ignoreID)
   }, []);
   const afterJoin = (id, userId, password, type) => {
     let result = null;
-    if(type === 'VIEW') result =  props.viewRoom(id, userId, props.name, password || null);
-    else if(type === 'PLAY') result = props.joinRoom(id, userId, props.name, password || null);
+    console.log(type);
+    if(type === 'VIEW') result =  props.viewRoom(id, userId, props.user.name, password || null);
+    else if(type === 'PLAY') result = props.joinRoom(id, userId, props.user.name, props.user.coins, password || null);
     if(result.status) callbackSuccess(id);
     else callbackFailure(result.msg);
   }
   const joinRoom = (id, userId, type) => {
     const item = props.rooms[id];
+    console.log(type)
     if(item) {
-      if(item.password !== '') {
+      if(item.password && item.password !== '') {
         handleClickOpen();
         setData({id, userId, type});
       }
-      else afterJoin(id, userId, type)
+      else afterJoin(id, userId, null, type)
     }
     else setMessage({ type: "error", content: "Mã phòng không hợp lệ", open: true })
   }
@@ -102,12 +106,11 @@ const ListRoom = (props) => {
     const room = Object.values(props.rooms).find((item) => item.roomType === 'hidden');
     if(room) {
       joinRoom(room.id, props.userId, 'PLAY');
-      WSSubject.sendJoinGame({roomID: room.id});
       clearTimeout(timeOutHandler);
     }
     else {
       const id = _createID();
-      props.addRoom(props.userId, props.name, null, 30, null, 'hidden', id);
+      props.addRoom(props.userId, props.user.name, props.user.coins, null, 30, 1, null, 'hidden', id);
       const timer = setTimeout(() => {
         //hết thời gian chờ trận;
         props.leaveRoom(id, "X", () => setMessage({ type: "error", content: "Tạm thời không tìm thấy đối thủ, vui lòng thử lại sau", open: true }));
@@ -133,7 +136,8 @@ const ListRoom = (props) => {
             view={!!item.viewer}
             joinRoom = {(id, userId) => joinRoom(id, userId, 'PLAY')}
             viewRoom = {(id, userId) => joinRoom(id, userId, 'VIEW')}
-            name = {props.name}
+            name = {props.user.name}
+            coins = {item.coins}
             setMessage = {setMessage}
           />
         ))}
@@ -157,12 +161,14 @@ const ListRoom = (props) => {
   );
 };
 const mapStateToProps = (state) => {
+  console.log(state.user);
   return {
     rooms: state.room,
-    name: state.user.name
+    user: state.user,
+    token: state.auth.token
   };
 };
 const mapDispatchToProps = {
-  updateRoomData, joinRoom, addRoom, leaveRoom, viewRoom
+  updateRoomData, joinRoom, addRoom, leaveRoom, viewRoom, fetchRoom,
 };
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ListRoom));

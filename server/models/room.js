@@ -6,24 +6,65 @@ const roomSchema = mongoose.Schema({
     required: true,
     trim: true,
   },
-  XPlayer: {
-    type: String,
-    required: true,
+  X: { 
+    name: {
+      type: String,
+      required: true,
+    },
+    id: {
+      type: String,
+      required:true
+    },
+    coins: {
+      type: Number,
+      required: true
+    }
   },
-  OPlayer: {
+  Y: {
+    name: {
+      type: String,
+    },
+    id: {
+      type: String,
+    },
+    coins: {
+      type: Number,
+    }
+  },
+  password: {
     type: String,
   },
-  viewers: [
-      {
-        viewer: {
-            type: String
-        }
-      }
-  ],
-  status: { //0 = waiting, 1 = playing 
+  timer: {
     type: Number,
     required: true
+  },
+  coins: {
+    type: Number,
+    required: true
+  },
+  roomType: {
+    type: String,
+    required: true
+  },
+  lastGameInRoom: {
+    type: Date
+  },
+  timerId: {
+    type: Number
   }
+}, {timestamp: true});
+
+roomSchema.pre("save", async function(next) {
+  const room = this;
+  const timeOut = 10*60*1000;
+  if(this.timerId) clearTimeout(this.timerId);
+  if(room.lastGameInRoom) {
+    const id = setTimeout(function() {
+      if((room.lastGameInRoom + timeOut) < Date.now()) room.remove();
+    }, timeOut);
+    this.timerId = id;
+  }  
+  next();
 });
 
 const Room = mongoose.model("Room", roomSchema);

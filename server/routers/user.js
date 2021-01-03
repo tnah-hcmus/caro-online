@@ -23,8 +23,12 @@ router.post("/api/users/me", auth, (req, res) => { //lấy thông tin cá nhân 
       id: user.gameId,
       name: user.name,
       email: user.email,
-      coins: user.coin,
+      coins: user.coins,
       role: user.role,
+      win: user.win,
+      lose: user.lose,
+      games: user.games,
+      draw: user.draw,
       accessToken: req.token,
     };
     res.status(200).send(result)
@@ -46,8 +50,12 @@ router
         id: user.gameId,
         name: user.name,
         email: user.email,
-        coins: user.coin,
+        coins: user.coins,
         role: user.role,
+        win: user.win,
+        lose: user.lose,
+        games: user.games,
+        draw: user.draw,
         accessToken: req.token,
       };
       const { id } = req.params;
@@ -69,6 +77,7 @@ router
         if(property !== 'isBlocked') {
           user[property] = data;
           await user.save();
+          console.log(user);
           res.status(201).send({ success: `Success update ${property}` });
         } else {
           res.status(403).send({error: 'You must use delete method to lock your account'});

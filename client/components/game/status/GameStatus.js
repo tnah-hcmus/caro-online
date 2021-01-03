@@ -12,7 +12,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Countdown from "../Countdown";
-import { updateGameResult, newGame, leaveRoom } from "../../../action/room/action";
+import { updateGameResult, newGame } from "../../../action/room/action";
 import {connect} from 'react-redux';
 import WSObserver from '../../../socket/observer';
 import WSSubject from '../../../socket/subject';
@@ -88,7 +88,10 @@ const Status = (props) => {
   }
   const handleSurrender = () => {
     if(!props.player || props.player === "") props.setMessage({ type: "error", content: `Only player can use this function`, open: true });
-    else if(!props.winning) props.updateGameResult(props.roomID, (props.player !== "X" ? 1 : 2));
+    else if(!props.winning) {
+      props.updateGameResult(props.roomID, (props.player !== "X" ? 1 : 2));
+      props.updateCoin((props.player !== "X" ? "X" : "O"));
+    }
     else props.setMessage({ type: "error", content: `Game has been end, you can't surrender anymore`, open: true })
   }
 
@@ -105,11 +108,11 @@ const Status = (props) => {
         </Grid>
         <Grid container item xs={12} className={classes.statusWrapper}>
           <Grid container item xs={12} justify="space-around" className={classes.infoPlayer}>
-            <PlayerInfo type = {"X"} coins = {5} isWin = {props.winning && props.winning.winner === "X"} name = {props.X.name} isTurn = {props.isTurn}/>
+            <PlayerInfo type = {"X"} coins = {5} isWin = {props.winning && props.winning.winner === "X"} name = {props.X.name} isTurn = {props.isTurn} coins = {props.X.coins}/>
             <Grid item xs={2} fontSize="large" className={classes.iconRed}>
               {props.isTurn ? <img src={vsIcon} width={40} height={48} /> : <img src={vsIconReverse} width={40} height={48} />}
             </Grid>
-            <PlayerInfo type = {"O"} coins = {5} isWin = {props.winning && props.winning.winner === "O"} name = {props.O.name} isTurn = {!props.isTurn}/>
+            <PlayerInfo type = {"O"} coins = {5} isWin = {props.winning && props.winning.winner === "O"} name = {props.O.name} isTurn = {!props.isTurn} coins = {props.O.coins}/>
           </Grid>
           <Grid item xs={12} className={classes.countdown}>
             <Countdown time={5} onTimeOut={handleTimeOut} />
@@ -171,7 +174,7 @@ const Status = (props) => {
   );
 };
 const mapDispatchToProps = {
-  updateGameResult, newGame, leaveRoom
+  updateGameResult, newGame
 };
 export default connect(null, mapDispatchToProps)(withRouter(Status));
 

@@ -40,16 +40,29 @@ const userSchema = mongoose.Schema({
   coins: {
     type: Number,
     required: true,
-    default: 0,
+    default: 15,
   },
   isBlocked: {
     type: Boolean,
     required: true,
     default: false,
   },
+  win: {
+    type: Number,
+    default: 0
+  },
+  lose: {
+    type: Number,
+    default: 0
+  },
+  draw: {
+    type: Number,
+    default: 0
+  },
   role: {
     type: [String],
-    enum: ["user", "admin"]
+    enum: ["user", "admin"],
+    default: "user"
   },
   games: [
     {
@@ -120,6 +133,19 @@ userSchema.methods.generatePasswordReset = function() {
 userSchema.methods.generateAcceptChangePasswordToken = function() {
   this.allowResetPassword = true;
   return jwt.sign({reset: this.resetPasswordToken, allow: this.allowResetPassword}, process.env.JWT_KEY);
+};
+userSchema.methods.updateAfterGame = async function(operator, number, isDraw) {
+  if(isDraw) {
+    this.draw++;
+  }
+  else if(operator) {
+    this.coins += number;
+    this.win++;
+  } else {
+    this.lose++;
+    this.coins -= number;
+  }
+  await this.save();
 };
 
 userSchema.statics.findByCredentials = async (email, password) => {
