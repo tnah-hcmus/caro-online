@@ -1,58 +1,87 @@
 import React from "react";
 
-import CssBaseline from "@material-ui/core/CssBaseline";
-import MaUTable from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-
-import { useTable } from "react-table";
+import { useTable, useSortBy } from "react-table";
 import { makeStyles, TablePagination } from "@material-ui/core";
 
 function Table({ columns, data }) {
   const classes = useStyles();
-  const { getTableProps, headerGroups, rows, prepareRow } = useTable({
-    columns,
-    data,
-  });
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
+    {
+      columns,
+      data,
+    },
+    useSortBy
+  );
+
+  const firstPageRows = rows.slice(0, 10);
 
   return (
-    <MaUTable {...getTableProps()} size="small" stickyHeader>
-      <TableHead>
-        {headerGroups.map((headerGroup) => (
-          <TableRow {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map((column) => (
-              <TableCell {...column.getHeaderProps()}>{column.render("Header")}</TableCell>
-            ))}
-          </TableRow>
-        ))}
-      </TableHead>
-      <TableBody>
-        {rows.map((row, i) => {
-          prepareRow(row);
-          return (
-            <TableRow {...row.getRowProps()} hover={true}>
-              {row.cells.map((cell) => {
-                return <TableCell {...cell.getCellProps()}>{cell.render("Cell")}</TableCell>;
-              })}
-            </TableRow>
-          );
-        })}
-      </TableBody>
-    </MaUTable>
+    <>
+      <table {...getTableProps()} className={classes.root}>
+        <thead>
+          {headerGroups.map((headerGroup) => (
+            <tr {...headerGroup.getHeaderGroupProps()} className={classes.header}>
+              {headerGroup.headers.map((column) => (
+                <th {...column.getHeaderProps(column.getSortByToggleProps())} className={classes.th}>
+                  {column.render("Header")}
+                  <span>{column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}</span>
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody {...getTableBodyProps()}>
+          {firstPageRows.map((row, i) => {
+            prepareRow(row);
+            return (
+              <tr {...row.getRowProps()} className={classes.row}>
+                {row.cells.map((cell) => {
+                  return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
+                })}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      <TablePagination
+        rowsPerPageOptions={[10, 25, 100]}
+        component="div"
+        count={50} // users.length
+        rowsPerPage={10} // user.
+        page={1}
+        // onChangePage={handleChangePage}
+        // onChangeRowsPerPage={handleChangeRowsPerPage}
+      />
+    </>
   );
 }
 
-function ManageUser() {
+function ManageUser(props) {
+  const fetchData = async () => {
+    // get users list
+    //
+  };
+
   const columns = React.useMemo(
     () => [
       {
-        Header: "First Name",
+        Header: "STT",
+        accessor: "stt",
+      },
+      {
+        Header: "Email",
         accessor: "firstName",
       },
       {
-        Header: "Last Name",
+        Header: "Name",
+        accessor: "lastName",
+      },
+      {
+        Header: "Verified",
+        accessor: "lastName",
+      },
+      {
+        Header: "Blocked",
         accessor: "lastName",
       },
     ],
@@ -139,17 +168,7 @@ function ManageUser() {
 
   return (
     <div>
-      <CssBaseline />
       <Table columns={columns} data={data} />
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={50}
-        rowsPerPage={10}
-        page={1}
-        // onChangePage={handleChangePage}
-        // onChangeRowsPerPage={handleChangeRowsPerPage}
-      />
     </div>
   );
 }
@@ -157,9 +176,28 @@ function ManageUser() {
 export default ManageUser;
 
 const useStyles = makeStyles({
+  root: {
+    width: "100%",
+    borderSpacing: 0,
+    borderCollapse: "collapse",
+  },
   row: {
+    borderBottom: "1px solid #ddd",
+    height: 35,
     "&:hover": {
       background: "#ddd",
+    },
+    "& > td": {
+      paddingLeft: 10,
+    },
+  },
+  header: {
+    background: "#888",
+    color: "white",
+    textAlign: "left",
+    height: 40,
+    "& > th": {
+      paddingLeft: 10,
     },
   },
 });

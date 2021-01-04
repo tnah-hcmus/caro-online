@@ -1,4 +1,4 @@
-import React, {useState } from "react";
+import React, { useState } from "react";
 import { Grid, Typography, TextField, Button, Breadcrumbs, Link, makeStyles } from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import HomeIcon from "@material-ui/icons/Home";
@@ -7,8 +7,8 @@ import { Link as RouteLink } from "react-router-dom";
 import iconMedal from "../../assets/images/icon-medal.png";
 import iconDinosaur from "../../assets/images/icon-dinosaur.png";
 import EditIcon from "@material-ui/icons/Edit";
-import {updateName} from '../../action/user/action';
-import {connect} from 'react-redux';
+import { updateName } from "../../action/user/action";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   link: {
@@ -32,9 +32,23 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: "15px !important",
     borderLeft: "1px solid #ddd",
   },
+  historyGame: {
+    background: "#d2d2d2",
+    borderRadius: 12,
+    boxShadow: "0 1px 5px black",
+  },
+  game: {
+    padding: 10,
+  },
 }));
 
-const Profile = ({user, updateName, token, userId}) => {
+const DividerComponent = () => (
+  <Grid item xs={12} style={{ width: "100%", padding: "10px 0" }}>
+    <Divider />
+  </Grid>
+);
+
+const Profile = ({ user, updateName, token, userId }) => {
   const classes = useStyles();
   let names = user.name.split(" ");
   const userFirstName = names.pop();
@@ -42,6 +56,7 @@ const Profile = ({user, updateName, token, userId}) => {
   const [firstName, setFirstName] = useState(userFirstName);
   const [lastName, setLastName] = useState(userLastName);
   const [isEditing, setIsEditing] = useState(false);
+  const games = [];
 
   const handleChangeName = () => {
     const newFirstName = firstName.trim();
@@ -49,19 +64,17 @@ const Profile = ({user, updateName, token, userId}) => {
     const name = [newLastName, newFirstName].join(" ");
     updateName(name, token, userId);
     setIsEditing(false);
-    
   };
   const declineChangeName = () => {
     setFirstName(userFirstName);
     setLastName(userLastName);
     setIsEditing(false);
-  }
+  };
 
   return (
     <div>
       <Grid
         container
-        spacing={1}
         direction="column"
         justify="center"
         alignItems="flex-start"
@@ -81,10 +94,7 @@ const Profile = ({user, updateName, token, userId}) => {
             </Typography>
           </Breadcrumbs>
         </Grid>
-        <Grid item xs={12} style={{ width: "100%", padding: "10px 0" }}>
-          <Divider />
-        </Grid>
-
+        <DividerComponent />
         <Grid item container spacing={1} xs={12} direction="row" wrap="nowrap">
           <Grid item className={classes.avatar}>
             <img src={iconDinosaur} />
@@ -142,11 +152,7 @@ const Profile = ({user, updateName, token, userId}) => {
             </Grid>
           </Grid>
         </Grid>
-
-        <Grid item xs={12} style={{ width: "100%", padding: "10px 0" }}>
-          <Divider />
-        </Grid>
-
+        <DividerComponent />
         <Grid item container xs={12} spacing={1}>
           <Grid item container spacing={1} xs={12}>
             <Grid item>
@@ -205,18 +211,74 @@ const Profile = ({user, updateName, token, userId}) => {
             </Grid>
           </Grid>
         )}
+
+        <DividerComponent />
+        <Grid item container xs={12} spacing={1}>
+          <Grid item xs={12}>
+            <Typography variant="h6" color="initial">
+              Games History
+            </Typography>
+          </Grid>
+          <Grid item xs={12} className={classes.historyGame}>
+            {(games || []).map((game, i) => (
+              <Grid
+                key={i}
+                item
+                container
+                xs={12}
+                direction="row"
+                justify="space-between"
+                wrap="nowrap"
+                className={classes.game}
+              >
+                <Grid item xs={1}>
+                  <Typography variant="subtitle2" align="center">
+                    {game.roomID}
+                  </Typography>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography variant="subtitle2" noWrap={true}>
+                    {game.winner}
+                  </Typography>
+                </Grid>
+                <Grid item xs={2}>
+                  <Typography variant="subtitle2">
+                    {game.status === 0 ? "Corrupt game" : game.status === 1 ? "Has winner" : "Draw game"}
+                  </Typography>
+                </Grid>
+                <Grid item xs={2}>
+                  <Typography variant="subtitle2" align="center">
+                    {game.start}
+                  </Typography>
+                </Grid>
+                <Grid item xs={1}>
+                  <Typography variant="subtitle2" align="center">
+                    {game.duration / 60000}m{(game.duration % 60000) / 1000}s
+                  </Typography>
+                </Grid>
+                <Grid item xs={2}>
+                  <RouteLink to="#">
+                    <Typography variant="subtitle2" color="primary" align="center">
+                      View detail
+                    </Typography>
+                  </RouteLink>
+                </Grid>
+              </Grid>
+            ))}
+          </Grid>
+        </Grid>
       </Grid>
     </div>
   );
-}
+};
 const mapStateToProps = (state) => {
   return {
     token: state.auth.token,
     userId: state.auth.id,
-    user: state.user
+    user: state.user,
   };
 };
 const mapDispatchToProps = {
-  updateName
+  updateName,
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);

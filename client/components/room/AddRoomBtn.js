@@ -43,15 +43,21 @@ const AddRoomBtn = (props) => {
   const handleSubmit = () => {
     setOpen(false);
     if (!props.busy) {
-      const password = passwordRef.current.value || '';
+      const password = passwordRef.current.value || "";
       const timer = Number(timerRef.current.value) || 30;
       const coins = Number(coinRef.current.value) || 1;
-      if(timer < minTimer) {
-        props.setMessage({ type: "error", content: "Thời gian suy nghĩ quá ngắn, thời gian suy nghĩ tối thiểu phải tối thiểu " + minTimer + " giây.", open: true });
+      if (timer < minTimer) {
+        props.setMessage({
+          type: "error",
+          content: "Thời gian suy nghĩ quá ngắn, thời gian suy nghĩ tối thiểu phải tối thiểu " + minTimer + " giây.",
+          open: true,
+        });
         return false;
-      }
-      else props.addRoom(props.userId, props.user.name, props.user.coins, password || null, timer, coins , (id) => props.history.push("/room/" + id));
-    } else props.setMessage({ type: "error", content: `You already in another room`, open: true});
+      } else
+        props.addRoom(props.userId, props.user.name, props.user.coins, password || null, timer, coins, (id) =>
+          props.history.push("/room/" + id)
+        );
+    } else props.setMessage({ type: "error", content: `You already in another room`, open: true });
   };
 
   return (
@@ -68,9 +74,34 @@ const AddRoomBtn = (props) => {
       <Dialog open={open} onClose={handleClose} className={classes.dialog}>
         <DialogTitle id="form-dialog-title">Add new room</DialogTitle>
         <DialogContent>
-          <TextField inputRef = {passwordRef} autoFocus variant="outlined" label="Password" id="password" type="password" fullWidth />
-          <TextField inputRef = {timerRef}  variant="outlined" label="Time" id="time" type="number" fullWidth />
-          <TextField inputRef = {coinRef}  variant="outlined" label="Coins" id="coin" type="number" fullWidth />
+          <TextField
+            inputRef={passwordRef}
+            autoFocus
+            variant="outlined"
+            label="Password"
+            id="password"
+            type="password"
+            fullWidth
+            style={{ marginBottom: 15 }}
+          />
+          <TextField
+            inputRef={timerRef}
+            variant="outlined"
+            label="Time"
+            id="time"
+            type="number"
+            fullWidth
+            style={{ marginBottom: 15 }}
+          />
+          <TextField
+            inputRef={coinRef}
+            variant="outlined"
+            label="Coins"
+            id="coin"
+            type="number"
+            fullWidth
+            style={{ marginBottom: 15 }}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleSubmit} variant="contained" color="primary">
@@ -87,7 +118,7 @@ const AddRoomBtn = (props) => {
 const mapStateToProps = (state) => {
   return {
     busy: state.auth.inRoom,
-    user: state.user
+    user: state.user,
   };
 };
 const mapDispatchToProps = {

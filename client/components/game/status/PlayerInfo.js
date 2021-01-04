@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Typography, makeStyles, withStyles} from "@material-ui/core";
+import { Grid, Typography, makeStyles, withStyles } from "@material-ui/core";
 import Avatar from "@material-ui/core/Avatar";
 import Tooltip from "@material-ui/core/Tooltip";
 // IMPORT ICON
@@ -39,39 +39,40 @@ const StyledBadge = withStyles((theme) => ({
   },
 }))(Badge);
 
-const PlayerInfo = ({type, coins, isWin, name, isTurn}) => {
+const PlayerInfo = ({ type, coins, isWin, name, isTurn }) => {
   const classes = useStyles();
   return (
-    <Grid item xs={5} className= {isWin ? "rainbow" : ""}>
-    <Grid container direction="row" justify="center" style={{ marginTop: 5 }}>
-      <Grid item>
-        <img src={MedalIcon} width={24} height={24} />
+    <Grid item xs={5} className={isWin ? "rainbow" : ""}>
+      <Grid container direction="row" justify="center" style={{ marginTop: 5 }}>
+        <Grid item>
+          <img src={MedalIcon} width={24} height={24} />
+        </Grid>
+        <Grid item>
+          <Typography variant="subtitle2" color="secondary">
+            {coins || 5}
+          </Typography>
+        </Grid>
       </Grid>
-      <Grid item>
-        <Typography variant="subtitle2" color="secondary">
-          {coins || 5}
+      {/* Turn's player */}
+      <StyledBadge
+        overlap="circle"
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        variant={isTurn ? "dot" : "standard"}
+      >
+        <Avatar alt="avatar" src={type == "X" ? CrocodileIcon : DinosaurIcon} className={classes.large} />
+      </StyledBadge>
+      <Tooltip title={name} arrow>
+        <Typography variant="subtitle2" className={classes.noWrap}>
+          {/* Player {type}: {name} */}
+          {name}
         </Typography>
-      </Grid>
+      </Tooltip>
+      <img src={type == "X" ? XIcon : OIcon} width={24} height={24} />
     </Grid>
-    {/* Turn's player */}
-    <StyledBadge
-      overlap="circle"
-      anchorOrigin={{
-        vertical: "bottom",
-        horizontal: "right",
-      }}
-      variant={isTurn ? "dot" : "standard"}
-    >
-      <Avatar alt="avatar" src={type=="X" ? CrocodileIcon : DinosaurIcon} className={classes.large} />
-    </StyledBadge>
-    <Tooltip title="Player 01" arrow>
-      <Typography variant="subtitle2" className={classes.noWrap}>
-        Player {type}: {name}
-      </Typography>
-    </Tooltip>
-    <img src={type == "X" ? XIcon: OIcon} width={24} height={24} />
-  </Grid>
-    )
+  );
 };
 const useStyles = makeStyles((theme) => ({
   large: {
@@ -82,7 +83,6 @@ const useStyles = makeStyles((theme) => ({
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
-  }
+  },
 }));
 export default PlayerInfo;
-
