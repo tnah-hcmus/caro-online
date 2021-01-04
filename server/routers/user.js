@@ -2,6 +2,7 @@ const express = require("express");
 const User = require("../models/user");
 const auth = require("../middleware/auth");
 const authAdmin = require("../middleware/authAdmin");
+const bcrypt = require("bcryptjs");
 const router = express.Router();
 
 const processUser = async (req, res, callback) => {
@@ -67,8 +68,8 @@ router
       res.status(200).send({ user: result });
     })  
   })
-  .put(auth, (req, res) => {
-    //PUT: update 1 thuộc tính ứng với user
+  .patch(auth, (req, res) => {
+    //patch: update 1 thuộc tính ứng với user
     //check quyền authen
     processUser(req, res, async (user) => {
       const { id } = req.params;
@@ -95,6 +96,39 @@ router
       user.isBlocked = true;
       await user.save();
     })
+  });
+router
+  .route("/api/users/:id/password")
+  .post((req, res) => {
+    //POST: bỏ qua
+    res.status(404).send("Invalid path"); //không cho tạo user trên 1 id cụ thể
+  })
+  .get((req, res) => {
+    //GET: bỏ qua
+    res.status(404).send("Invalid path");
+  })
+  .put(auth, (req, res) => {
+    //put: Update password của 1 user
+    //check quyền authen
+    processUser(req, res, async (user) => {
+      const { id } = req.params;
+      const { oldPass, newPass } = req.body;
+      if(id === user.gameId) {
+        const isRightPassword = await bcrypt.compare(oldPass, user.password);
+        if(isRightPassword) {
+          if(newPass.length < 7)  res.status(403).send({error: 'Password must > 7 character'});
+          else {
+            const newToken = await user.updatePasswordAndUpdateToken(newPass);
+            res.status(200).send(newToken);
+          }
+        } else res.status(403).send({error: 'Wrong old password'});     
+      }
+      else res.status(401).send({ error: "You can't update other user's pass" })
+    }) 
+  })
+  .delete(auth, authAdmin, (req, res) => {
+    //DELETE: bỏ qua
+    res.status(404).send("Invalid path");
   });
 
 module.exports = router;

@@ -43,10 +43,13 @@ class WSObserver {
       };
     })
   }
-  startListenUpdateGameData(updateGameData) {
+  startListenUpdateGameData(updateGameData, canView, setCanView) {
     WS.onNewData("new-game-data", (data) => {
       const { roomID, squares, status, player } = data;
       updateGameData(roomID, squares, status, player);
+      if(!canView) {
+        setCanView(true);
+      }
     });
   }
   startListenUpdateRoomData(updateRoomData) {

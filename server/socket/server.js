@@ -51,12 +51,14 @@ module.exports = function(app) {
               socket.on("send-chat", async (message) => {
                 message.socket = socket.id;
                 socket.to(id).emit("new-message", message);
-                console.log("on new chat-------------------", game.chat);
-                if(game.chat) game.chat.push(message);
-                else game.chat = [message];
-                console.log("before save chat---------------", game.chat);
-                await game.save();
-                console.log("after execute chat------------------", game.chat);
+                if(game) {
+                  console.log("on new chat-------------------", game.chat);
+                  if(game.chat) game.chat.push(message);
+                  else game.chat = [message];
+                  console.log("before save chat---------------", game.chat);
+                  await game.save();
+                  console.log("after execute chat------------------", game.chat);
+                }               
               });
               //receive game data
               socket.on("send-game-data", async (data) => {
@@ -81,38 +83,42 @@ module.exports = function(app) {
               socket.on("send-game-request", (data) => {
                 socket.to(id).emit("new-game-request", data);
                 socket.on("game-reply-to-server", async (data) => {
-                  const {accept, type} = data;
-                  if(accept) {
-                      if(type == "NEW") {
-                          room.lastGameInRoom = Date.now();
-                          await room.save();
-                          game =  await Game.findOne({roomID: id, status: 0});
-                          console.log("Find a new game",game, Date.now());
-                          const user = await User.findOne({gameId: userId});
-                          user.games.push({id: game._id});
-                          user.save();
-                      }
-                  }
+                  if(room) {
+                    const {accept, type} = data;
+                    if(accept) {
+                        if(type == "NEW") {
+                            room.lastGameInRoom = Date.now();
+                            await room.save();
+                            game =  await Game.findOne({roomID: id, status: 0});
+                            console.log("Find a new game",game, Date.now());
+                            const user = await User.findOne({gameId: userId});
+                            user.games.push({id: game._id});
+                            user.save();
+                        }
+                    }
+                  }                  
                 })
               });
               socket.on("send-result-data", async (data) => {
                 const {result} = data;
                 socket.to(id).emit("new-result-data", data);
-                game.status = result;
-                game.save();
-                const current = await Room.findOne({roomID: room.roomID});
-                const [userX, userY] = await Promise.all([User.findOne({gameId: current.X.id}), User.findOne({gameId: current.Y.id})]);
-                userX.updateAfterGame(result == 1 ? 1 : 0, room.coins, result == 3);
-                userY.updateAfterGame(result == 2 ? 1 : 0, room.coins, result == 3); 
-                if(result == 1) {
-                  current.X.coins += room.coins;
-                  current.Y.coins -= room.coins;
-                } else if(result == 2) {
-                  current.X.coins -= room.coins;
-                  current.Y.coins += room.coins;
-                } else {
-                }
-                current.save();             
+                if(room) {
+                  game.status = result;
+                  game.save();
+                  const current = await Room.findOne({roomID: room.roomID});
+                  const [userX, userY] = await Promise.all([User.findOne({gameId: current.X.id}), User.findOne({gameId: current.Y.id})]);
+                  userX.updateAfterGame(result == 1 ? 1 : 0, room.coins, result == 3);
+                  userY.updateAfterGame(result == 2 ? 1 : 0, room.coins, result == 3); 
+                  if(result == 1) {
+                    current.X.coins += room.coins;
+                    current.Y.coins -= room.coins;
+                  } else if(result == 2) {
+                    current.X.coins -= room.coins;
+                    current.Y.coins += room.coins;
+                  } else {
+                  }
+                  current.save();  
+                }           
               })
               socket.on("send-game-reply", async (data) => {
                 const {accept, type} = data;
@@ -135,38 +141,44 @@ module.exports = function(app) {
               })
               socket.on("leave-room", async ({id, userId}) => {
                   socket.leave(id);
-                  console.log("leave, goodbye", id, userId);
-                  if(userId == room.X.id && !room.Y.id) {
-                      room.playerX = null;
-                      await Room.deleteOne({roomID: id});
-                      room = null;
-                  }
-                  else {
-                    if(userId == room.Y.id) room.Y = {id: null, name: null, coins: null};
-                    else if(userId == room.X && room.Y) {
-                        room.X = room.Y;
-                        room.Y = null;
+                  if(room) {
+                    console.log("leave, goodbye", id, userId);
+                    if(userId == room.X.id && !room.Y.id) {
+                        room.playerX = null;
+                        await Room.deleteOne({roomID: id});
+                        room = null;
                     }
-                    await room.save();
+                    else {
+                      if(userId == room.Y.id) room.Y = {id: null, name: null, coins: null};
+                      else if(userId == room.X && room.Y) {
+                          room.X = room.Y;
+                          room.Y = null;
+                      }
+                      await room.save();
+                    }
                   }
+                  
               });
-              //init data (execute after add Listener)
-              if(!room) {
-                room = await new Room({roomID: id, X: {id: userId, name: userName, coins: userCoins}, Y: {id:null, name: null, coins: null}, roomType, timer, password, coins});
-                await room.save();
-                game = await new Game({roomID: id, start: Date.now(), status: 0});
-                await game.save();
-              } else if(!room.Y.id) {
-                room.Y = {id: userId, name: userName, coins: userCoins};
-                const [data1, data2] = await Promise.all([
-                    room.save(),
-                    Game.find({roomID: id, status: 0})
-                ])
-                game = data2[0];
+              if(userId) { //if player
+                //init data (execute after add Listener)
+                if(!room) {
+                  room = await new Room({roomID: id, X: {id: userId, name: userName, coins: userCoins}, Y: {id:null, name: null, coins: null}, roomType, timer, password, coins});
+                  await room.save();
+                  game = await new Game({roomID: id, start: Date.now(), status: 0});
+                  await game.save();
+                } else if(!room.Y.id) {
+                  room.Y = {id: userId, name: userName, coins: userCoins};
+                  const [data1, data2] = await Promise.all([
+                      room.save(),
+                      Game.find({roomID: id, status: 0})
+                  ])
+                  game = data2[0];
+                }
+                const user = await User.findOne({gameId: userId});
+                user.games.push({id: game._id});
+                user.save(); 
               }
-              const user = await User.findOne({gameId: userId});
-              user.games.push({id: game._id});
-              user.save(); 
+              
         });
         //on send disconnect
         socket.on('send-disconnect-request', () => {

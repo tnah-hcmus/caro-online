@@ -126,6 +126,21 @@ userSchema.methods.generateAuthToken = async function () {
   return token;
 };
 
+userSchema.methods.updatePasswordAndUpdateToken = async function (newPass) {
+  // Generate an auth token for the user
+  const user = this;
+  const today = new Date();
+  const expirationDate = new Date(today);
+  expirationDate.setDate(today.getDate() + 60);
+  const token = jwt.sign({ _id: user._id }, process.env.JWT_KEY, {
+    expiresIn: parseInt(expirationDate.getTime()/1000, 10)
+  });
+  user.tokens = user.tokens.concat({ token });
+  user.password = newPass;
+  await user.save();
+  return token;
+};
+
 userSchema.methods.generatePasswordReset = function() {
   this.resetPasswordToken = crypto.randomBytes(20).toString('hex');
   this.resetPasswordExpires = Date.now() + 3600000; //expires in an hour

@@ -2,6 +2,7 @@ require("dotenv").config();
 const validator = require("validator");
 const User = require("../models/user");
 
+
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
 const FacebookStrategy = require('passport-facebook').Strategy
@@ -10,6 +11,7 @@ const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
 const serverUrl = process.env.NODE_ENV === 'production' ? process.env.PROD_SERVER_URL : process.env.DEV_SERVER_URL;
 
 const {_createRandomPassword, _createRandomUID} = require('../helper/generator')
+const {sendNewThirdPartySignUpEmail} = require("../helper/emailSender");
 
 const generateToken = async (user) => {
   if(user) return await user.generateAuthToken();
@@ -29,15 +31,17 @@ const thirdPartyStrategy = async (strategyType, profile, done) => {
     userDB = existEmail;
   }
   else {
+    const password = _createRandomPassword();
     const user = new User({
         gameId: _createRandomUID(),
         name: profile.displayName,
         [strategyType]: profile.id,
         email: profile.emails[0].value,
-        password: _createRandomPassword()
+        password
     })
     await user.save();
     userDB = user;
+    sendNewThirdPartySignUpEmail(user, strategyType.replace("Id", ""), password);
   }
   done(null, userDB, {accessToken: await generateToken(userDB)});
 }

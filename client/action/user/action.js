@@ -1,8 +1,8 @@
 import { INIT_INFO, UPDATE_INFO, CLEAR_INFO } from "./type";
 import Axios from "axios";
-export const initInfo = ({name, email, coins, win, lose, draw, total}) => ({
+export const initInfo = ({name, email, coins, win, lose, draw, total, role}) => ({
   type: INIT_INFO,
-  payload: {name, email, coins, win, lose, draw, total},
+  payload: {name, email, coins, win, lose, draw, total, role},
 });
 
 export const updateInfo = (property, newData) => ({
@@ -26,7 +26,7 @@ export const getInfo = (token) => {
     .then((res) => {
       const user = res.data;
       console.log(user)
-      dispatch(initInfo({name: user.name, email: user.email, coins: user.coins, win: user.win, lose: user.lose, total : user.games.length, draw: user.draw}));
+      dispatch(initInfo({name: user.name, email: user.email, coins: user.coins, win: user.win, lose: user.lose, total : user.games.length, draw: user.draw, role: user.role}));
     })
     .catch((e) => {
       console.log(e);
@@ -35,7 +35,7 @@ export const getInfo = (token) => {
 };
 export const updateName = (name, token, id) => {
   return (dispatch) => {
-    Axios.put(
+    Axios.patch(
       "/api/users/" + id,
       {
         property: "name",

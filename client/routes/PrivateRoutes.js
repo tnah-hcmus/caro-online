@@ -17,7 +17,18 @@ import ChangePassword from "../components/starting/ChangePassword";
 
 const PrivateRoutes = (props) => {
   if (props.isAuthenticated) {
-    return (
+    if(props.role == "admin") return (
+      <Switch>
+        <Route path="/admin" component={AdminLoginPanel} />
+        {
+          props.secretKey
+          ?
+          <></>
+          : null
+        }
+      </Switch>
+    )
+    else return (
       <Header>
         <Switch>
           <Route path="/" component={MainPage} exact />
@@ -33,7 +44,6 @@ const PrivateRoutes = (props) => {
     return (
       <Switch>
         <Route path="/" component={StartPage} exact />
-        <Route path="/admin" component={AdminLoginPanel} />
         <Route path="/auth/success" component={LoadingLogin} />
         <Route path="/password/forgot" component={ForgotPasswordPanel} />
         <Route path="/password/reset" component={ResetPasswordPanel} />
@@ -47,7 +57,8 @@ const PrivateRoutes = (props) => {
 const mapStateToProps = (state) => {
   return {
     isAuthenticated: !!state.auth.token,
-    // isAuthenticated: true,
+    role: state.user.role,
+    secretKey: state.user.secretKey
   };
 };
 

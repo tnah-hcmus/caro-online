@@ -29,6 +29,19 @@ const sendVerificationEmail = async (user, token) => {
     }
 }
 
+const sendNewThirdPartySignUpEmail = async (user, type, password) => {
+    try{
+        const subject = "Account have just created";
+        const to = user.email;
+        const from = process.env.FROM_EMAIL;
+        const html = `<p>Hi ${user.name}<p><br><p>You have just create your account by ${type} auth. Your default password is: ${password}. Please keep it secret or update it as soon as possible.</p> 
+                  <br><p>If you did not request this, please ignore this email.</p>`;
+        await sendEmail({to, from, subject, html});
+    }catch (error) {
+        console.log(error, error.response, error.response.body)
+    }
+}
+
 const sendRecoverEmail = async (user) => {
     try{
         const serverUrl = process.env.NODE_ENV === 'production' ? process.env.PROD_SERVER_URL : process.env.DEV_SERVER_URL;
@@ -66,4 +79,4 @@ const sendSuccessUpdateEmail = async (user) => {
     }
 }
 
-module.exports = { sendRecoverEmail, sendVerificationEmail, sendSuccessUpdateEmail };
+module.exports = { sendRecoverEmail, sendVerificationEmail, sendSuccessUpdateEmail, sendNewThirdPartySignUpEmail };

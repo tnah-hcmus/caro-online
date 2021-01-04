@@ -1,4 +1,4 @@
-import { LOGIN, LOGOUT, JOIN } from "./type";
+import { LOGIN, LOGOUT, JOIN, UPDATE_TOKEN } from "./type";
 import {initInfo, getInfo} from '../user/action';
 import Axios from "axios";
 export const login = (id, token) => ({
@@ -9,6 +9,11 @@ export const login = (id, token) => ({
 export const joinState = (roomID) => ({
   type: JOIN,
   payload: roomID
+})
+
+export const updateToken = (token) => ({
+  type: UPDATE_TOKEN,
+  payload: token
 })
 
 export const logout = () => ({
@@ -78,3 +83,24 @@ export const startSignUp = (data, setMessage) => {
       });
   };
 };
+
+export const changePassword = (oldPass, newPass, id, token) => {
+  return (dispatch) => {
+    return Axios.put("/api/users/" + id + "/password", {
+      oldPass,
+      newPass
+     }, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    .then((res) => {
+        const token = res.data;
+        dispatch(updateToken(token));
+        return {status: true}
+    })
+    .catch((e) => {
+        const error = e.response && e.response.data && e.response.data.error;
+        console.log(e);
+        return {status: false, content: { type: "error", content: error || "Lỗi không xác định", open: true }}
+    });
+  }  
+}

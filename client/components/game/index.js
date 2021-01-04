@@ -32,8 +32,9 @@ const useStyles = makeStyles({
 
 const Game = (props) => {
   const classes = useStyles();
+  const [canView, setCanView] = useState(props.player !== "");
   const [message, setMessage] = useState();
-  WSObserver.startListenUpdateGameData(props.addBoard);
+  WSObserver.startListenUpdateGameData(props.addBoard, canView, setCanView);
   const size = 20;
   const roomInfo = props.rooms[props.roomID];
   console.log(roomInfo, props.roomID);
@@ -102,6 +103,9 @@ const Game = (props) => {
   };
 
   return (
+    <>
+    {canView
+    ?
     <Grid container item xs={12} md={9} className={classes.root}>
       <Grid item xs={8} className={classes.board}>
         <BoardView squares={current} size={size} handleClick={handleClick} winning={winning} setMessage = {setMessage}/>
@@ -111,6 +115,11 @@ const Game = (props) => {
       </Grid>
       <CustomizedSnackbars message = {message}/>
     </Grid>
+    : <p>Đang tải trận, vui lòng chờ</p>
+    }
+    </>
+    
+    
   );
 };
 const mapStateToProps = (state) => {
