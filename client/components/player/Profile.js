@@ -9,7 +9,7 @@ import iconDinosaur from "../../assets/images/icon-dinosaur.png";
 import EditIcon from "@material-ui/icons/Edit";
 import {updateName} from '../../action/user/action';
 import {connect} from 'react-redux';
-
+import {withRouter} from 'react-router-dom';
 const useStyles = makeStyles((theme) => ({
   link: {
     display: "flex",
@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Profile = ({user, updateName, token, userId}) => {
+const Profile = ({user, updateName, token, userId, history}) => {
   const classes = useStyles();
   let names = user.name.split(" ");
   const userFirstName = names.pop();
@@ -205,6 +205,12 @@ const Profile = ({user, updateName, token, userId}) => {
             </Grid>
           </Grid>
         )}
+        <ul>
+        {user.games.map(item => {
+          return <li key = {item.id} onClick = {() => history.push("/review/" + item.id, {token})}>{item.id}</li>
+        })}   
+        </ul>
+        
       </Grid>
     </div>
   );
@@ -219,4 +225,4 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = {
   updateName
 };
-export default connect(mapStateToProps, mapDispatchToProps)(Profile);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Profile));

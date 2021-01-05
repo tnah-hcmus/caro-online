@@ -14,6 +14,7 @@ import ResetPasswordPanel from "../components/starting/ResetPassword";
 import ForgotPasswordPanel from "../components/starting/ForgotPassword";
 import Profile from "../components/player/Profile";
 import ChangePassword from "../components/starting/ChangePassword";
+import GameReview from '../components/game-review/Review';
 
 const PrivateRoutes = (props) => {
   if (props.isAuthenticated) {
@@ -35,6 +36,7 @@ const PrivateRoutes = (props) => {
           <Route path="/room/:id" component={RoomView} />
           <Route path="/profile" component={Profile} />
           <Route path="/changepassword" component={ChangePassword} />
+          <Route path="/review/:id" component = {GameReview}/>
           <Route path="/404" component={NotFound} />
           <Redirect to="/404" />
         </Switch>
