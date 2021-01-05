@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Copyright from "./common/Copyright";
 import WSClient from "../socket/socket";
-import WSObserver from '../socket/observer';
+import WSObserver from "../socket/observer";
 import { connect } from "react-redux";
 import { Grid } from "@material-ui/core";
 
@@ -18,9 +18,9 @@ const MainPage = (props) => {
 
   return (
     <>
-      <Grid container>
+      <Grid container style={{ minHeight: "calc(100vh - 114px)" }}>
         <Grid item xs={12} md={10}>
-          <ListRoom userId = {props.userId} />
+          <ListRoom userId={props.userId} />
         </Grid>
         <Grid item xs={12} md={2}>
           <ListPlayer user={user} />

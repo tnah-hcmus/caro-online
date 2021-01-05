@@ -17,7 +17,9 @@ import PersonIcon from "@material-ui/icons/Person";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
 import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
-import { useHistory } from "react-router-dom";
+
+import { Link } from "@material-ui/core";
+import { Link as RouterLink, useHistory } from "react-router-dom";
 
 import IcAdmin from "../../assets/images/icon-admin.png";
 
@@ -96,9 +98,11 @@ export default function SidebarAdmin(props) {
     >
       <div className={classes.toolbar} style={{ display: "flex", justifyContent: "space-around" }}>
         <img src={IcAdmin} height={40} weight={40} style={{ margin: "auto" }} />
-        <Typography variant="h5" color="initial" style={{ margin: "auto" }}>
-          Admin Desktop
-        </Typography>
+        <RouterLink to="/admin" style={{ margin: "auto" }}>
+          <Typography variant="h5" style={{ color: "white" }}>
+            Admin Desktop
+          </Typography>
+        </RouterLink>
       </div>
       <Divider />
       <List>

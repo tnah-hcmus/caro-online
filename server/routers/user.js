@@ -1,23 +1,10 @@
 const express = require("express");
-const User = require("../models/user");
 const auth = require("../middleware/auth");
 const authAdmin = require("../middleware/authAdmin");
+const {processUser} = require('../helper/processData');
 const bcrypt = require("bcryptjs");
 const router = express.Router();
 
-const processUser = async (req, res, callback) => {
-  try {
-    const user = await User.findOne({ _id: req.userId, 'tokens.token': req.token })
-    if (!user) {
-      res.status(401).send({ error: 'No user found' })
-    }
-    else {
-      callback(user);
-    }
-  } catch (error) {
-    res.status(401).send({ error: 'Not authorized to access this resource' })
-  }  
-}
 router.post("/api/users/me", auth, (req, res) => { //lấy thông tin cá nhân từ token (không biết trước id);
   processUser(req, res, (user) => {
     const result = {

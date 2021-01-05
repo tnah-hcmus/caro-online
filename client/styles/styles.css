@@ -100,3 +100,7 @@ ul {
   background: #ddd;
   border-radius: 5px;
 }
+
+a {
+  text-decoration: none;
+}

@@ -14,6 +14,7 @@ import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import { Link } from "@material-ui/core";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import iconLogo from "../../assets/images/icon-logo.png";
+import {connect} from 'react-redux'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -87,7 +88,7 @@ const Header = (props) => {
                 <AccountCircle />
 
                 <Typography variant="subtitle2" color="initial">
-                  My Name
+                  {props.name}
                 </Typography>
               </IconButton>
               <Popper open={open} anchorEl={anchorRef.current} placement="bottom-end" transition>
@@ -98,6 +99,7 @@ const Header = (props) => {
                         <MenuList autoFocusItem={open} id="menu-list-grow">
                           <MenuItem onClick={() => history.push("/profile")}>Profile</MenuItem>
                           <MenuItem onClick={() => history.push("/changepassword")}>Change password</MenuItem>
+                          <MenuItem onClick={() => history.push("/rank")}>Ranking</MenuItem>
                           <MenuItem onClick={handleSignout}>Logout</MenuItem>
                         </MenuList>
                       </ClickAwayListener>
@@ -113,5 +115,9 @@ const Header = (props) => {
     </>
   );
 };
-
-export default Header;
+const mapStateToProps = (state) => {
+  return {
+    name: state.user.name,
+  };
+};
+export default connect(mapStateToProps)(Header);

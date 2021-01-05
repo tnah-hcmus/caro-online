@@ -1,12 +1,5 @@
 import React from "react";
 
-function ManageGame() {
-  return <div></div>;
-}
-
-export default ManageGame;
-import React from "react";
-
 import CssBaseline from "@material-ui/core/CssBaseline";
 import MaUTable from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";

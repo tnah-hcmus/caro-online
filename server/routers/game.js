@@ -1,22 +1,8 @@
 const express = require("express");
 const auth = require("../middleware/auth");
-const User = require("../models/user");
 const Game = require("../models/game");
+const {processUser} = require('../helper/processData');
 const router = express.Router();
-const processUser = async (req, res, callback) => {
-  try {
-    const user = await User.findOne({ _id: req.userId, 'tokens.token': req.token })
-    if (!user) {
-      res.status(401).send({ error: 'No user found' })
-    }
-    else {
-      callback(user);
-    }
-  } catch (error) {
-    console.log(error);
-    res.status(401).send({ error: 'Not authorized to access this resource' })
-  }  
-}
 
 router //game only create and edit by server in socket server, not from client-api
   .route("/api/games")
