@@ -68,6 +68,7 @@ module.exports = function(app) {
                   console.log("on new move-------------------------------", game.history);
                   if(status) {
                     game.status = (status.winner == "X") ? 1 : 2;
+                    game.winner = `${status.winner}: ${room[status.winner].name}`;
                   }
                   game.history.push({x, y, player, timestamp: Date.now()});
                   console.log("before save game---------------------------", game.history);
@@ -104,6 +105,9 @@ module.exports = function(app) {
                 socket.to(id).emit("new-result-data", data);
                 if(room) {
                   game.status = result;
+                  if (result == 1) game.winner = `X: ${room.X.name}`;
+                  else if (result == 2) game.winner = `O: ${room.Y.name}`;
+                  else game.winner = `None`;
                   game.save();
                   const current = await Room.findOne({roomID: room.roomID});
                   const [userX, userY] = await Promise.all([User.findOne({gameId: current.X.id}), User.findOne({gameId: current.Y.id})]);
@@ -128,6 +132,7 @@ module.exports = function(app) {
                   if(!!game.status) game = await new Game({roomID: id, start: Date.now(), status: 0});
                   else {
                       game.status = 4;
+                      game.winner = `None`;
                       await game.save();
                       game = await new Game({roomID: id, start: Date.now(), status: 0});
                   }

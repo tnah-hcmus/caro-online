@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Grid, Typography, TextField, Button, Breadcrumbs, Link, makeStyles } from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import HomeIcon from "@material-ui/icons/Home";
@@ -9,7 +9,8 @@ import iconDinosaur from "../../assets/images/icon-dinosaur.png";
 import EditIcon from "@material-ui/icons/Edit";
 import { updateName } from "../../action/user/action";
 import { connect } from "react-redux";
-
+import {withRouter} from 'react-router-dom';
+import Axios from 'axios';
 const useStyles = makeStyles((theme) => ({
   link: {
     display: "flex",
@@ -42,13 +43,30 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const getGameList = (token) => {
+  return Axios.get(
+      "/api/games" + "?filterBy=userGames",
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    )
+    .then((res) => {
+      const listGame = res.data;
+      console.log(listGame)
+      return listGame;
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+};
+
 const DividerComponent = () => (
   <Grid item xs={12} style={{ width: "100%", padding: "10px 0" }}>
     <Divider />
   </Grid>
 );
 
-const Profile = ({ user, updateName, token, userId }) => {
+const Profile = ({ user, updateName, token, userId, history }) => {
   const classes = useStyles();
   let names = user.name.split(" ");
   const userFirstName = names.pop();
@@ -56,7 +74,14 @@ const Profile = ({ user, updateName, token, userId }) => {
   const [firstName, setFirstName] = useState(userFirstName);
   const [lastName, setLastName] = useState(userLastName);
   const [isEditing, setIsEditing] = useState(false);
-  const games = [];
+  const [games, setGames] = useState([]);
+  useEffect(() => {
+    const fetchGames = async () => {
+      const list = await getGameList(token);
+      setGames(list);
+    }
+    fetchGames();
+  }, [])
 
   const handleChangeName = () => {
     const newFirstName = firstName.trim();
@@ -146,7 +171,7 @@ const Profile = ({ user, updateName, token, userId }) => {
               </Grid>
               <Grid item>
                 <Typography variant="h6" color="secondary">
-                  {user.total}
+                  {user.games.length}
                 </Typography>
               </Grid>
             </Grid>
@@ -236,14 +261,9 @@ const Profile = ({ user, updateName, token, userId }) => {
                     {game.roomID}
                   </Typography>
                 </Grid>
-                <Grid item xs={4}>
-                  <Typography variant="subtitle2" noWrap={true}>
-                    {game.winner}
-                  </Typography>
-                </Grid>
                 <Grid item xs={2}>
                   <Typography variant="subtitle2">
-                    {game.status === 0 ? "Corrupt game" : game.status === 1 ? "Has winner" : "Draw game"}
+                    {game.status === 4 ? "Corrupt game" : game.status === 1 ? "X" : "Draw game"}
                   </Typography>
                 </Grid>
                 <Grid item xs={2}>
@@ -251,17 +271,10 @@ const Profile = ({ user, updateName, token, userId }) => {
                     {game.start}
                   </Typography>
                 </Grid>
-                <Grid item xs={1}>
-                  <Typography variant="subtitle2" align="center">
-                    {game.duration / 60000}m{(game.duration % 60000) / 1000}s
-                  </Typography>
-                </Grid>
-                <Grid item xs={2}>
-                  <RouteLink to="#">
+                <Grid item xs={2} onClick = {() => history.push("/review/" + game._id, {token})}>
                     <Typography variant="subtitle2" color="primary" align="center">
                       View detail
                     </Typography>
-                  </RouteLink>
                 </Grid>
               </Grid>
             ))}
@@ -281,4 +294,4 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = {
   updateName,
 };
-export default connect(mapStateToProps, mapDispatchToProps)(Profile);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Profile));
