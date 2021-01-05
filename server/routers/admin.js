@@ -18,7 +18,7 @@ router.post("/api/admin/login", async (req, res) => {
     if (!user) {
       return res.status(401).send({ error: "Login failed! Maybe wrong password or email" });
     } else {
-      if (user.role !== "admin") {
+      if (user.role.indexOf("admin") === -1) {
         return res.status(401).send({ error: "Login failed! You don't have permission to access" });
       } else {
         const token = await user.generateAuthToken();

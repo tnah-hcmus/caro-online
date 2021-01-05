@@ -60,12 +60,12 @@ export default function SidebarAdmin(props) {
     {
       icon: <SupervisorAccountIcon />,
       text: "Users",
-      redirect: () => history.push("/manageuser"),
+      redirect: () => history.push("/admin/manageuser"),
     },
     {
       icon: <SportsEsportsIcon />,
       text: "Games",
-      redirect: () => history.push("/managegame"),
+      redirect: () => history.push("/admin/managegame"),
     },
   ];
 
@@ -73,17 +73,17 @@ export default function SidebarAdmin(props) {
     {
       icon: <VpnKeyIcon />,
       text: "Change password",
-      redirect: () => history.push("/changepassword"),
+      redirect: () => history.push("/admin/changepassword"),
     },
     {
       icon: <PersonIcon />,
       text: "Edit profile",
-      redirect: () => history.push("/profile"),
+      redirect: () => history.push("/admin/profile"),
     },
     {
       icon: <ExitToAppIcon />,
       text: "Log out",
-      redirect: () => history.push("/logout"),
+      redirect: () => history.push("/admin/logout"),
     },
   ];
 

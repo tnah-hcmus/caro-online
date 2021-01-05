@@ -1,9 +1,8 @@
-import React, { useState } from "react";
-import { Grid, Typography, TextField, Button, Breadcrumbs, Link, makeStyles } from "@material-ui/core";
-import Divider from "@material-ui/core/Divider";
+import React, { useState, useEffect } from "react";
+import { Typography, Breadcrumbs, Link, makeStyles } from "@material-ui/core";
 import HomeIcon from "@material-ui/icons/Home";
-import VpnKeyIcon from "@material-ui/icons/VpnKey";
-import { Link as RouteLink } from "react-router-dom";
+import { getUsersList } from "../../action/user/action";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   link: {
@@ -19,21 +18,26 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Dashboard() {
+const Dashboard = (props) => {
   const classes = useStyles();
+
+  useEffect(() => {
+    props.getUsersList(props.token);
+  }, []);
 
   return (
     <div className={classes.root}>
       <Breadcrumbs aria-label="breadcrumb">
-        <Link color="inherit" to="/" component={RouteLink} className={classes.link}>
-          <HomeIcon className={classes.icon} />
-          Home
-        </Link>
         <Typography color="textPrimary" className={classes.link}>
-          <VpnKeyIcon className={classes.icon} />
-          Change password
+          <HomeIcon className={classes.icon} />
+          Dashboard
         </Typography>
       </Breadcrumbs>
     </div>
   );
-}
+};
+
+const mapStateToProps = (state) => ({ token: state.auth.token });
+const mapDispatchToProps = { getUsersList };
+
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

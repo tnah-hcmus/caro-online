@@ -1,65 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 
-import { useTable, useSortBy } from "react-table";
-import { makeStyles, TablePagination } from "@material-ui/core";
-
-function Table({ columns, data }) {
-  const classes = useStyles();
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
-    {
-      columns,
-      data,
-    },
-    useSortBy
-  );
-
-  const firstPageRows = rows.slice(0, 10);
-
-  return (
-    <>
-      <table {...getTableProps()} className={classes.root}>
-        <thead>
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()} className={classes.header}>
-              {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps(column.getSortByToggleProps())} className={classes.th}>
-                  {column.render("Header")}
-                  <span>{column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}</span>
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {firstPageRows.map((row, i) => {
-            prepareRow(row);
-            return (
-              <tr {...row.getRowProps()} className={classes.row}>
-                {row.cells.map((cell) => {
-                  return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={50} // users.length
-        rowsPerPage={10} // user.
-        page={1}
-        // onChangePage={handleChangePage}
-        // onChangeRowsPerPage={handleChangeRowsPerPage}
-      />
-    </>
-  );
-}
+import { connect } from "react-redux";
+import Table from "../Table";
+import { Typography } from "@material-ui/core";
 
 function ManageUser(props) {
-  const fetchData = async () => {
-    // get users list
-    //
+  const generateData = (usersList) => {
+    return (usersList || []).map((user, i) => {
+      const stt = i + 1;
+      const email = user.email;
+      const name = user.name;
+      const verified = user.isVerified ? "Đã xác thực" : "Chưa xác thực";
+      const blocked = user.isBlocked ? "Đã bị khóa" : "Chưa bị khóa";
+      return { stt, email, name, verified, blocked };
+    });
   };
 
   const columns = React.useMemo(
@@ -70,134 +24,37 @@ function ManageUser(props) {
       },
       {
         Header: "Email",
-        accessor: "firstName",
+        accessor: "email",
       },
       {
         Header: "Name",
-        accessor: "lastName",
+        accessor: "name",
       },
       {
         Header: "Verified",
-        accessor: "lastName",
+        accessor: "verified",
       },
       {
         Header: "Blocked",
-        accessor: "lastName",
+        accessor: "blocked",
       },
     ],
     []
   );
 
-  const data = React.useMemo(
-    () => [
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-    ],
-    []
-  );
+  const data = React.useMemo(() => generateData(props.usersList), []);
 
   return (
     <div>
+      <Typography variant="h4">Manage User</Typography>
       <Table columns={columns} data={data} />
     </div>
   );
 }
 
-export default ManageUser;
+const mapStateToProps = (state) => {
+  console.log({ state });
+  return { usersList: state.user.usersList };
+};
 
-const useStyles = makeStyles({
-  root: {
-    width: "100%",
-    borderSpacing: 0,
-    borderCollapse: "collapse",
-  },
-  row: {
-    borderBottom: "1px solid #ddd",
-    height: 35,
-    "&:hover": {
-      background: "#ddd",
-    },
-    "& > td": {
-      paddingLeft: 10,
-    },
-  },
-  header: {
-    background: "#888",
-    color: "white",
-    textAlign: "left",
-    height: 40,
-    "& > th": {
-      paddingLeft: 10,
-    },
-  },
-});
+export default connect(mapStateToProps)(ManageUser);

@@ -4,9 +4,10 @@ const auth = require("../middleware/auth");
 const authAdmin = require("../middleware/authAdmin");
 const validator = require("validator");
 const router = express.Router();
-const {_createRandomUID} = require('../helper/generator');
-const {sendVerificationEmail, sendRecoverEmail, sendSuccessUpdateEmail} = require('../helper/emailSender');
-const jwt = require('jsonwebtoken')
+const { _createRandomUID } = require("../helper/generator");
+const { sendVerificationEmail, sendRecoverEmail, sendSuccessUpdateEmail } = require("../helper/emailSender");
+const jwt = require("jsonwebtoken");
+const passport = require("../helper/passport");
 
 router
   .route("/api/users")
@@ -24,10 +25,10 @@ router
       if (find) {
         return res.status(401).send({ error: "Signup failed! Already have account" });
       } else {
-        const user = new User({...req.body, gameId: _createRandomUID()});
+        const user = new User({ ...req.body, gameId: _createRandomUID() });
         await user.save();
         const token = await user.generateAuthToken();
-        const {message, code} = await sendVerificationEmail(user, token); 
+        const { message, code } = await sendVerificationEmail(user, token);
         res.status(code).send(message);
       }
     } catch (error) {
@@ -68,33 +69,40 @@ router
 
 //Verify account
 router.get("/api/token/verify/:token", async (req, res) => {
-  if(!req.params.token) return res.status(400).json({message: "We were unable to find a user for this token."});
+  if (!req.params.token) return res.status(400).json({ message: "We were unable to find a user for this token." });
   try {
-      // Find a matching token
-      const data = jwt.verify(req.params.token, process.env.JWT_KEY);
-      const user = await User.findOne({ _id: data._id })
-      if (!user) return res.status(400).json({ message: 'We were unable to find your token.' });
-      if (user.isVerified) return res.status(400).json({ message: 'This user has already been verified.' });
-      user.isVerified = true;
-      await user.save();
-      res.cookie("x-auth-cookie", req.params.token);
-      res.redirect('/auth/success');
-      //res.status(200).send("The account has been verified. Please log in."); -> for mobile
+    // Find a matching token
+    const data = jwt.verify(req.params.token, process.env.JWT_KEY);
+    const user = await User.findOne({ _id: data._id });
+    if (!user) return res.status(400).json({ message: "We were unable to find your token." });
+    if (user.isVerified) return res.status(400).json({ message: "This user has already been verified." });
+    user.isVerified = true;
+    await user.save();
+    res.cookie("x-auth-cookie", req.params.token);
+    res.redirect("/auth/success");
+    //res.status(200).send("The account has been verified. Please log in."); -> for mobile
   } catch (error) {
-      res.status(500).json({message: error.message})
+    res.status(500).json({ message: error.message });
   }
-})
+});
 router.post("/api/token/resend", async (req, res) => {
   try {
-      const { email } = req.body;
-      const user = await User.findOne({ email });
-      if (!user) return res.status(401).json({ message: 'The email address ' + email + ' is not associated with any account. Double-check your email address and try again.'});
-      if (user.isVerified) return res.status(400).json({ message: 'This account has already been verified. Please log in.'});
-      const token = await user.generateAuthToken();
-      const {message, code} = await sendVerificationEmail(user, token); 
-      res.status(code).send(message);
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user)
+      return res.status(401).json({
+        message:
+          "The email address " +
+          email +
+          " is not associated with any account. Double-check your email address and try again.",
+      });
+    if (user.isVerified)
+      return res.status(400).json({ message: "This account has already been verified. Please log in." });
+    const token = await user.generateAuthToken();
+    const { message, code } = await sendVerificationEmail(user, token);
+    res.status(code).send(message);
   } catch (error) {
-      res.status(500).json({message: error.message})
+    res.status(500).json({ message: error.message });
   }
 });
 //Recover password concept:
@@ -109,69 +117,79 @@ router.post("/api/token/resend", async (req, res) => {
  */
 
 //Recover password
-router.post('/api/recover/request', async (req, res) => { //send email to recover password
+router.post("/api/recover/request", async (req, res) => {
+  //send email to recover password
   try {
-      const { email } = req.body;
-      if (!validator.isEmail(email)) {
-        return res.status(401).json({ message: 'The email address is not valid. Re-check the email you provided and try again.'});
-      }
-      const user = await User.findOne({ email });
-      if (!user) return res.status(401).json({ message: 'The email address ' + email + ' is not associated with any account. Double-check your email address and try again.'});
-      //Generate and set password reset token
-      user.generatePasswordReset();
-      await user.save();
-     //send email
-      const {message, code} = await sendRecoverEmail(user); 
-      res.status(code).send(message); 
+    const { email } = req.body;
+    if (!validator.isEmail(email)) {
+      return res
+        .status(401)
+        .json({ message: "The email address is not valid. Re-check the email you provided and try again." });
+    }
+    const user = await User.findOne({ email });
+    if (!user)
+      return res.status(401).json({
+        message:
+          "The email address " +
+          email +
+          " is not associated with any account. Double-check your email address and try again.",
+      });
+    //Generate and set password reset token
+    user.generatePasswordReset();
+    await user.save();
+    //send email
+    const { message, code } = await sendRecoverEmail(user);
+    res.status(code).send(message);
   } catch (error) {
-      res.status(500).json({message: error.message})
+    res.status(500).json({ message: error.message });
   }
 });
 //Verified and redirect
-router.get('/api/recover/verify/:token', async (req, res) => {
-  if(!req.params.token) return res.status(400).json({message: "We were unable to find a user for this reset password token."});
+router.get("/api/recover/verify/:token", async (req, res) => {
+  if (!req.params.token)
+    return res.status(400).json({ message: "We were unable to find a user for this reset password token." });
   try {
-      const { token } = req.params;
-      const user = await User.findOne({resetPasswordToken: token, resetPasswordExpires: {$gt: Date.now()}});
-      if (!user) return res.status(401).json({message: 'Password reset token is invalid or has expired.'});
-      const updateToken = user.generateAcceptChangePasswordToken();
-      res.cookie('x-update-token', updateToken);
-      res.redirect('/password/reset');
+    const { token } = req.params;
+    const user = await User.findOne({ resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() } });
+    if (!user) return res.status(401).json({ message: "Password reset token is invalid or has expired." });
+    const updateToken = user.generateAcceptChangePasswordToken();
+    res.cookie("x-update-token", updateToken);
+    res.redirect("/password/reset");
   } catch (error) {
-      res.status(500).json({message: error.message})
+    res.status(500).json({ message: error.message });
   }
-})
+});
 
 //Reset password
-router.post('/api/recover/update', async (req, res) => {
+router.post("/api/recover/update", async (req, res) => {
   try {
-      const { token, password } = req.body;
-      if(!token) return res.status(400).json({message: 'Update token is required'});
-      const {reset, allow} = jwt.verify(token, process.env.JWT_KEY);
-      if(!reset ||  !allow) return res.status(400).json({message: 'Unable to parse token'});
-      const user = await User.findOne({resetPasswordToken: reset, resetPasswordExpires: {$gt: Date.now()}});
-      if (!user) return res.status(401).json({message: 'Password reset token is invalid or has expired.'});
+    const { token, password } = req.body;
+    if (!token) return res.status(400).json({ message: "Update token is required" });
+    const { reset, allow } = jwt.verify(token, process.env.JWT_KEY);
+    if (!reset || !allow) return res.status(400).json({ message: "Unable to parse token" });
+    const user = await User.findOne({ resetPasswordToken: reset, resetPasswordExpires: { $gt: Date.now() } });
+    if (!user) return res.status(401).json({ message: "Password reset token is invalid or has expired." });
 
-      //Set the new password
-      user.password = password;
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpires = undefined;
-      user.allowResetPassword = false;
-      user.isVerified = true;
+    //Set the new password
+    user.password = password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    user.allowResetPassword = false;
+    user.isVerified = true;
 
-      // Save the updated user object
-      await user.save();
+    // Save the updated user object
+    await user.save();
 
-      //send email
-      const {message, code} = await sendSuccessUpdateEmail(user); 
-      if(code !== 200) res.status(code).send({message});
-      else {
-        const newToken = await user.generateAuthToken();
-        res.status(code).send(newToken);
-      }
+    //send email
+    const { message, code } = await sendSuccessUpdateEmail(user);
+    if (code !== 200) res.status(code).send({ message });
+    else {
+      const newToken = await user.generateAuthToken();
+      res.status(code).send(newToken);
+    }
   } catch (error) {
-      res.status(500).json({message: error.message})
+    res.status(500).json({ message: error.message });
   }
-})
+});
 
 module.exports = router;

@@ -1,10 +1,10 @@
-const jwt = require('jsonwebtoken')
+const jwt = require("jsonwebtoken");
 
-const auth = async(req, res, next) => {
-    const token = req.header('Authorization').replace('Bearer ', '')
-    const data = jwt.verify(token, process.env.JWT_KEY);
-    req.userId = data._id;
-    req.token = token;
-    next();
-}
-module.exports = auth
+const auth = async (req, res, next) => {
+  const token = req.header("Authorization").replace("Bearer ", "");
+  const data = jwt.verify(token, process.env.JWT_KEY);
+  req.userId = data._id;
+  req.token = token;
+  next();
+};
+module.exports = auth;

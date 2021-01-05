@@ -1,5 +1,5 @@
 import { LOGIN, LOGOUT, JOIN, UPDATE_TOKEN } from "./type";
-import {initInfo, getInfo} from '../user/action';
+import { initInfo, getInfo } from "../user/action";
 import Axios from "axios";
 export const login = (id, token) => ({
   type: LOGIN,
@@ -8,13 +8,13 @@ export const login = (id, token) => ({
 
 export const joinState = (roomID) => ({
   type: JOIN,
-  payload: roomID
-})
+  payload: roomID,
+});
 
 export const updateToken = (token) => ({
   type: UPDATE_TOKEN,
-  payload: token
-})
+  payload: token,
+});
 
 export const logout = () => ({
   type: LOGOUT,
@@ -42,8 +42,8 @@ export const startLoginAdmin = (email, password, history, setMessage) => {
       .then((res) => {
         const { user, token } = res.data;
         dispatch(login(user._id, token));
-        setMessage({ type: "success", content: `Login Successfully !!!`, open: true });
-        history.push("/");
+        // setMessage({ type: "success", content: `Login Successfully !!!`, open: true });
+        history.push("/admin");
       })
       .catch((e) => {
         console.log(e);
@@ -54,18 +54,22 @@ export const startLoginAdmin = (email, password, history, setMessage) => {
 };
 export const startLoginThirdParty = (token, history) => {
   return (dispatch) => {
-    Axios.post("/api/users/me", { }, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    .then((res) => {
+    Axios.post(
+      "/api/users/me",
+      {},
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    )
+      .then((res) => {
         const user = res.data;
         dispatch(login(user.id, user.accessToken));
         dispatch(initInfo({ name: user.name, email: user.email }));
         history.push("/");
-    })
-    .catch((e) => {
+      })
+      .catch((e) => {
         console.log(e.response);
-    });
+      });
   };
 };
 export const startSignUp = (data, setMessage) => {
@@ -86,21 +90,25 @@ export const startSignUp = (data, setMessage) => {
 
 export const changePassword = (oldPass, newPass, id, token) => {
   return (dispatch) => {
-    return Axios.put("/api/users/" + id + "/password", {
-      oldPass,
-      newPass
-     }, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    .then((res) => {
+    return Axios.put(
+      "/api/users/" + id + "/password",
+      {
+        oldPass,
+        newPass,
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    )
+      .then((res) => {
         const token = res.data;
         dispatch(updateToken(token));
-        return {status: true}
-    })
-    .catch((e) => {
+        return { status: true };
+      })
+      .catch((e) => {
         const error = e.response && e.response.data && e.response.data.error;
         console.log(e);
-        return {status: false, content: { type: "error", content: error || "Lỗi không xác định", open: true }}
-    });
-  }  
-}
+        return { status: false, content: { type: "error", content: error || "Lỗi không xác định", open: true } };
+      });
+  };
+};
