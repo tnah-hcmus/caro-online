@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { Grid, makeStyles, Typography } from "@material-ui/core";
 import Bg from "../../assets/images/bg-rank.jpg";
 import IcMedal from "../../assets/images/icon-medal.png";
@@ -8,18 +8,34 @@ import IcTop1 from "../../assets/images/top1.png";
 import IcTop2 from "../../assets/images/top2.png";
 import IcTop3 from "../../assets/images/top3.png";
 import IcTop5 from "../../assets/images/top5.png";
-
-function RankChart(props) {
+import Axios from 'axios';
+import {connect} from 'react-redux';
+const getTopPlayerByMedal = (size, token) => {
+    return Axios.get(
+      "/api/users" + "?sortBy=coins" + "&start=0&end=" + size,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    )
+    .then((res) => {
+      const result = res.data;
+      console.log(result);
+      return result;
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+};
+const RankChart = (props) => {
   const classes = useStyles();
-
-  const top10 = [
-    { name: "player 01", medal: 5 },
-    { name: "player 01", medal: 5 },
-    { name: "player 01", medal: 5 },
-    { name: "player 01", medal: 5 },
-    { name: "player 01", medal: 5 },
-    { name: "player 01", medal: 5 },
-  ];
+  const [topUser, setTopUser] = useState([]);
+  useEffect(() => {
+    const fetchTopUser = async () => {
+      const users = await getTopPlayerByMedal(5, props.token);
+      setTopUser(users);
+    }
+    fetchTopUser();
+  }, []);
 
   return (
     <div className={classes.root}>
@@ -46,7 +62,7 @@ function RankChart(props) {
           alignContent="center"
           className={classes.top10}
         >
-          {top10.map((row, i) => (
+          {topUser.length && topUser.map((row, i) => (
             <Grid
               key={i}
               item
@@ -76,7 +92,7 @@ function RankChart(props) {
                 </Grid>
                 <Grid item style={{ margin: "auto 0" }}>
                   <Typography variant="h6" color="initial">
-                    52
+                    {row.coins}
                   </Typography>
                 </Grid>
               </Grid>
@@ -87,8 +103,12 @@ function RankChart(props) {
     </div>
   );
 }
-
-export default RankChart;
+const mapStateToProps = (state) => {
+  return {
+    token: state.auth.token,
+  };
+};
+export default connect(mapStateToProps)(RankChart);
 
 const useStyles = makeStyles({
   root: {

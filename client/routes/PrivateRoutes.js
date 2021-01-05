@@ -19,6 +19,8 @@ import Dashboard from "../components/admin/dashboard";
 import ManageUser from "../components/admin/ManageUser";
 import ManageGame from "../components/admin/ManageGame";
 import RankChart from "../components/rankchart";
+import GameReview from "../components/game-review/Review";
+import Rank from "../components/rankchart/index";
 
 const PrivateRoutes = (props) => {
   if (props.isAuthenticated) {
@@ -45,6 +47,8 @@ const PrivateRoutes = (props) => {
             <Route path="/room/:id" component={RoomView} />
             <Route path="/profile" component={Profile} />
             <Route path="/changepassword" component={ChangePassword} />
+            <Route path="/review/:id" component={GameReview} />
+            <Route path="/rank" component={Rank} />
             <Route path="/404" component={NotFound} />
             <Redirect to="/404" />
           </Switch>

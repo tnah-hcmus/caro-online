@@ -3,8 +3,7 @@ const userRouter = require("./routers/user");
 const authRouter = require("./routers/auth");
 const usersRouter = require("./routers/users");
 const adminRouter = require("./routers/admin");
-const gameRouter = require("./routers/game");
-const gamesRouter = require("./routers/games");
+const gamesRouter = require("./routers/game");
 const roomsRouter = require("./routers/rooms");
 const path = require("path");
 const passport = require("./helper/passport");
@@ -24,7 +23,6 @@ app.use(userRouter);
 app.use(usersRouter);
 app.use(authRouter);
 app.use(adminRouter);
-app.use(gameRouter);
 app.use(gamesRouter);
 app.use(roomsRouter);
 

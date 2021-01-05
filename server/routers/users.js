@@ -7,7 +7,8 @@ const router = express.Router();
 const { _createRandomUID } = require("../helper/generator");
 const { sendVerificationEmail, sendRecoverEmail, sendSuccessUpdateEmail } = require("../helper/emailSender");
 const jwt = require("jsonwebtoken");
-const passport = require("../helper/passport");
+const { processUser } = require("../helper/processData");
+const { raw } = require("body-parser");
 
 router
   .route("/api/users")
@@ -35,16 +36,43 @@ router
       res.status(400).send(error);
     }
   })
-  .get(auth, authAdmin, async (req, res) => {
+  .get(auth, (req, res) => {
     //GET: lấy danh sách user (phục vụ admin)
     //check quyền admin, và thực hiện
     //Tạm thời chưa apply phân quyền nên cứ gọi tới thì auto thực hiện thôi, không cần phải lăn tăn nhiều
-    try {
-      const users = await User.find().select("-password -tokens");
-      res.status(201).send({ users });
-    } catch (error) {
-      res.status(400).send(error);
-    }
+    processUser(req, res, async (user) => {
+      try {
+        const users = await User.find();
+        if (!Object.keys(req.query).length) {
+          if (user.role === "admin") res.status(200).send({ users });
+          else res.status(401).send({ error: "You don't have permission to access this resource" });
+        } else {
+          let { sortBy, start, end } = req.query;
+          if (User.schema.paths[sortBy]) {
+            const result = users.sort((a, b) => b[sortBy] - a[sortBy]).slice(start, end);
+            if (user.role === "admin") res.status(200).send(result);
+            else
+              res.status(200).send(
+                result.map((item) => {
+                  return {
+                    id: item.gameId,
+                    email: item.email,
+                    role: item.role,
+                    coins: item.coins,
+                    win: item.win,
+                    lose: item.lose,
+                    games: item.games,
+                    draw: item.draw,
+                  };
+                })
+              );
+          } else res.status(400).send({ error: "Không tìm thấy trường cần sort" });
+        }
+      } catch (error) {
+        console.log(error);
+        res.status(400).send(error);
+      }
+    });
   })
   .put(auth, authAdmin, async (req, res) => {
     //PUT: update 1 thuộc tính nào đó cho list user (block or unblock for all blocked users)
