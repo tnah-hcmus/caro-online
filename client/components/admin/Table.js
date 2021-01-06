@@ -15,6 +15,9 @@ function Table({ columns, data }) {
 
   const firstPageRows = rows.slice(0, 10);
 
+  const handleChangePage = () => {};
+  const handleChangeRowsPerPage = () => {};
+
   return (
     <>
       <table {...getTableProps()} className={classes.root}>
@@ -49,8 +52,8 @@ function Table({ columns, data }) {
         count={50} // users.length
         rowsPerPage={10} // user.
         page={1}
-        // onChangePage={handleChangePage}
-        // onChangeRowsPerPage={handleChangeRowsPerPage}
+        onChangePage={handleChangePage}
+        onChangeRowsPerPage={handleChangeRowsPerPage}
       />
     </>
   );

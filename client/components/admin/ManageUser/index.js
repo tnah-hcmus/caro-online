@@ -2,9 +2,34 @@ import React, { useEffect } from "react";
 
 import { connect } from "react-redux";
 import Table from "../Table";
-import { Typography } from "@material-ui/core";
+import { makeStyles, Typography, Breadcrumbs, Link } from "@material-ui/core";
+import HomeIcon from "@material-ui/icons/Home";
+import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
+import { Link as RouteLink } from "react-router-dom";
+
+const useStyles = makeStyles((theme) => ({
+  link: {
+    display: "flex",
+  },
+  icon: {
+    marginRight: theme.spacing(0.5),
+    width: 30,
+    height: 30,
+  },
+  label: {
+    minWidth: 220,
+  },
+  container: {
+    margin: "10px 0",
+    background: "#ddd",
+    boxShadow: "0 2px 8px grey",
+    borderRadius: 8,
+    padding: 15,
+  },
+}));
 
 function ManageUser(props) {
+  const classes = useStyles();
   const generateData = (usersList) => {
     return (usersList || []).map((user, i) => {
       const stt = i + 1;
@@ -46,14 +71,26 @@ function ManageUser(props) {
 
   return (
     <div>
-      <Typography variant="h4">Manage User</Typography>
-      <Table columns={columns} data={data} />
+      <Breadcrumbs aria-label="breadcrumb">
+        <Link color="inherit" to="/admin" component={RouteLink} className={classes.link}>
+          <HomeIcon className={classes.icon} />
+          <Typography variant="h6" style={{ color: "inherit" }}>
+            Dashboard
+          </Typography>
+        </Link>
+        <Typography variant="h6" color="textPrimary" className={classes.link}>
+          <PeopleAltIcon className={classes.icon} />
+          Manage User
+        </Typography>
+      </Breadcrumbs>
+      <div className={classes.container}>
+        <Table columns={columns} data={data} />
+      </div>
     </div>
   );
 }
 
 const mapStateToProps = (state) => {
-  console.log({ state });
   return { usersList: state.user.usersList };
 };
 

@@ -47,12 +47,16 @@ const useStyles = makeStyles((theme) => ({
 
 export default function AdminLayout({ children }) {
   const classes = useStyles();
+  const [open, setOpen] = React.useState(true);
+
+  const handleDrawerOpen = () => setOpen(true);
+  const handleDrawerClose = () => setOpen(false);
 
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <SidebarAdmin />
-      <HeaderAdmin />
+      <SidebarAdmin onDrawerClose={handleDrawerClose} open={open} />
+      <HeaderAdmin onDrawerOpen={handleDrawerOpen} open={open} />
       <main className={classes.content}>
         <div className={classes.toolbar} />
         {children}

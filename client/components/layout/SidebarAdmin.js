@@ -1,8 +1,7 @@
 /*eslint-disable*/
 import React from "react";
-import { NavLink } from "react-router-dom";
 // @material-ui/core components
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
@@ -12,11 +11,16 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MailIcon from "@material-ui/icons/Mail";
+import IconButton from "@material-ui/core/IconButton";
+import MenuIcon from "@material-ui/icons/Menu";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import VpnKeyIcon from "@material-ui/icons/VpnKey";
 import PersonIcon from "@material-ui/icons/Person";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
 import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
+import clsx from "clsx";
 
 import { Link } from "@material-ui/core";
 import { Link as RouterLink, useHistory } from "react-router-dom";
@@ -30,31 +34,71 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
   },
   appBar: {
-    width: `calc(100% - ${drawerWidth}px)`,
+    zIndex: theme.zIndex.drawer + 1,
+    transition: theme.transitions.create(["width", "margin"], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+  },
+  appBarShift: {
     marginLeft: drawerWidth,
+    width: `calc(100% - ${drawerWidth}px)`,
+    transition: theme.transitions.create(["width", "margin"], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  menuButton: {
+    marginRight: 36,
+  },
+  hide: {
+    display: "none",
   },
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
+    whiteSpace: "nowrap",
   },
-  drawerPaper: {
+  drawerOpen: {
     width: drawerWidth,
     color: "white",
     background: "#3e435f",
+    transition: theme.transitions.create("width", {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
   },
-  // necessary for content to be below app bar
-  toolbar: theme.mixins.toolbar,
+  drawerClose: {
+    color: "white",
+    background: "#3e435f",
+    transition: theme.transitions.create("width", {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    overflowX: "hidden",
+    width: theme.spacing(7) + 1,
+    [theme.breakpoints.up("sm")]: {
+      width: theme.spacing(9) + 1,
+    },
+  },
+  toolbar: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+  },
   content: {
     flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
     padding: theme.spacing(3),
   },
 }));
 
-export default function SidebarAdmin(props) {
+export default function SidebarAdmin({ onDrawerClose, open }) {
   const classes = useStyles();
   const history = useHistory();
-  // verifies if routeName is the one active (in browser input)
+  const theme = useTheme();
 
   const dataList = [
     {
@@ -89,20 +133,32 @@ export default function SidebarAdmin(props) {
 
   return (
     <Drawer
-      className={classes.drawer}
       variant="permanent"
+      className={clsx(classes.drawer, {
+        [classes.drawerOpen]: open,
+        [classes.drawerClose]: !open,
+      })}
       classes={{
-        paper: classes.drawerPaper,
+        paper: clsx({
+          [classes.drawerOpen]: open,
+          [classes.drawerClose]: !open,
+        }),
       }}
-      anchor="left"
     >
       <div className={classes.toolbar} style={{ display: "flex", justifyContent: "space-around" }}>
         <img src={IcAdmin} height={40} weight={40} style={{ margin: "auto" }} />
         <RouterLink to="/admin" style={{ margin: "auto" }}>
-          <Typography variant="h5" style={{ color: "white" }}>
+          <Typography variant="h6" style={{ color: "white" }}>
             Admin Desktop
           </Typography>
         </RouterLink>
+        <IconButton onClick={onDrawerClose}>
+          {theme.direction === "rtl" ? (
+            <ChevronRightIcon style={{ color: "white" }} />
+          ) : (
+            <ChevronLeftIcon style={{ color: "white" }} />
+          )}
+        </IconButton>
       </div>
       <Divider />
       <List>

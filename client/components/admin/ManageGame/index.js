@@ -1,165 +1,97 @@
-import React from "react";
+import React, { useEffect } from "react";
 
-import CssBaseline from "@material-ui/core/CssBaseline";
-import MaUTable from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
+import { connect } from "react-redux";
+import Table from "../Table";
+import { makeStyles, Typography, Breadcrumbs, Link } from "@material-ui/core";
+import HomeIcon from "@material-ui/icons/Home";
+import GamesIcon from "@material-ui/icons/Games";
+import { Link as RouteLink } from "react-router-dom";
 
-import { useTable } from "react-table";
-import { makeStyles, TablePagination } from "@material-ui/core";
+const useStyles = makeStyles((theme) => ({
+  link: {
+    display: "flex",
+  },
+  icon: {
+    marginRight: theme.spacing(0.5),
+    width: 30,
+    height: 30,
+  },
+  label: {
+    minWidth: 220,
+  },
+  container: {
+    margin: "10px 0",
+    background: "#ddd",
+    boxShadow: "0 2px 8px grey",
+    borderRadius: 8,
+    padding: 15,
+  },
+}));
 
-function Table({ columns, data }) {
+function ManageUser(props) {
   const classes = useStyles();
-  const { getTableProps, headerGroups, rows, prepareRow } = useTable({
-    columns,
-    data,
-  });
+  const generateData = (usersList) => {
+    return (usersList || []).map((user, i) => {
+      const stt = i + 1;
+      const email = user.email;
+      const name = user.name;
+      const verified = user.isVerified ? "Đã xác thực" : "Chưa xác thực";
+      const blocked = user.isBlocked ? "Đã bị khóa" : "Chưa bị khóa";
+      return { stt, email, name, verified, blocked };
+    });
+  };
 
-  return (
-    <MaUTable {...getTableProps()} size="small" stickyHeader>
-      <TableHead>
-        {headerGroups.map((headerGroup) => (
-          <TableRow {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map((column) => (
-              <TableCell {...column.getHeaderProps()}>{column.render("Header")}</TableCell>
-            ))}
-          </TableRow>
-        ))}
-      </TableHead>
-      <TableBody>
-        {rows.map((row, i) => {
-          prepareRow(row);
-          return (
-            <TableRow {...row.getRowProps()} hover={true}>
-              {row.cells.map((cell) => {
-                return <TableCell {...cell.getCellProps()}>{cell.render("Cell")}</TableCell>;
-              })}
-            </TableRow>
-          );
-        })}
-      </TableBody>
-    </MaUTable>
-  );
-}
-
-function ManageGame() {
   const columns = React.useMemo(
     () => [
       {
-        Header: "First Name",
-        accessor: "firstName",
+        Header: "STT",
+        accessor: "stt",
       },
       {
-        Header: "Last Name",
-        accessor: "lastName",
+        Header: "Email",
+        accessor: "email",
+      },
+      {
+        Header: "Name",
+        accessor: "name",
+      },
+      {
+        Header: "Verified",
+        accessor: "verified",
+      },
+      {
+        Header: "Blocked",
+        accessor: "blocked",
       },
     ],
     []
   );
 
-  const data = React.useMemo(
-    () => [
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-      {
-        firstName: "Phat",
-        lastName: "Nguyen",
-      },
-    ],
-    []
-  );
+  const data = React.useMemo(() => generateData(props.usersList), []);
 
   return (
     <div>
-      <CssBaseline />
-      <Table columns={columns} data={data} />
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={50}
-        rowsPerPage={10}
-        page={1}
-        // onChangePage={handleChangePage}
-        // onChangeRowsPerPage={handleChangeRowsPerPage}
-      />
+      <Breadcrumbs aria-label="breadcrumb">
+        <Link color="inherit" to="/admin" component={RouteLink} className={classes.link}>
+          <HomeIcon className={classes.icon} />
+          <Typography variant="h6" style={{ color: "inherit" }}>
+            Dashboard
+          </Typography>
+        </Link>
+        <Typography variant="h6" color="textPrimary" className={classes.link}>
+          <GamesIcon className={classes.icon} />
+          Manage Game
+        </Typography>
+      </Breadcrumbs>
+      <div className={classes.container}>
+        <Table columns={columns} data={data} />
+      </div>
     </div>
   );
 }
 
-export default ManageGame;
+const mapStateToProps = (state) => {
+  return { usersList: state.user.usersList };
+};
 
-const useStyles = makeStyles({
-  row: {
-    "&:hover": {
-      background: "#ddd",
-    },
-  },
-});
+export default connect(mapStateToProps)(ManageUser);
