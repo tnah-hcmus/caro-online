@@ -100,6 +100,7 @@ const Header = (props) => {
                           <MenuItem onClick={() => history.push("/profile")}>Profile</MenuItem>
                           <MenuItem onClick={() => history.push("/changepassword")}>Change password</MenuItem>
                           <MenuItem onClick={() => history.push("/rank")}>Ranking</MenuItem>
+                          {props.role && props.role.includes("admin") && <MenuItem onClick={() => history.push("/admin/login")}>Go to admin page</MenuItem>}
                           <MenuItem onClick={handleSignout}>Logout</MenuItem>
                         </MenuList>
                       </ClickAwayListener>
@@ -118,6 +119,7 @@ const Header = (props) => {
 const mapStateToProps = (state) => {
   return {
     name: state.user.name,
+    role: state.user.role
   };
 };
 export default connect(mapStateToProps)(Header);

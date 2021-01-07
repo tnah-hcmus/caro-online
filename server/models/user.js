@@ -94,6 +94,17 @@ const userSchema = mongoose.Schema({
   allowResetPassword: {
     type: Boolean,
     required: false
+  },
+  adminInfo: {
+    id: {
+      type: String,
+    },
+    password: {
+      type: String,
+    },
+    secret: {
+      type:String
+    }
   }
 }, {timestamp: true});
 
@@ -102,6 +113,15 @@ userSchema.pre("save", async function (next) {
   const user = this;
   if (user.isModified("password")) {
     user.password = await bcrypt.hash(user.password, 8);
+  }
+  if(user.role.includes("admin")) {
+    if(!user.adminInfo) {
+      const defaultPassword = "secretAdmin";
+      user.adminInfo = {
+        id: 'admin',
+        password: await bcrypt.hash(defaultPassword, 8)
+      }
+    }
   }
   if(user.allowResetPassword) {
     if(user.resetPasswordToken) {
@@ -125,6 +145,16 @@ userSchema.methods.generateAuthToken = async function () {
   await user.save();
   return token;
 };
+
+userSchema.methods.generateAdminSecretToken = async function () {
+  const user = this;
+  if(user.role.includes("admin")) {
+    const secret = await bcrypt.hash(user.adminInfo.password + user.password, 8);
+    user.adminInfo.secret = secret;
+    const token = jwt.sign({ secret, date: Date.now()}, process.env.JWT_KEY);
+    return token;
+  }
+}
 
 userSchema.methods.updatePasswordAndUpdateToken = async function (newPass) {
   // Generate an auth token for the user

@@ -1,5 +1,5 @@
 import { LOGIN, LOGOUT, JOIN, UPDATE_TOKEN } from "./type";
-import { initInfo, getInfo } from "../user/action";
+import { initInfo, getInfo, updateInfo } from "../user/action";
 import Axios from "axios";
 export const login = (id, token) => ({
   type: LOGIN,
@@ -36,13 +36,16 @@ export const startLogin = (email, password, setMessage) => {
       });
   };
 };
-export const startLoginAdmin = (email, password, history, setMessage) => {
-  return (dispatch, getState) => {
-    Axios.post("/api/admin/login", { email, password })
+export const startLoginAdmin = (username, password, token, history, setMessage) => {
+  return (dispatch) => {
+    Axios.post("/api/admin/auth", 
+    { username, password },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    })
       .then((res) => {
-        const { user, token } = res.data;
-        dispatch(login(user._id, token));
-        // setMessage({ type: "success", content: `Login Successfully !!!`, open: true });
+        const { token } = res.data;
+        dispatch(updateInfo("secretKey", token))
         history.push("/admin");
       })
       .catch((e) => {

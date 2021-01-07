@@ -8,7 +8,6 @@ const { _createRandomUID } = require("../helper/generator");
 const { sendVerificationEmail, sendRecoverEmail, sendSuccessUpdateEmail } = require("../helper/emailSender");
 const jwt = require("jsonwebtoken");
 const { processUser } = require("../helper/processData");
-const { raw } = require("body-parser");
 
 router
   .route("/api/users")

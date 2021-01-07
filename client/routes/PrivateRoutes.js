@@ -24,20 +24,19 @@ import Rank from "../components/rankchart/index";
 
 const PrivateRoutes = (props) => {
   if (props.isAuthenticated) {
-    if (props.role == "admin")
+    if (props.secretKey) 
       return (
-        <AdminLayout>
-          <Switch>
-            <Route path="/admin" component={Dashboard} exact />
-            <Route path="/admin/manageuser" component={ManageUser} exact />
-            <Route path="/admin/manageuser/:id" component={Profile} />
-            <Route path="/admin/managegame" component={ManageGame} exact />
-            <Route path="/admin/managegame/:id" component={ManageUser} />
-            <Route path="/admin/profile" component={Profile} />
-            <Route path="/admin/changepassword" component={ChangePassword} />
-            {props.secretKey ? <></> : null}
-          </Switch>
-        </AdminLayout>
+            <AdminLayout>
+            <Switch>
+              <Route path="/admin/dashboard" component={Dashboard} exact />
+              <Route path="/admin/manageuser" component={ManageUser} exact />
+              <Route path="/admin/manageuser/:id" component={Profile} />
+              <Route path="/admin/managegame" component={ManageGame} exact />
+              <Route path="/admin/managegame/:id" component={ManageUser} />
+              <Route path="/admin/profile" component={Profile} />
+              <Route path="/admin/changepassword" component={ChangePassword} />
+            </Switch>
+            </AdminLayout>
       );
     else
       return (
@@ -45,6 +44,7 @@ const PrivateRoutes = (props) => {
           <Switch>
             <Route path="/" component={MainPage} exact />
             <Route path="/room/:id" component={RoomView} />
+            {props.role && props.role.includes("admin") && <Route path="/admin/login" component={AdminLoginPanel} exact />}
             <Route path="/profile" component={Profile} />
             <Route path="/changepassword" component={ChangePassword} />
             <Route path="/review/:id" component={GameReview} />
@@ -58,7 +58,6 @@ const PrivateRoutes = (props) => {
     return (
       <Switch>
         <Route path="/" component={StartPage} exact />
-        <Route path="/admin" component={AdminLoginPanel} exact />
         <Route path="/auth/success" component={LoadingLogin} />
         <Route path="/password/forgot" component={ForgotPasswordPanel} />
         <Route path="/password/reset" component={ResetPasswordPanel} />
@@ -73,7 +72,6 @@ const mapStateToProps = (state) => {
   return {
     isAuthenticated: !!state.auth.token,
     role: state.user.role,
-    // role: "admin",
     secretKey: state.user.secretKey,
   };
 };

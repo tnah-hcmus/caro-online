@@ -13,9 +13,9 @@ const AdminLoginPanel = (props) => {
 
   const handleSubmitLogin = (e) => {
     e.preventDefault();
-    const email = e.target.elements.email.value;
+    const username = e.target.elements.username.value;
     const password = e.target.elements.password.value;
-    props.startLoginAdmin(email, password, props.history, setMessage);
+    props.login(username, password, props.token, props.history, setMessage);
   };
 
   return (
@@ -35,12 +35,12 @@ const AdminLoginPanel = (props) => {
               </Typography>
               <form className={classes.form} noValidate onSubmit={handleSubmitLogin}>
                 <TextField
-                  id="email"
-                  autoComplete="email"
+                  id="username"
+                  autoComplete="username"
                   fullWidth
                   margin="normal"
                   required
-                  label="Email"
+                  label="Username"
                   variant="outlined"
                   className={classes.textFiled}
                 />
@@ -59,11 +59,6 @@ const AdminLoginPanel = (props) => {
                   Log In
                 </Button>
               </form>
-            </Grid>
-            <Grid container justify="center">
-              <Link href="/password/forgot" variant="body2">
-                Forgot password?
-              </Link>
             </Grid>
           </DialogContent>
         </Dialog>
@@ -100,6 +95,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.secondary.main,
   },
 }));
-
-const mapDispatchToProps = { startLoginAdmin };
-export default connect(null, mapDispatchToProps)(AdminLoginPanel);
+const mapStateToProps = (state) => {
+  return {
+    token: state.auth.token
+  }
+}
+const mapDispatchToProps = { login: startLoginAdmin };
+export default connect(mapStateToProps, mapDispatchToProps)(AdminLoginPanel);
