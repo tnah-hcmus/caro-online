@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
 
-import { connect } from "react-redux";
 import Table from "../Table";
 import { makeStyles, Typography, Breadcrumbs, Link } from "@material-ui/core";
 import HomeIcon from "@material-ui/icons/Home";
 import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
 import { Link as RouteLink } from "react-router-dom";
+
+import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   link: {
@@ -35,9 +36,10 @@ function ManageUser(props) {
       const stt = i + 1;
       const email = user.email;
       const name = user.name;
-      const verified = user.isVerified ? "Đã xác thực" : "Chưa xác thực";
-      const blocked = user.isBlocked ? "Đã bị khóa" : "Chưa bị khóa";
-      return { stt, email, name, verified, blocked };
+      const verified = user.isVerified.toString() ? "True" : "False";
+      const blocked = user.isBlocked ? "True" : "False";
+      const actions = user._id;
+      return { stt, email, name, verified, blocked, actions };
     });
   };
 
@@ -58,10 +60,17 @@ function ManageUser(props) {
       {
         Header: "Verified",
         accessor: "verified",
+        disableSortBy: true,
       },
       {
         Header: "Blocked",
         accessor: "blocked",
+        disableSortBy: true,
+      },
+      {
+        Header: "Actions",
+        accessor: "actions",
+        disableSortBy: true,
       },
     ],
     []
@@ -74,11 +83,11 @@ function ManageUser(props) {
       <Breadcrumbs aria-label="breadcrumb">
         <Link color="inherit" to="/admin" component={RouteLink} className={classes.link}>
           <HomeIcon className={classes.icon} />
-          <Typography variant="h6" style={{ color: "inherit" }}>
+          <Typography variant="body1" style={{ color: "inherit" }}>
             Dashboard
           </Typography>
         </Link>
-        <Typography variant="h6" color="textPrimary" className={classes.link}>
+        <Typography variant="body1" color="textPrimary" className={classes.link}>
           <PeopleAltIcon className={classes.icon} />
           Manage User
         </Typography>

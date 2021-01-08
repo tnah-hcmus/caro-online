@@ -5,7 +5,7 @@ const auth = async (req, res, next) => {
   const tokens = req.header("Authorization").replace("Bearer ", "").split(" ");
   const token = tokens[0];
   const data = jwt.verify(token, process.env.JWT_KEY);
-  if(!data || !data._id) return res.status(401).send({error: "Invalid token"});
+  if (!data || !data._id) return res.status(401).send({ error: "Invalid token" });
   req.userId = data._id;
   req.token = token;
   req.secretKey = tokens[1];

@@ -1,10 +1,11 @@
 const express = require("express");
 const auth = require("../middleware/auth");
-const {processUser} = require('../helper/processData');
+const { processUser } = require("../helper/processData");
 const bcrypt = require("bcryptjs");
 const router = express.Router();
 
-router.post("/api/admin/auth", auth, (req, res) => { //lấy thông tin cá nhân từ token (không biết trước id);
+router.post("/api/admin/auth", auth, (req, res) => {
+  //lấy thông tin cá nhân từ token (không biết trước id);
   processUser(req, res, async (user) => {
     const { username, password } = req.body;
     if (!username || !password) {
@@ -18,15 +19,15 @@ router.post("/api/admin/auth", auth, (req, res) => { //lấy thông tin cá nhâ
       if (user.role.indexOf("admin") === -1) {
         return res.status(401).send({ error: "You're not admin" });
       } else {
-        const isRightPassword = user.adminInfo.id == username && await bcrypt.compare(password, user.adminInfo.password);
-        if(isRightPassword) {
+        const isRightPassword =
+          user.adminInfo.id == username && (await bcrypt.compare(password, user.adminInfo.password));
+        if (isRightPassword) {
           const token = user.generateAdminSecretToken();
-          res.status(200).send({token})
+          res.status(200).send({ token });
         } else return res.status(401).send({ error: "Wrong password or username" });
-
       }
     }
-  })
-})
+  });
+});
 
 module.exports = router;

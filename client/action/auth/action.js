@@ -38,15 +38,17 @@ export const startLogin = (email, password, setMessage) => {
 };
 export const startLoginAdmin = (username, password, token, history, setMessage) => {
   return (dispatch) => {
-    Axios.post("/api/admin/auth", 
-    { username, password },
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    Axios.post(
+      "/api/admin/auth",
+      { username, password },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    )
       .then((res) => {
         const { token } = res.data;
-        dispatch(updateInfo("secretKey", token))
-        history.push("/admin");
+        dispatch(updateInfo("secretKey", token));
+        history.push("/admin/dashboard");
       })
       .catch((e) => {
         console.log(e);

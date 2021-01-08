@@ -9,8 +9,8 @@ import iconDinosaur from "../../assets/images/icon-dinosaur.png";
 import EditIcon from "@material-ui/icons/Edit";
 import { updateName } from "../../action/user/action";
 import { connect } from "react-redux";
-import {withRouter} from 'react-router-dom';
-import Axios from 'axios';
+import { withRouter } from "react-router-dom";
+import Axios from "axios";
 const useStyles = makeStyles((theme) => ({
   link: {
     display: "flex",
@@ -44,15 +44,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const getGameList = (token) => {
-  return Axios.get(
-      "/api/games" + "?filterBy=userGames",
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    )
+  return Axios.get("/api/games" + "?filterBy=userGames", {
+    headers: { Authorization: `Bearer ${token}` },
+  })
     .then((res) => {
       const listGame = res.data;
-      console.log(listGame)
+      console.log(listGame);
       return listGame;
     })
     .catch((e) => {
@@ -79,9 +76,9 @@ const Profile = ({ user, updateName, token, userId, history }) => {
     const fetchGames = async () => {
       const list = await getGameList(token);
       setGames(list);
-    }
+    };
     fetchGames();
-  }, [])
+  }, []);
 
   const handleChangeName = () => {
     const newFirstName = firstName.trim();
@@ -121,8 +118,8 @@ const Profile = ({ user, updateName, token, userId, history }) => {
         </Grid>
         <DividerComponent />
         <Grid item container spacing={1} xs={12} direction="row" wrap="nowrap">
-          <Grid item className={classes.avatar}>
-            <img src={iconDinosaur} />
+          <Grid item>
+            <img src={iconDinosaur} className={classes.avatar} />
           </Grid>
           <Grid item container direction="column" className={classes.info}>
             <Grid item container direction="row">
@@ -271,10 +268,10 @@ const Profile = ({ user, updateName, token, userId, history }) => {
                     {game.start}
                   </Typography>
                 </Grid>
-                <Grid item xs={2} onClick = {() => history.push("/review/" + game._id, {token})}>
-                    <Typography variant="subtitle2" color="primary" align="center">
-                      View detail
-                    </Typography>
+                <Grid item xs={2} onClick={() => history.push("/review/" + game._id, { token })}>
+                  <Typography variant="subtitle2" color="primary" align="center">
+                    View detail
+                  </Typography>
                 </Grid>
               </Grid>
             ))}

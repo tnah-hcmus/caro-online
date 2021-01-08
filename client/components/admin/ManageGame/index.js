@@ -74,11 +74,11 @@ function ManageUser(props) {
       <Breadcrumbs aria-label="breadcrumb">
         <Link color="inherit" to="/admin" component={RouteLink} className={classes.link}>
           <HomeIcon className={classes.icon} />
-          <Typography variant="h6" style={{ color: "inherit" }}>
+          <Typography variant="body1" style={{ color: "inherit" }}>
             Dashboard
           </Typography>
         </Link>
-        <Typography variant="h6" color="textPrimary" className={classes.link}>
+        <Typography variant="body1" color="textPrimary" className={classes.link}>
           <GamesIcon className={classes.icon} />
           Manage Game
         </Typography>
