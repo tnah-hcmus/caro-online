@@ -17,8 +17,8 @@ const useStyles = makeStyles((theme) => ({
   },
   icon: {
     marginRight: theme.spacing(0.5),
-    width: 30,
-    height: 30,
+    width: 22,
+    height: 22,
   },
   label: {
     minWidth: 220,
