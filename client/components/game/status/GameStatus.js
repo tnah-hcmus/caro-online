@@ -55,7 +55,7 @@ const Status = (props) => {
   WSObserver.startListenGameRequest(handleShowRequestPopup);
   const handleTimeOut = () => {
     props.setMessage({ type: "error", content: `Time's Up !!!`, open: true });
-    //props.updateGameResult(props.roomID, (props.player !== "X" ? 2 : 1));
+    props.updateGameResult(props.roomID, (props.player !== "X" ? 1 : 2));
   };
   const handleNewgame = () => {
     if (!props.player || props.player == "")
@@ -152,7 +152,7 @@ const Status = (props) => {
             />
           </Grid>
           <Grid item xs={12} className={classes.countdown}>
-            <Countdown time={5} onTimeOut={handleTimeOut} />
+            <Countdown time={1000} onTimeOut={handleTimeOut} />
             <Typography variant="h6">{props.status}</Typography>
           </Grid>
         </Grid>

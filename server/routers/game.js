@@ -3,33 +3,41 @@ const auth = require("../middleware/auth");
 const User = require("../models/user");
 const Game = require("../models/game");
 const {processUser} = require('../helper/processData');
+const authAdmin = require("../middleware/authAdmin");
 const router = express.Router();
 
 
 router //game only create and edit by server in socket server, not from client-api
   .route("/api/games")
-  .get(auth, async (req, res) => {
+  .get(auth, authAdmin, async (req, res) => {
     processUser(req, res, async (user) => {
       // Get all games
       try {
         let gameList = [];
-        if(!Object.keys(req.query).length) gameList = await Game.find();
-        else {
-          const {filterBy} = req.query;
-          if(filterBy === "userGames") {
-            const ids = user.games.map(item => item.id);
-            gameList = await Game.find().where('_id').in(ids).exec();
-          }
-        }
-        if (!gameList.length) {
-          res.status(401).send({ error: "Can't get game !!!" });
+        const {filterBy} = req.query; 
+        if (filterBy === "userGames") {
+          const ids = user.games.map((item) => item.id);
+          gameList = await Game.find().where("_id").in(ids).exec();
+          if (req.adminAuth.status !== 200) {
+            res.status(200).send(
+              gameList.map((item) => {
+                delete item.history;
+                delete item.chat;
+                delete item.timerId;
+                return item;
+              })
+            );
+          } else res.status(gameList);
         } else {
-          res.status(200).send(gameList.map(item => {
-            delete item.history;
-            delete item.chat;
-            delete item.timerId;
-            return item;
-          }));
+          if (req.adminAuth.status !== 200) res.status(401).send({ error: req.adminAuth.error });
+          else {
+            if (filterBy) {
+              const user = await User.findOne({gameId: filterBy});
+              const ids = user.games.map((item) => item.id);
+              gameList = await Game.find().where("_id").in(ids).exec();
+            } else gameList = await Game.find();
+            res.status(200).send(gameList);
+          }
         }
       } catch (error) {
         console.log(error);

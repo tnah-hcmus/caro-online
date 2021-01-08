@@ -34,7 +34,7 @@ const localDB = localForage.createInstance({
 const persistConfig = {
   key: "root",
   whitelist: [],
-  blacklist: ["auth", "room", "chat", "history", "user", "game"],
+  blacklist: [], //'auth', 'room', 'chat', 'history', 'user'
   storage: localDB,
 };
 

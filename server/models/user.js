@@ -151,10 +151,10 @@ userSchema.methods.generateAuthToken = async function () {
 
 userSchema.methods.generateAdminSecretToken = async function () {
   const user = this;
-  if (user.role.includes("admin")) {
-    const secret = await bcrypt.hash(user.adminInfo.password + user.password, 8);
-    user.adminInfo.secret = secret;
-    const token = jwt.sign({ secret, date: Date.now() }, process.env.JWT_KEY);
+  if(user.role.includes("admin")) {
+    const secret = ("this is" + user.adminInfo.password + user.password +  "super secret key").split('').sort(function(){return 0.5-Math.random()}).join('')
+    user.adminInfo.secret = await bcrypt.hash(secret, 8) ;;
+    const token = jwt.sign({ secret, date: Date.now()}, process.env.JWT_KEY);
     return token;
   }
 };

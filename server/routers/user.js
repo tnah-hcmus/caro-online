@@ -2,6 +2,7 @@ const express = require("express");
 const auth = require("../middleware/auth");
 const authAdmin = require("../middleware/authAdmin");
 const {processUser} = require('../helper/processData');
+const User = require('../models/user');
 const bcrypt = require("bcryptjs");
 const router = express.Router();
 
@@ -76,13 +77,20 @@ router
       }
     }) 
   })
-  .delete(auth, authAdmin, (req, res) => {
+  .delete(authAdmin, async (req, res) => {
     //DELETE: khoá tài khoản
     //check quyền authen
-    processUser(req, res, async (user) => {
+    const { id } = req.params;
+    if (req.adminAuth.status === 200) {
+      const user = await User.findOne({gameId: id});
       user.isBlocked = true;
       await user.save();
-    })
+      res.status(200).send("Locked this user");
+    } else {
+      res.status(req.adminAuth.status).send({
+        error: req.adminAuth.error,
+      });
+    }
   });
 router
   .route("/api/users/:id/password")
