@@ -43,13 +43,13 @@ router
       try {
         const users = await User.find();
         if (!Object.keys(req.query).length) {
-          if (user.role === "admin") res.status(200).send({ users });
+          if (user.role.indexOf("admin") !== -1) res.status(200).send({ users });
           else res.status(401).send({ error: "You don't have permission to access this resource" });
         } else {
           let { sortBy, start, end } = req.query;
           if (User.schema.paths[sortBy]) {
             const result = users.sort((a, b) => b[sortBy] - a[sortBy]).slice(start, end);
-            if (user.role === "admin") res.status(200).send(result);
+            if (user.role.indexOf("admin") !== -1) res.status(200).send(result);
             else
               res.status(200).send(
                 result.map((item) => {

@@ -51,6 +51,7 @@ export default function SearchUser() {
   const classes = useStyles();
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
+  const [option, setOption] = useState("email");
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -74,6 +75,11 @@ export default function SearchUser() {
     prevOpen.current = open;
   }, [open]);
 
+  const handleChangeOption = (option) => {
+    setOption(option);
+    setOpen(false);
+  };
+
   const handleSignout = () => {
     console.log("LOGOUT");
   };
@@ -84,7 +90,7 @@ export default function SearchUser() {
       <Divider className={classes.divider} orientation="vertical" />
       <IconButton className={classes.iconButton} aria-label="menu" ref={anchorRef} onClick={handleToggle}>
         <Typography variant="body1" color="initial">
-          Email
+          {option}
         </Typography>
         <ExpandMoreIcon />
       </IconButton>
@@ -94,8 +100,8 @@ export default function SearchUser() {
             <Paper>
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList autoFocusItem={open} id="menu-list-grow">
-                  <MenuItem onClick={() => console.log("email")}>Email</MenuItem>
-                  <MenuItem onClick={() => console.log("name")}>Name</MenuItem>
+                  <MenuItem onClick={() => handleChangeOption("email")}>Email</MenuItem>
+                  <MenuItem onClick={() => handleChangeOption("name")}>Name</MenuItem>
                 </MenuList>
               </ClickAwayListener>
             </Paper>

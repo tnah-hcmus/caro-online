@@ -1,25 +1,61 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
-import { useTable, useSortBy } from "react-table";
-import { makeStyles, TablePagination } from "@material-ui/core";
+import { useTable, useSortBy, usePagination } from "react-table";
+import { makeStyles, TablePagination, Button } from "@material-ui/core";
+import { useHistory } from "react-router-dom";
+import ConfirmModal from "../common/ConfirmModal";
 
 function Table({ columns, data }) {
   const classes = useStyles();
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
+  const history = useHistory();
+  const [open, setOpen] = useState(false);
+  const [userId, setUserId] = useState("");
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+    pageOptions,
+    page,
+    state: { pageIndex, pageSize },
+    gotoPage,
+    previousPage,
+    nextPage,
+    setPageSize,
+    canPreviousPage,
+    canNextPage,
+  } = useTable(
     {
       columns,
       data,
     },
-    useSortBy
+    useSortBy,
+    usePagination
   );
 
-  const firstPageRows = rows.slice(0, 10);
+  const handleChangePage = (event, page) => gotoPage(page);
 
-  const handleChangePage = () => {};
-  const handleChangeRowsPerPage = () => {};
+  const handleChangeRowsPerPage = (event) => setPageSize(event.target.value);
+
+  const onBlockUser = (userId) => {
+    setUserId(userId);
+    setOpen(true);
+  };
+
+  const handleBlockUser = () => {
+    console.log("Block user", userId);
+    setOpen(false);
+  };
 
   return (
     <>
+      <ConfirmModal
+        title="Do you want to block this user ?"
+        open={open}
+        onAgree={handleBlockUser}
+        onDisagree={() => setOpen(false)}
+      />
       <table {...getTableProps()} className={classes.root}>
         <thead>
           {headerGroups.map((headerGroup) => (
@@ -34,12 +70,37 @@ function Table({ columns, data }) {
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {firstPageRows.map((row, i) => {
+          {rows.map((row, i) => {
             prepareRow(row);
             return (
               <tr {...row.getRowProps()} className={classes.row}>
                 {row.cells.map((cell) => {
-                  return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
+                  return (
+                    <td {...cell.getCellProps()}>
+                      {cell.column.Header === "Actions" ? (
+                        <div className={classes.actions}>
+                          <Button
+                            onClick={() => history.push(`/admin/manageuser/${cell.value}`)}
+                            variant="contained"
+                            size="small"
+                            color="primary"
+                          >
+                            View
+                          </Button>
+                          <Button
+                            onClick={() => onBlockUser(cell.value)}
+                            variant="contained"
+                            size="small"
+                            color="secondary"
+                          >
+                            {cell.row.original.blocked == "False" ? "Block" : "Unblock"}
+                          </Button>
+                        </div>
+                      ) : (
+                        cell.render("Cell")
+                      )}
+                    </td>
+                  );
                 })}
               </tr>
             );
@@ -47,11 +108,11 @@ function Table({ columns, data }) {
         </tbody>
       </table>
       <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
+        rowsPerPageOptions={[10, 20, 30, 50]}
         component="div"
-        count={50} // users.length
-        rowsPerPage={10} // user.
-        page={1}
+        count={rows.length}
+        rowsPerPage={pageSize}
+        page={pageIndex}
         onChangePage={handleChangePage}
         onChangeRowsPerPage={handleChangeRowsPerPage}
       />
@@ -68,10 +129,10 @@ const useStyles = makeStyles({
     borderCollapse: "collapse",
   },
   row: {
-    borderBottom: "1px solid #ddd",
+    borderBottom: "1px solid #f1f1f1",
     height: 35,
     "&:hover": {
-      background: "#ddd",
+      background: "#f1f1f1",
     },
     "& > td": {
       paddingLeft: 10,
@@ -84,6 +145,11 @@ const useStyles = makeStyles({
     height: 40,
     "& > th": {
       paddingLeft: 10,
+    },
+  },
+  actions: {
+    "&>button": {
+      margin: "auto 5px",
     },
   },
 });

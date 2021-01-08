@@ -21,22 +21,25 @@ import ManageGame from "../components/admin/ManageGame";
 import RankChart from "../components/rankchart";
 import GameReview from "../components/game-review/Review";
 import Rank from "../components/rankchart/index";
+import UserDetail from "../components/admin/ManageUser/UserDetail";
+import GameDetail from "../components/admin/ManageGame/GameDetail";
 
 const PrivateRoutes = (props) => {
   if (props.isAuthenticated) {
-    if (props.secretKey) 
+    if (props.secretKey)
       return (
-            <AdminLayout>
-            <Switch>
-              <Route path="/admin/dashboard" component={Dashboard} exact />
-              <Route path="/admin/manageuser" component={ManageUser} exact />
-              <Route path="/admin/manageuser/:id" component={Profile} />
-              <Route path="/admin/managegame" component={ManageGame} exact />
-              <Route path="/admin/managegame/:id" component={ManageUser} />
-              <Route path="/admin/profile" component={Profile} />
-              <Route path="/admin/changepassword" component={ChangePassword} />
-            </Switch>
-            </AdminLayout>
+        <AdminLayout>
+          <Switch>
+            <Route path="/admin/dashboard" component={Dashboard} exact />
+            <Route path="/admin/manageuser" component={ManageUser} exact />
+            <Route path="/admin/manageuser/:id" component={UserDetail} />
+            <Route path="/admin/managegame" component={ManageGame} exact />
+            <Route path="/admin/managegame/:id" component={GameDetail} />
+            <Route path="/admin/profile" component={Profile} />
+            <Route path="/admin/changepassword" component={ChangePassword} />
+            <Redirect to="/admin/dashboard" />
+          </Switch>
+        </AdminLayout>
       );
     else
       return (
@@ -44,7 +47,9 @@ const PrivateRoutes = (props) => {
           <Switch>
             <Route path="/" component={MainPage} exact />
             <Route path="/room/:id" component={RoomView} />
-            {props.role && props.role.includes("admin") && <Route path="/admin/login" component={AdminLoginPanel} exact />}
+            {props.role && props.role.includes("admin") && (
+              <Route path="/admin/login" component={AdminLoginPanel} exact />
+            )}
             <Route path="/profile" component={Profile} />
             <Route path="/changepassword" component={ChangePassword} />
             <Route path="/review/:id" component={GameReview} />

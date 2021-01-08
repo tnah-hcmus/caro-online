@@ -12,9 +12,11 @@ export default function ConfirmModal(props) {
   return (
     <Dialog open={open} onClose={onDisagree}>
       <DialogTitle>{title}</DialogTitle>
-      <DialogContent>
-        <DialogContentText>{body}</DialogContentText>
-      </DialogContent>
+      {body && (
+        <DialogContent>
+          <DialogContentText>{body}</DialogContentText>
+        </DialogContent>
+      )}
       <DialogActions>
         <Button onClick={onDisagree} color="primary">
           Disagree
