@@ -68,15 +68,21 @@ const BoxChat = (props) => {
       <Grid item container xs={12} className={classes.content} alignItems="flex-end">
         <Grid item xs={12} className={classes.box}>
           {allMessages.map((item, i) => {
-            return <Message key = {i} isMyMessage={item.isMyMessage} message={item.message} owner={item.owner} />;
+            return <Message key={i} isMyMessage={item.isMyMessage} message={item.message} owner={item.owner} />;
           })}
         </Grid>
         <Grid container item xs={12} alignItems="flex-end" direction="row" className={classes.input}>
           <Grid item xs={8} style={{ padding: "0 10px" }}>
-            <textarea id="message" className={classes.inputBtn} ref={chatRef} />
+            <textarea id="message" className={classes.inputBtn} ref={chatRef} disabled={props.isReview} />
           </Grid>
           <Grid item xs={4} style={{ margin: "auto", padding: 0 }}>
-            <Button startIcon={<SendIcon />} variant="contained" color="primary" margin="" onClick={handleChat}>
+            <Button
+              startIcon={<SendIcon />}
+              variant="contained"
+              color="primary"
+              disabled={props.isReview}
+              onClick={handleChat}
+            >
               Send
             </Button>
           </Grid>
@@ -88,7 +94,7 @@ const BoxChat = (props) => {
 const mapStateToProps = (state) => {
   return {
     chat: state.chat,
-    name: state.user.name
+    name: state.user.name,
   };
 };
 const mapDispatchToProps = {

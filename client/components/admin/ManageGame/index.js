@@ -48,20 +48,21 @@ function ManageUser(props) {
         accessor: "stt",
       },
       {
-        Header: "Email",
-        accessor: "email",
+        Header: "RoomID",
+        accessor: "roomId",
       },
       {
-        Header: "Name",
-        accessor: "name",
+        Header: "Date",
+        accessor: "date",
       },
       {
         Header: "Verified",
         accessor: "verified",
       },
       {
-        Header: "Blocked",
-        accessor: "blocked",
+        Header: "Actions",
+        accessor: "actions",
+        disableSortBy: true,
       },
     ],
     []

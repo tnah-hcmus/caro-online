@@ -1,12 +1,12 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { Grid, makeStyles, Typography, Button } from "@material-ui/core";
 import BoardView from "../board/BoardView";
 import Status from "./status/GameStatus";
 import calculateWinner from "../../game-logic/calculateWinner";
 
 import { addBoard, createBoard } from "../../action/history/action";
-import {updateCoins} from '../../action/room/action';
-import {updateUserAfterGame} from '../../action/user/action';
+import { updateCoins } from "../../action/room/action";
+import { updateUserAfterGame } from "../../action/user/action";
 
 import WSSubject from "../../socket/subject";
 import WSObserver from "../../socket/observer";
@@ -19,7 +19,7 @@ const useStyles = makeStyles({
     // margin: "15px 5px",
   },
   board: {
-    marginTop: 45,
+    marginTop: 20,
     padding: "15px",
     background: "#d2d2d2",
     borderRadius: 12,
@@ -51,75 +51,93 @@ const Game = (props) => {
     current = props.history[step].squares;
     player = props.history[step].player;
   }
-  switch(roomInfo.result) {
+  switch (roomInfo.result) {
     case 1:
-      winning = {winArea: [], winner: "X"}
+      winning = { winArea: [], winner: "X" };
       break;
-    case 2: 
-      winning = {winArea: [], winner: "O"}
+    case 2:
+      winning = { winArea: [], winner: "O" };
       break;
     case 3:
-      winning = {winArea: [], winner: drawFlag}
+      winning = { winArea: [], winner: drawFlag };
       break;
   }
   const handleClick = (i, j) => {
-    if (props.player === "") setMessage({ type: "error", content: "Bạn không phải là người chơi", open: true })
-    else if (props.player === player) setMessage({ type: "error", content: "Hãy chờ tới lượt của bạn", open: true })
+    if (props.player === "") setMessage({ type: "error", content: "Bạn không phải là người chơi", open: true });
+    else if (props.player === player) setMessage({ type: "error", content: "Hãy chờ tới lượt của bạn", open: true });
     else updateBoard(i, j, props.player);
   };
   const updateCoin = (winner) => {
     if (props.player !== "") props.updateUserAfterGame(roomInfo.coins, winner == props.player);
-    if(winner == "X") {
+    if (winner == "X") {
       props.updateCoins(props.roomID, "X", roomInfo.players.X.coins + roomInfo.coins);
       props.updateCoins(props.roomID, "Y", roomInfo.players.Y.coins - roomInfo.coins);
     }
-    if(winner == "O") {
+    if (winner == "O") {
       props.updateCoins(props.roomID, "X", roomInfo.players.X.coins - roomInfo.coins);
       props.updateCoins(props.roomID, "Y", roomInfo.players.Y.coins + roomInfo.coins);
     }
-  }
+  };
   WSObserver.startListenGameResult(updateCoin);
   const updateBoard = (i, j, player) => {
     const id = i * size + j;
     const squares = current.slice();
-    if(winning) setMessage({ type: "error", content: "Game đã kết thúc", open: true })
-    else if(squares[id]) setMessage({ type: "error", content: "Ô này đã được đánh", open: true })
+    if (winning) setMessage({ type: "error", content: "Game đã kết thúc", open: true });
+    else if (squares[id]) setMessage({ type: "error", content: "Ô này đã được đánh", open: true });
     else {
       squares[id] = player;
       const isWin = calculateWinner(id, squares, squares[id], size);
-      if(isWin) updateCoin(isWin.winner);
+      if (isWin) updateCoin(isWin.winner);
       props.addBoard(props.roomID, squares, isWin, player);
-      WSSubject.sendGameData({ roomID: props.roomID, squares, status: isWin, player, x: i, y: j});
+      WSSubject.sendGameData({ roomID: props.roomID, squares, status: isWin, player, x: i, y: j });
     }
   };
 
   const getGameStatus = () => {
-    if(winning) {
-      if(winning.winner !== drawFlag) return "Winner: " + winning.winner;
+    if (winning) {
+      if (winning.winner !== drawFlag) return "Winner: " + winning.winner;
       else return "Two player draw!";
-    } else if ((step >= size * size)) {
+    } else if (step >= size * size) {
       return "Two player draw!";
     } else return "Playing..";
   };
 
   return (
     <>
-    {canView
-    ?
-    <Grid container item xs={12} md={9} className={classes.root}>
-      <Grid item xs={8} className={classes.board}>
-        <BoardView squares={current} size={size} handleClick={handleClick} winning={winning} setMessage = {setMessage}/>
-      </Grid>
-      <Grid item xs={4} className={classes.status}>
-        <Status X = {roomInfo.players.X} O = {roomInfo.players.Y} status = {getGameStatus()} winning = {winning} isTurn = {roomInfo.players.X.id === props.userId ? props.player !== player : props.player === player} roomID = {props.roomID} player = {props.player} size = {size} setMessage = {setMessage} isOWner = {roomInfo.players.X.id === props.userId} handleLeave = {props.handleLeave} viewers = {roomInfo.viewer} updateCoin = {updateCoin}/>
-      </Grid>
-      <CustomizedSnackbars message = {message}/>
-    </Grid>
-    : <p>Đang tải trận, vui lòng chờ</p>
-    }
+      {canView ? (
+        <Grid container item xs={12} md={9} className={classes.root}>
+          <Grid item xs={8} className={classes.board}>
+            <BoardView
+              squares={current}
+              size={size}
+              handleClick={handleClick}
+              winning={winning}
+              setMessage={setMessage}
+            />
+          </Grid>
+          <Grid item xs={4} className={classes.status}>
+            <Status
+              X={roomInfo.players.X}
+              O={roomInfo.players.Y}
+              status={getGameStatus()}
+              winning={winning}
+              isTurn={roomInfo.players.X.id === props.userId ? props.player !== player : props.player === player}
+              roomID={props.roomID}
+              player={props.player}
+              size={size}
+              setMessage={setMessage}
+              isOWner={roomInfo.players.X.id === props.userId}
+              handleLeave={props.handleLeave}
+              viewers={roomInfo.viewer}
+              updateCoin={updateCoin}
+            />
+          </Grid>
+          <CustomizedSnackbars message={message} />
+        </Grid>
+      ) : (
+        <p>Đang tải trận, vui lòng chờ</p>
+      )}
     </>
-    
-    
   );
 };
 const mapStateToProps = (state) => {
@@ -127,13 +145,13 @@ const mapStateToProps = (state) => {
     history: state.history[state.auth.inRoom],
     roomID: state.auth.inRoom,
     rooms: state.room,
-    userId: state.auth.id
+    userId: state.auth.id,
   };
 };
 const mapDispatchToProps = {
   addBoard,
   createBoard,
   updateCoins,
-  updateUserAfterGame
+  updateUserAfterGame,
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Game);

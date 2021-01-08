@@ -242,6 +242,24 @@ const Profile = ({ user, updateName, token, userId, history }) => {
             </Typography>
           </Grid>
           <Grid item xs={12} className={classes.historyGame}>
+            <Grid item container xs={12} direction="row" justify="space-between" wrap="nowrap" className={classes.game}>
+              <Grid item xs={1}>
+                <Typography variant="h6" align="center">
+                  RoomID
+                </Typography>
+              </Grid>
+              <Grid item xs={2}>
+                <Typography variant="h6">Status</Typography>
+              </Grid>
+              <Grid item xs={2}>
+                <Typography variant="h6" align="center">
+                  Date
+                </Typography>
+              </Grid>
+              <Grid item xs={2}>
+                <Typography variant="h6">Actions</Typography>
+              </Grid>
+            </Grid>
             {(games || []).map((game, i) => (
               <Grid
                 key={i}
@@ -268,10 +286,14 @@ const Profile = ({ user, updateName, token, userId, history }) => {
                     {game.start}
                   </Typography>
                 </Grid>
-                <Grid item xs={2} onClick={() => history.push("/review/" + game._id, { token })}>
-                  <Typography variant="subtitle2" color="primary" align="center">
+                <Grid item xs={2}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => history.push("/review/" + game._id, { token })}
+                  >
                     View detail
-                  </Typography>
+                  </Button>
                 </Grid>
               </Grid>
             ))}
