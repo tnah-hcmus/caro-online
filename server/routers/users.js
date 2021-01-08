@@ -35,21 +35,22 @@ router
       res.status(400).send(error);
     }
   })
-  .get(auth, (req, res) => {
+  .get(auth, authAdmin, (req, res) => {
     //GET: lấy danh sách user (phục vụ admin)
     //check quyền admin, và thực hiện
-    //Tạm thời chưa apply phân quyền nên cứ gọi tới thì auto thực hiện thôi, không cần phải lăn tăn nhiều
-    processUser(req, res, async (user) => {
+    processUser(req, res, async () => {
       try {
         const users = await User.find();
         if (!Object.keys(req.query).length) {
-          if (user.role === "admin") res.status(200).send({ users });
-          else res.status(401).send({ error: "You don't have permission to access this resource" });
+          if (req.adminAuth.status === 200) res.status(200).send({ users });
+          else res.status(req.adminAuth.status).send({
+            error: req.adminAuth.error
+          });
         } else {
           let { sortBy, start, end } = req.query;
           if (User.schema.paths[sortBy]) {
             const result = users.sort((a, b) => b[sortBy] - a[sortBy]).slice(start, end);
-            if (user.role === "admin") res.status(200).send(result);
+            if (req.adminAuth.status === 200) res.status(200).send(result);
             else
               res.status(200).send(
                 result.map((item) => {

@@ -30,11 +30,11 @@ const localDB = localForage.createInstance({
 });
 
 const persistConfig = {
-  key: 'root',
+  key: "root",
   whitelist: [],
-  blacklist: ['auth', 'room', 'chat', 'history', 'user'],
+  blacklist: [], //'auth', 'room', 'chat', 'history', 'user'
   storage: localDB,
-}
+};
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
