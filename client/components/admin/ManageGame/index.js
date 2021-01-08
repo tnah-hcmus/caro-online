@@ -6,6 +6,7 @@ import { makeStyles, Typography, Breadcrumbs, Link } from "@material-ui/core";
 import HomeIcon from "@material-ui/icons/Home";
 import GamesIcon from "@material-ui/icons/Games";
 import { Link as RouteLink } from "react-router-dom";
+import moment from "moment";
 
 const useStyles = makeStyles((theme) => ({
   link: {
@@ -28,16 +29,34 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ManageUser(props) {
+function ManageGame(props) {
   const classes = useStyles();
-  const generateData = (usersList) => {
-    return (usersList || []).map((user, i) => {
+  const generateData = (gamesList) => {
+    const getStatus = (status) => {
+      switch (status) {
+        case 0:
+          return "Game not end yet";
+        case 1:
+          return "X win";
+        case 2:
+          return "O win";
+        case 3:
+          return "Draw game";
+        default:
+          return "corrupt";
+      }
+    };
+
+    return (gamesList || []).map((game, i) => {
       const stt = i + 1;
-      const email = user.email;
-      const name = user.name;
-      const verified = user.isVerified ? "Đã xác thực" : "Chưa xác thực";
-      const blocked = user.isBlocked ? "Đã bị khóa" : "Chưa bị khóa";
-      return { stt, email, name, verified, blocked };
+      const roomId = game.roomID;
+      const date = moment(game.start).format("DD-MM-YYYY hh:mm:ss");
+      const status = getStatus(game.status);
+      const steps = `${game.history.length} steps`;
+      const chat = `${game.chat.length} messages`;
+      const actions = game._id;
+      const tableType = "game";
+      return { stt, roomId, date, status, steps, chat, actions, tableType };
     });
   };
 
@@ -52,12 +71,20 @@ function ManageUser(props) {
         accessor: "roomId",
       },
       {
+        Header: "Status",
+        accessor: "status",
+      },
+      {
         Header: "Date",
         accessor: "date",
       },
       {
-        Header: "Verified",
-        accessor: "verified",
+        Header: "Steps",
+        accessor: "steps",
+      },
+      {
+        Header: "Chat",
+        accessor: "chat",
       },
       {
         Header: "Actions",
@@ -68,7 +95,7 @@ function ManageUser(props) {
     []
   );
 
-  const data = React.useMemo(() => generateData(props.usersList), []);
+  const data = React.useMemo(() => generateData(props.gamesList), []);
 
   return (
     <div>
@@ -92,7 +119,7 @@ function ManageUser(props) {
 }
 
 const mapStateToProps = (state) => {
-  return { usersList: state.user.usersList };
+  return { gamesList: state.game.gamesList };
 };
 
-export default connect(mapStateToProps)(ManageUser);
+export default connect(mapStateToProps)(ManageGame);

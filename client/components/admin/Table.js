@@ -78,24 +78,39 @@ function Table({ columns, data }) {
                   return (
                     <td {...cell.getCellProps()}>
                       {cell.column.Header === "Actions" ? (
-                        <div className={classes.actions}>
-                          <Button
-                            onClick={() => history.push(`/admin/manageuser/${cell.value}`)}
-                            variant="contained"
-                            size="small"
-                            color="primary"
-                          >
-                            View
-                          </Button>
-                          <Button
-                            onClick={() => onBlockUser(cell.value)}
-                            variant="contained"
-                            size="small"
-                            color="secondary"
-                          >
-                            {cell.row.original.blocked == "False" ? "Block" : "Unblock"}
-                          </Button>
-                        </div>
+                        <>
+                          {cell.row.original.tableType == "game" ? (
+                            <div className={classes.actions}>
+                              <Button
+                                onClick={() => history.push(`/admin/managegame/${cell.value}`)}
+                                variant="contained"
+                                size="small"
+                                color="primary"
+                              >
+                                View
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className={classes.actions}>
+                              <Button
+                                onClick={() => history.push(`/admin/manageuser/${cell.value}`)}
+                                variant="contained"
+                                size="small"
+                                color="primary"
+                              >
+                                View
+                              </Button>
+                              <Button
+                                onClick={() => onBlockUser(cell.value)}
+                                variant="contained"
+                                size="small"
+                                color="secondary"
+                              >
+                                {cell.row.original.blocked == "False" ? "Block" : "Unblock"}
+                              </Button>
+                            </div>
+                          )}
+                        </>
                       ) : (
                         cell.render("Cell")
                       )}
