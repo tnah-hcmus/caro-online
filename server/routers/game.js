@@ -40,7 +40,6 @@ router //game only create and edit by server in socket server, not from client-a
           }
         }
       } catch (error) {
-        console.log(error);
         res.status(400).send({error});
       }
     }
@@ -72,7 +71,6 @@ router
           return res.status(200).send(game);
         }
       } catch (error) {
-        console.log(error)
         res.status(401).send(error);
       }
     })    

@@ -34,10 +34,8 @@ const Game = (props) => {
   const classes = useStyles();
   const [canView, setCanView] = useState(props.player !== "");
   const [message, setMessage] = useState();
-  WSObserver.startListenUpdateGameData(props.addBoard, canView, setCanView);
   const size = 20;
   const roomInfo = props.rooms[props.roomID];
-  console.log(roomInfo, props.roomID);
   let step = 0,
     winning = null,
     current = [],
@@ -62,12 +60,6 @@ const Game = (props) => {
       winning = { winArea: [], winner: drawFlag };
       break;
   }
-  const handleClick = (i, j) => {
-    if (winning) setMessage({ type: "error", content: "Game đã kết thúc", open: true });
-    else if (props.player === "") setMessage({ type: "error", content: "Bạn không phải là người chơi", open: true });
-    else if (props.player === player) setMessage({ type: "error", content: "Hãy chờ tới lượt của bạn", open: true });
-    else updateBoard(i, j, props.player);
-  };
   const updateCoin = (winner) => {
     if (props.player !== "") props.updateUserAfterGame(roomInfo.coins, winner == props.player);
     if (winner == "X") {
@@ -79,6 +71,14 @@ const Game = (props) => {
       props.updateCoins(props.roomID, "Y", roomInfo.players.Y.coins + roomInfo.coins);
     }
   };
+  WSObserver.startListenUpdateGameData(props.addBoard, canView, setCanView, updateCoin);
+  const handleClick = (i, j) => {
+    if (winning) setMessage({ type: "error", content: "Game đã kết thúc", open: true });
+    else if (props.player === "") setMessage({ type: "error", content: "Bạn không phải là người chơi", open: true });
+    else if (props.player === player) setMessage({ type: "error", content: "Hãy chờ tới lượt của bạn", open: true });
+    else updateBoard(i, j, props.player);
+  };
+
   WSObserver.startListenGameResult(updateCoin);
   const updateBoard = (i, j, player) => {
     const id = i * size + j;

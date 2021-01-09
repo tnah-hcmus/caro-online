@@ -30,7 +30,6 @@ const Status = (props) => {
   const [open, setOpen] = useState(false);
   const [requestType, setRequestType] = useState({ type: null, content: null });
   const handleClose = () => setOpen(false);
-  console.log("Winning", props.winning);
   const handleDecline = () => {
     WSSubject.sendGameReply({ accept: false, type: requestType.type });
     setRequestType({ type: null, content: null });

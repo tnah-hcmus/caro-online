@@ -80,7 +80,6 @@ function ManageUser(props) {
   let users = props.usersList;
   if(searchOptions) {
     const key = Object.keys(searchOptions)[0];
-    console.log(searchOptions);
     users = users.filter(item => item[key].includes(searchOptions[key]));
   }
 

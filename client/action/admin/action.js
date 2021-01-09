@@ -19,7 +19,6 @@ export const getUsersList = (token, secret) => {
         headers: { Authorization: `Bearer ${token} ${secret}` },
       })
         .then((res) => {
-          console.log(res)
           dispatch(initUsers(res.data));
         })
         .catch((e) => console.log(e.response));
@@ -32,7 +31,6 @@ export const getGamesList = (token, secret) => {
         headers: { Authorization: `Bearer ${token} ${secret}` },
       })
         .then((res) => {
-          console.log(res)
           dispatch(initGames(res.data));
         })
         .catch((e) => console.log(e.response));

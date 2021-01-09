@@ -13,10 +13,13 @@ const useStyles = makeStyles((theme) => ({
 const QuickJoinRoomBtn = ({onPress, timeOut, setMessage}) => {
   const classes = useStyles();
   const [content, setContent] = useState("Quick Join");
+  const handleTimeOut = () => {
+    setContent("Quick Join");
+  }
   const handleClick = () => {
     if(content === "Quick Join") {
       setContent("Đang tìm trận..."); 
-      const timer = setTimeout(() => setContent("Quick Join"), timeOut); 
+      const timer = setTimeout(handleTimeOut, timeOut); 
       onPress(timer);
     } else setMessage({ type: "error", content: `Đang tìm trận, vui lòng chờ`, open: true});
   }

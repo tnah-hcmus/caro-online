@@ -12,7 +12,6 @@ export default (state = {}, action) => {
         return {...state};
       case REMOVE_ROOM:
         delete state[action.payload.id];
-        console.log(state)
         return {
           ...state
         }

@@ -73,7 +73,6 @@ const ListRoom = (props) => {
   }, []);
   const afterJoin = (id, userId, password, type) => {
     let result = null;
-    console.log(type);
     if (type === "VIEW") result = props.viewRoom(id, userId, props.user.name, password || null);
     else if (type === "PLAY") result = props.joinRoom(id, userId, props.user.name, props.user.coins, password || null);
     if (result.status) callbackSuccess(id);
@@ -81,7 +80,6 @@ const ListRoom = (props) => {
   };
   const joinRoom = (id, userId, type) => {
     const item = props.rooms[id];
-    console.log(type, id, item, props.rooms);
     if (item) {
       if (item.password && item.password !== "") {
         handleClickOpen();
@@ -177,7 +175,6 @@ const ListRoom = (props) => {
   );
 };
 const mapStateToProps = (state) => {
-  console.log(state.user);
   return {
     rooms: state.room,
     user: state.user,

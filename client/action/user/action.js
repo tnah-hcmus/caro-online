@@ -30,7 +30,6 @@ export const getInfo = (token) => {
     )
       .then((res) => {
         const user = res.data;
-        console.log(user);
         dispatch(initInfo(user));
       })
       .catch((e) => {

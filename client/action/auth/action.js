@@ -29,8 +29,7 @@ export const startLogin = (email, password, setMessage) => {
         dispatch(getInfo(user.accessToken));
         //setMessage({ type: "success", content: `Login Successfully !!!`, open: true });
       })
-      .catch((e) => {
-        console.log(e);
+      .catch((e) => {;
         const error = e.response && e.response.data && e.response.data.error;
         setMessage({ type: "error", content: `${error || e.response.statusText}`, open: true });
       });
@@ -46,13 +45,11 @@ export const startLoginAdmin = (username, password, token, history, setMessage) 
       }
     )
       .then((res) => {
-        console.log(res);
         const { token } = res.data;
         dispatch(updateInfo("secretKey", token));
         history.push("/admin/dashboard");
       })
       .catch((e) => {
-        console.log(e);
         const error = e.response && e.response.data && e.response.data.error;
         setMessage({ type: "error", content: `${error || e.response.statusText}`, open: true });
       });
@@ -113,7 +110,6 @@ export const changePassword = (oldPass, newPass, id, token) => {
       })
       .catch((e) => {
         const error = e.response && e.response.data && e.response.data.error;
-        console.log(e);
         return { status: false, content: { type: "error", content: error || "Lỗi không xác định", open: true } };
       });
   };

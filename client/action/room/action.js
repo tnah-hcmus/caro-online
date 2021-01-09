@@ -46,7 +46,6 @@ export const addExistingRoom = (data) => ({
 })
 
 export const addRoom = (playerID, playerName, playerCoins, passwordRaw, timerRaw, coins, callback, type, roomId) => {
-  console.log(playerID, playerName, playerCoins, passwordRaw, timerRaw, coins, callback, type, roomId);
   return (dispatch, getState) => {
     const id = roomId || _createID();
     const roomType = type || 'public';
@@ -139,7 +138,6 @@ export const removePlayer = (roomID, players) => ({
 })
 
 export const leaveRoom = (roomID, player, callback) => {
-  console.log(player);
   return (dispatch, getState) => {
     player = (player === "O" ? "Y" : player);
     const state = getState();
@@ -199,7 +197,7 @@ export const joinRoom = (id, playerID, playerName, playerCoins, password) => {
       if(room[id].password == '' || room[id].password == password) {
         dispatch(addPlayer(id, playerID, playerName, playerCoins));
         dispatch(joinState(id));
-        WSSubject.joinChannel(id, playerID, playerCoins);
+        WSSubject.joinChannel(id, playerID, playerName, playerCoins);
         let newData = {...room[id].players}
         newData.Y = {id: playerID, name: playerName, coins: playerCoins}
         WSSubject.sendRoomData({type: 'UPDATE', roomID: id, property: 'players', newData })

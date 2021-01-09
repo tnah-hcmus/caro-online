@@ -99,9 +99,7 @@ const GameReview = (props) => {
       const id = x * size + y;
       const squares = history[step].squares;
       if (!isWin) {
-        console.log("calculate isWin");
         isWin = calculateWinner(id, squares, player, size);
-        console.log("winning", isWin);
       }
       setWinning(isWin);
     }
@@ -149,7 +147,6 @@ const GameReview = (props) => {
   }
 
   const allMoveButton = () => {
-    console.log(listMove);
     const allMoves = listMove.map((step, i) => {
       let desc = i ? `Go to move #${i}; Tick at ${step.x}:${step.y} by ${step.player}` : "Go to game start";
       if (i === step) desc = <b>{desc}</b>;

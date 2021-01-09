@@ -50,7 +50,6 @@ const getGameList = (token) => {
   })
     .then((res) => {
       const listGame = res.data;
-      console.log(listGame);
       return listGame;
     })
     .catch((e) => {

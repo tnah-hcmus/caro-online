@@ -53,8 +53,6 @@ const RoomView = (props) => {
   let playerStatus = "";
   let current = props.rooms[props.roomID];
   if (current) {
-    console.log("X.id", current.players.X.id);
-    console.log("User.id", props.id);
     if (current.players.X.id === props.id) playerStatus = "X";
     else if (current.players.Y.id === props.id) playerStatus = "O";
   } else current = { players: { X: null, Y: null }, status: 0 };
@@ -72,7 +70,6 @@ const RoomView = (props) => {
     }
   };
   const handleLeave = (player) => {
-    console.log("leaving", player);
     if (player !== "") props.leaveRoom(props.roomID, player, (ignore) => props.history.push("/", { ignore }));
     else props.leaveViewRoom(props.roomID, props.id, () => props.history.push("/"));
   };
@@ -129,7 +126,6 @@ const RoomView = (props) => {
 };
 
 const mapStateToProps = (state) => {
-  console.log(state.room);
   return {
     roomID: state.auth.inRoom,
     rooms: state.room,

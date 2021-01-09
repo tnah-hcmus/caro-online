@@ -24,7 +24,6 @@ const sendVerificationEmail = async (user, token) => {
         await sendEmail({to, from, subject, html});
         return {message: 'A verification email has been sent to ' + user.email + '.', code: 200}
     }catch (error) {
-        console.log(error, error.response, error.response.body)
         return {message: error.message, code: 500}
     }
 }

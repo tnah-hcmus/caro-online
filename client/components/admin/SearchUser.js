@@ -85,7 +85,6 @@ const SearchUser = (props) => {
 
   const handleSearch = () => {
     const searchContent = searchRef.current.value;
-    console.log(searchContent);
     if(searchContent) {
       const query = {[option]: searchContent}
       props.history.replace({
@@ -97,9 +96,6 @@ const SearchUser = (props) => {
     }
   }
 
-  const handleSignout = () => {
-    console.log("LOGOUT");
-  };
 
   return (
     <Paper component="form" className={classes.root}>

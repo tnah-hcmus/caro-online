@@ -10,7 +10,6 @@ class WSSubject {
     WS.pushData("join-room", {id, userId, userName, userCoins, roomType, timer, coins, password});
   }
   leaveChannel(id, userId) {
-    console.log("leave", id, userId);
     WS.pushData("leave-room", {id, userId});
   }
   sendMessage(message) {

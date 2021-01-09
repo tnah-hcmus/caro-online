@@ -45,19 +45,14 @@ module.exports = function(app) {
               socket.join(id);
               let room = await Room.findOne({roomID: id});
               let game = null;
-              console.log(id, userId, userName, userCoins, roomType, timer, password, coins);
-              console.log("on init", room, game)
               //receive chat
               socket.on("send-chat", async (message) => {
                 message.socket = socket.id;
                 socket.to(id).emit("new-message", message);
                 if(game) {
-                  console.log("on new chat-------------------", game.chat);
                   if(game.chat) game.chat.push(message);
                   else game.chat = [message];
-                  console.log("before save chat---------------", game.chat);
                   await game.save();
-                  console.log("after execute chat------------------", game.chat);
                 }               
               });
               //receive game data
@@ -65,20 +60,16 @@ module.exports = function(app) {
                 if(!game.status) {
                   socket.to(id).emit("new-game-data", data);
                   const {x, y, player, status} = data;
-                  console.log("on new move-------------------------------", game.history);
                   if(status) {
                     game.status = (status.winner == "X") ? 1 : 2;
                     game.winner = `${status.winner}: ${room[status.winner].name}`;
                   }
                   game.history.push({x, y, player, timestamp: Date.now()});
-                  console.log("before save game---------------------------", game.history);
                   await game.save();
                   if(!game.history.length) {
                     room.lastGameInRoom = Date.now();
                     room.save();
                   }
-
-                  console.log("after execute chat-------------------------", game.history);
                 }                
               });
               socket.on("send-game-request", async (data) => {
@@ -90,6 +81,7 @@ module.exports = function(app) {
                   await game.save();
                 }
                 socket.on("game-reply-to-server", async (data) => {
+                  room = await Room.findOne({roomID: id});
                   if(room) {
                     const {accept, type} = data;
                     if(accept) {
@@ -97,7 +89,6 @@ module.exports = function(app) {
                             room.lastGameInRoom = Date.now();
                             await room.save();
                             game =  await Game.findOne({roomID: id, status: 0});
-                            console.log("Find a new game",game, Date.now());
                             const user = await User.findOne({gameId: userId});
                             user.games.push({id: game._id});
                             user.save();
@@ -109,6 +100,7 @@ module.exports = function(app) {
               socket.on("send-result-data", async (data) => {
                 const {result} = data;
                 socket.to(id).emit("new-result-data", data);
+                room = await Room.findOne({roomID: id});
                 if(room) {
                   game.status = result;
                   if (result == 1) game.winner = `X: ${room.X.name}`;
@@ -133,8 +125,9 @@ module.exports = function(app) {
               socket.on("send-game-reply", async (data) => {
                 const {accept, type} = data;
                 if(accept && type == "NEW") {
+                  room = await Room.findOne({roomID: id});
                   room.lastGameInRoom = Date.now();
-                  room.save();
+                  await room.save();
                   if(!!game.status) game = await new Game({roomID: id, start: Date.now(), status: 0});
                   else {
                       game.status = 4;
@@ -143,7 +136,6 @@ module.exports = function(app) {
                       game = await new Game({roomID: id, start: Date.now(), status: 0});
                   }
                   await game.save();
-                  console.log("Create new game", game._id, Date.now());
                   socket.to(id).emit("new-game-reply", data); 
                   const user = await User.findOne({gameId: userId});
                   user.games.push({id: game._id});
@@ -152,18 +144,18 @@ module.exports = function(app) {
               })
               socket.on("leave-room", async ({id, userId}) => {
                   socket.leave(id);
+                  room = await Room.findOne({roomID: id});
                   if(room) {
-                    console.log("leave, goodbye", id, userId);
-                    if(userId == room.X.id && !room.Y.id) {
+                    if((userId == room.X.id) && !room.Y.id) {
                         room.playerX = null;
                         await Room.deleteOne({roomID: id});
                         room = null;
                     }
                     else {
                       if(userId == room.Y.id) room.Y = {id: null, name: null, coins: null};
-                      else if(userId == room.X && room.Y) {
-                          room.X = room.Y;
-                          room.Y = null;
+                      else if(userId == room.X.id && room.id) {
+                        room.X = {...room.Y};
+                        room.Y = {id: null, name: null, coins: null};
                       }
                       await room.save();
                     }

@@ -19,7 +19,6 @@ export default (state = {}, action) => {
       };
     case RESET_GAME:
       if (state[action.payload.roomID]) state[action.payload.roomID] =  [{ squares: Array(action.payload.size * action.payload.size).fill(null), status: null, player: null }];
-      console.log("state", state);
       return {
         ...state
       };

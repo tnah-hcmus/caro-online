@@ -19,7 +19,6 @@ const getTopPlayerByMedal = (size, token) => {
     )
     .then((res) => {
       const result = res.data;
-      console.log(result);
       return result;
     })
     .catch((e) => {

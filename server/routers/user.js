@@ -66,7 +66,6 @@ router
         if(property !== 'isBlocked') {
           user[property] = data;
           await user.save();
-          console.log(user);
           res.status(201).send({ success: `Success update ${property}` });
         } else {
           res.status(403).send({error: 'You must use delete method to lock your account'});

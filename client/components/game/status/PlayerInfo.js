@@ -64,7 +64,7 @@ const PlayerInfo = ({ type, coins, isWin, name, isTurn }) => {
       >
         <Avatar alt="avatar" src={type == "X" ? CrocodileIcon : DinosaurIcon} className={classes.large} />
       </StyledBadge>
-      <Tooltip title={name} arrow>
+      <Tooltip title={name || ''} arrow>
         <Typography variant="subtitle2" className={classes.noWrap}>
           {/* Player {type}: {name} */}
           {name}
