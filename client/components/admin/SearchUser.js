@@ -13,6 +13,8 @@ import MenuItem from "@material-ui/core/MenuItem";
 import MenuList from "@material-ui/core/MenuList";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import CheckIcon from "@material-ui/icons/Check";
+import qs from 'query-string';
+import {withRouter} from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -47,11 +49,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SearchUser() {
+const SearchUser = (props) => {
   const classes = useStyles();
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
   const [option, setOption] = useState("email");
+  const searchRef = useRef();
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -80,13 +83,27 @@ export default function SearchUser() {
     setOpen(false);
   };
 
+  const handleSearch = () => {
+    const searchContent = searchRef.current.value;
+    console.log(searchContent);
+    if(searchContent) {
+      const query = {[option]: searchContent}
+      props.history.replace({
+        pathname: '/admin/manageuser', 
+        search: qs.stringify(query)
+      })
+      searchRef.current.value = "";
+      setOption("email");
+    }
+  }
+
   const handleSignout = () => {
     console.log("LOGOUT");
   };
 
   return (
     <Paper component="form" className={classes.root}>
-      <InputBase className={classes.input} placeholder="Search Users" />
+      <InputBase className={classes.input} placeholder="Search Users" inputRef = {searchRef}/>
       <Divider className={classes.divider} orientation="vertical" />
       <IconButton className={classes.iconButton} aria-label="menu" ref={anchorRef} onClick={handleToggle}>
         <Typography variant="body1" color="initial">
@@ -108,9 +125,10 @@ export default function SearchUser() {
           </Grow>
         )}
       </Popper>
-      <IconButton type="submit" className={classes.iconButtonMenu} aria-label="search">
+      <IconButton className={classes.iconButtonMenu} aria-label="search" onClick = {handleSearch}>
         <SearchIcon />
       </IconButton>
     </Paper>
   );
 }
+export default withRouter(SearchUser);

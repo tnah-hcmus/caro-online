@@ -6,6 +6,7 @@ import CustomizedSnackbars from "../common/CustomizedSnackbars";
 import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
 import Avatar from "@material-ui/core/Avatar";
 import Link from "@material-ui/core/Link";
+import {withRouter} from 'react-router-dom'
 
 const AdminLoginPanel = (props) => {
   const classes = useStyles();
@@ -58,6 +59,9 @@ const AdminLoginPanel = (props) => {
                 <Button type="submit" variant="contained" color="primary" className={classes.button}>
                   Log In
                 </Button>
+                <Button variant="contained" color="primary" className={classes.button} onClick = {() => props.history.push('/')}>
+                  Go back
+                </Button>
               </form>
             </Grid>
           </DialogContent>
@@ -101,4 +105,4 @@ const mapStateToProps = (state) => {
   }
 }
 const mapDispatchToProps = { login: startLoginAdmin };
-export default connect(mapStateToProps, mapDispatchToProps)(AdminLoginPanel);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(AdminLoginPanel));

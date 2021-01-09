@@ -77,12 +77,12 @@ router
       }
     }) 
   })
-  .delete(authAdmin, async (req, res) => {
+  .delete(auth, authAdmin, async (req, res) => {
     //DELETE: khoá tài khoản
     //check quyền authen
     const { id } = req.params;
     if (req.adminAuth.status === 200) {
-      const user = await User.findOne({gameId: id});
+      const user = await User.findOne({_id: id});
       user.isBlocked = true;
       await user.save();
       res.status(200).send("Locked this user");

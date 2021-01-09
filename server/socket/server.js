@@ -81,8 +81,14 @@ module.exports = function(app) {
                   console.log("after execute chat-------------------------", game.history);
                 }                
               });
-              socket.on("send-game-request", (data) => {
+              socket.on("send-game-request", async (data) => {
                 socket.to(id).emit("new-game-request", data);
+                if(game && data.type == "DRAW") {
+                  const message = {roomID: id, message: `Game thủ ${userName} xin thủ hoà`, timestamp: Date.now(), owner: userName}
+                  if(game.chat) game.chat.push(message);
+                  else game.chat = [message];
+                  await game.save();
+                }
                 socket.on("game-reply-to-server", async (data) => {
                   if(room) {
                     const {accept, type} = data;

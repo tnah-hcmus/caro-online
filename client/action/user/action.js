@@ -2,7 +2,7 @@ import { INIT_INFO, UPDATE_INFO, CLEAR_INFO, SET_USERS_LIST } from "./type";
 import Axios from "axios";
 export const initInfo = ({ name, email, coins, win, lose, draw, total, role, games }) => ({
   type: INIT_INFO,
-  payload: { name, email, coins, win, lose, draw, total, role, games },
+  payload: { name, email, coins, win, lose, draw, total, role, games, total: games.length },
 });
 
 export const updateInfo = (property, newData) => ({
@@ -67,14 +67,4 @@ export const updateUserAfterGame = (coins, isWin) => {
   };
 };
 
-export const getUsersList = (token) => {
-  return (dispatch) => {
-    Axios.get("/api/users", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((response) => {
-        dispatch(setUsersList(response.data.users));
-      })
-      .catch((e) => console.log(e.response));
-  };
-};
+

@@ -13,6 +13,7 @@ import MenuList from "@material-ui/core/MenuList";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 import { Link } from "@material-ui/core";
 import { Link as RouterLink, useHistory } from "react-router-dom";
+import {startLogout} from '../../action/auth/action';
 import iconLogo from "../../assets/images/icon-logo.png";
 import {connect} from 'react-redux'
 
@@ -69,7 +70,7 @@ const Header = (props) => {
   }, [open]);
 
   const handleSignout = () => {
-    console.log("LOGOUT");
+    props.logout();
   };
 
   return (
@@ -97,10 +98,10 @@ const Header = (props) => {
                     <Paper>
                       <ClickAwayListener onClickAway={handleClose}>
                         <MenuList autoFocusItem={open} id="menu-list-grow">
-                          <MenuItem onClick={() => history.push("/profile")}>Profile</MenuItem>
-                          <MenuItem onClick={() => history.push("/changepassword")}>Change password</MenuItem>
-                          <MenuItem onClick={() => history.push("/rank")}>Ranking</MenuItem>
-                          {props.role && props.role.includes("admin") && <MenuItem onClick={() => history.push("/admin/login")}>Go to admin page</MenuItem>}
+                          <MenuItem onClick={() => {setOpen(false); history.push("/profile")}}>Profile</MenuItem>
+                          <MenuItem onClick={() => {setOpen(false); history.push("/changepassword")}}>Change password</MenuItem>
+                          <MenuItem onClick={() => {setOpen(false); history.push("/rank")}}>Ranking</MenuItem>
+                          {props.role && props.role.includes("admin") && <MenuItem onClick={() => {setOpen(false); history.push("/admin/login")}}>Go to admin page</MenuItem>}
                           <MenuItem onClick={handleSignout}>Logout</MenuItem>
                         </MenuList>
                       </ClickAwayListener>
@@ -122,4 +123,7 @@ const mapStateToProps = (state) => {
     role: state.user.role
   };
 };
-export default connect(mapStateToProps)(Header);
+const mapDispatchToProps = {
+  logout: startLogout
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

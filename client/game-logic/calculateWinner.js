@@ -13,7 +13,7 @@ const calculateWinner = (i, squares, value, size) => {
       count++;
       winArea.push(row * size + k);
     }
-    if (count === 4) {
+    if (count === 5) {
       winArea.push(i);
       return {winArea, winner: value};
     }
@@ -28,7 +28,7 @@ const calculateWinner = (i, squares, value, size) => {
       count++;
       winArea.push(k * size + col);
     }
-    if (count === 4) {
+    if (count === 5) {
       winArea.push(i);
       return {winArea, winner: value};
     }
@@ -44,7 +44,7 @@ const calculateWinner = (i, squares, value, size) => {
       count++;
       winArea.push(inital_pos + (size + 1) * k);
     }
-    if (count === 4) {
+    if (count === 5) {
       winArea.push(i);
       return {winArea, winner: value};
     }
@@ -60,7 +60,7 @@ const calculateWinner = (i, squares, value, size) => {
       count++;
       winArea.push(inital_pos_anti + (size - 1) * k);
     }
-    if (count === 4) {
+    if (count === 5) {
       winArea.push(i);
       return {winArea, winner: value};
     }

@@ -119,7 +119,7 @@ function ManageGame(props) {
 }
 
 const mapStateToProps = (state) => {
-  return { gamesList: state.game.gamesList };
+  return { gamesList: state.admin.gameList };
 };
 
 export default connect(mapStateToProps)(ManageGame);

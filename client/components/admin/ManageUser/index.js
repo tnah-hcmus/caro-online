@@ -7,6 +7,7 @@ import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
 import { Link as RouteLink } from "react-router-dom";
 
 import { connect } from "react-redux";
+import queryString from 'query-string'
 
 const useStyles = makeStyles((theme) => ({
   link: {
@@ -31,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
 
 function ManageUser(props) {
   const classes = useStyles();
+  const searchOptions = props.location.search ? queryString.parse(props.location.search) : null;
   const generateData = (usersList) => {
     return (usersList || []).map((user, i) => {
       const stt = i + 1;
@@ -75,8 +77,14 @@ function ManageUser(props) {
     ],
     []
   );
+  let users = props.usersList;
+  if(searchOptions) {
+    const key = Object.keys(searchOptions)[0];
+    console.log(searchOptions);
+    users = users.filter(item => item[key].includes(searchOptions[key]));
+  }
 
-  const data = React.useMemo(() => generateData(props.usersList), []);
+  const data = React.useMemo(() => generateData(users), [users]);
 
   return (
     <div>
@@ -100,7 +108,7 @@ function ManageUser(props) {
 }
 
 const mapStateToProps = (state) => {
-  return { usersList: state.user.usersList };
+  return { usersList: state.admin.userList };
 };
 
 export default connect(mapStateToProps)(ManageUser);

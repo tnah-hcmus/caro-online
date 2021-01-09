@@ -30,6 +30,7 @@ const Status = (props) => {
   const [open, setOpen] = useState(false);
   const [requestType, setRequestType] = useState({ type: null, content: null });
   const handleClose = () => setOpen(false);
+  console.log("Winning", props.winning);
   const handleDecline = () => {
     WSSubject.sendGameReply({ accept: false, type: requestType.type });
     setRequestType({ type: null, content: null });
@@ -113,7 +114,6 @@ const Status = (props) => {
       props.updateCoin(props.player !== "X" ? "X" : "O");
     } else props.setMessage({ type: "error", content: `Game has been end, you can't surrender anymore`, open: true });
   };
-
   return (
     <Grid container className={classes.root}>
       <Grid container item xs={12} className={classes.section} style={{ padding: "15px 0 0" }}>
@@ -152,7 +152,7 @@ const Status = (props) => {
             />
           </Grid>
           <Grid item xs={12} className={classes.countdown}>
-            <Countdown time={1000} onTimeOut={handleTimeOut} />
+            {props.waiting && !props.winning ? <Countdown time={props.timer} onTimeOut={handleTimeOut} reset = {props.waiting} /> : null}
             <Typography variant="h6">{props.status}</Typography>
           </Grid>
         </Grid>

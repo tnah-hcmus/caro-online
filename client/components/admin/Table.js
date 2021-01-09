@@ -4,8 +4,10 @@ import { useTable, useSortBy, usePagination } from "react-table";
 import { makeStyles, TablePagination, Button } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
 import ConfirmModal from "../common/ConfirmModal";
+import {blockUser} from '../../action/admin/action'
+import {connect} from 'react-redux'
 
-function Table({ columns, data }) {
+function Table({ columns, data, blockUser, secret, token }) {
   const classes = useStyles();
   const history = useHistory();
   const [open, setOpen] = useState(false);
@@ -44,7 +46,7 @@ function Table({ columns, data }) {
   };
 
   const handleBlockUser = () => {
-    console.log("Block user", userId);
+    blockUser(userId, secret, token);
     setOpen(false);
   };
 
@@ -105,8 +107,9 @@ function Table({ columns, data }) {
                                 variant="contained"
                                 size="small"
                                 color="secondary"
+                                disabled={cell.row.original.blocked == "True"}
                               >
-                                {cell.row.original.blocked == "False" ? "Block" : "Unblock"}
+                                {cell.row.original.blocked == "False" ? "Block" : "Blocked"}
                               </Button>
                             </div>
                           )}
@@ -134,8 +137,12 @@ function Table({ columns, data }) {
     </>
   );
 }
-
-export default Table;
+const mapStateToProps = (state) => ({
+  secret: state.user.secretKey,
+  token: state.auth.token
+})
+const mapDispatchToProps = {blockUser}
+export default connect(mapStateToProps, mapDispatchToProps)(Table);
 
 const useStyles = makeStyles({
   root: {

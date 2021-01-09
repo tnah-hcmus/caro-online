@@ -11,6 +11,7 @@ import { updateName } from "../../action/user/action";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import Axios from "axios";
+import moment from 'moment';
 const useStyles = makeStyles((theme) => ({
   link: {
     display: "flex",
@@ -283,7 +284,7 @@ const Profile = ({ user, updateName, token, userId, history }) => {
                 </Grid>
                 <Grid item xs={2}>
                   <Typography variant="subtitle2" align="center">
-                    {game.start}
+                    {moment(game.start).format("DD-MM-YYYY hh:mm:ss")}
                   </Typography>
                 </Grid>
                 <Grid item xs={2}>

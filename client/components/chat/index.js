@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { Grid, makeStyles, Button, Typography } from "@material-ui/core";
 import SendIcon from "@material-ui/icons/Send";
 import ForumIcon from "@material-ui/icons/Forum";
@@ -47,12 +47,18 @@ const useStyles = makeStyles({
 
 const BoxChat = (props) => {
   const chatRef = useRef();
-  const allMessages = props.chat[props.roomID] || [];
-  WSObserver.startListenUpdateChat(props.addMessage);
+  const allMessages = props.isReview ? props.chats.map(item => {
+    if((item.timestamp < props.timeFlag) || props.isEnd) {
+      return {message: item.message, owner: item.owner, isMyMessage: item.owner == props.name}
+    }
+  }).filter(item => item) : (props.chat[props.roomID] || []);
+  if(!props.isReview) WSObserver.startListenUpdateChat(props.addMessage);
   const handleChat = () => {
-    const timestamp = Date.now();
-    const text = chatRef.current.value;
-    props.addMessage(props.roomID, text, true, timestamp, props.name);
+    if(!props.isReview) {
+      const timestamp = Date.now();
+      const text = chatRef.current.value;
+      props.addMessage(props.roomID, text, true, timestamp, props.name);
+    }    
   };
   const classes = useStyles();
   return (

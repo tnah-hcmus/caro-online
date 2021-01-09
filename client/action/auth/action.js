@@ -1,5 +1,5 @@
 import { LOGIN, LOGOUT, JOIN, UPDATE_TOKEN } from "./type";
-import { initInfo, getInfo, updateInfo } from "../user/action";
+import { initInfo, getInfo, updateInfo, clearInfo } from "../user/action";
 import Axios from "axios";
 export const login = (id, token) => ({
   type: LOGIN,
@@ -46,6 +46,7 @@ export const startLoginAdmin = (username, password, token, history, setMessage) 
       }
     )
       .then((res) => {
+        console.log(res);
         const { token } = res.data;
         dispatch(updateInfo("secretKey", token));
         history.push("/admin/dashboard");
@@ -117,3 +118,9 @@ export const changePassword = (oldPass, newPass, id, token) => {
       });
   };
 };
+export const startLogout = () => {
+  return (dispatch) => {
+    dispatch(logout());
+    dispatch(clearInfo());
+  }
+}

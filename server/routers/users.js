@@ -42,7 +42,7 @@ router
       try {
         const users = await User.find();
         if (!Object.keys(req.query).length) {
-          if (req.adminAuth.status === 200) res.status(200).send({ users });
+          if (req.adminAuth.status === 200) res.status(200).send(users);
           else res.status(req.adminAuth.status).send({
             error: req.adminAuth.error
           });

@@ -281,7 +281,7 @@ const UserDetail = (props) => {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => history.push("/review/" + game._id, { token })}
+                  onClick={() => history.push("/admin/review/" + game._id, { token: props.token })}
                 >
                   View detail
                 </Button>
@@ -294,8 +294,10 @@ const UserDetail = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  return { usersList: state.user.usersList, gamesList: state.game.gamesList };
-};
+const mapStateToProps = (state) => ({ 
+  usersList: state.admin.userList, 
+  gamesList: state.admin.gameList,
+  token: state.auth.token
+});
 
 export default connect(mapStateToProps)(UserDetail);

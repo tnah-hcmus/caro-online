@@ -18,7 +18,7 @@ const JoinRoomBtn = (props) => {
   const handleJoinRoom = () => {
     const id = roomIdRef.current.value;
     if(!props.busy) {
-      props.joinRoom(id, props.userId);
+      props.joinRoom(id.trim(), props.userId);
     } else props.setMessage({ type: "error", content: `You already in ${props.busy == id ? 'this ': 'another'}room`, open: true});
   }
   return (

@@ -43,6 +43,7 @@ const thirdPartyStrategy = async (strategyType, profile, done) => {
     userDB = user;
     sendNewThirdPartySignUpEmail(user, strategyType.replace("Id", ""), password);
   }
+  if(userDB.isBlocked) done({error: "User has been blocked"}, null);
   done(null, userDB, {accessToken: await generateToken(userDB)});
 }
 

@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Typography, Breadcrumbs, Link, makeStyles, Grid } from "@material-ui/core";
 import HomeIcon from "@material-ui/icons/Home";
-import { getUsersList } from "../../action/user/action";
-import { getGamesList } from "../../action/game/action";
+import { getUsersList, getGamesList } from "../../action/admin/action";
 import { connect } from "react-redux";
 import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
 import GamesIcon from "@material-ui/icons/Games";
-import ArrowRightAltIcon from "@material-ui/icons/ArrowRightAlt";
 import { Link as RouterLink } from "react-router-dom";
 
 import "./style.css";
@@ -36,8 +34,8 @@ const Dashboard = (props) => {
   const classes = useStyles();
 
   useEffect(() => {
-    props.getUsersList(props.token);
-    props.getGamesList(props.token);
+    props.getUsersList(props.token, props.secret);
+    props.getGamesList(props.token, props.secret);
   }, []);
 
   return (
@@ -86,8 +84,9 @@ const Dashboard = (props) => {
 
 const mapStateToProps = (state) => ({
   token: state.auth.token,
-  usersList: state.user.usersList,
-  gamesList: state.game.gamesList,
+  secret: state.user.secretKey,
+  gamesList: state.admin.gameList,
+  usersList: state.admin.userList
 });
 
 const mapDispatchToProps = { getUsersList, getGamesList };

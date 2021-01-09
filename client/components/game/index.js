@@ -63,7 +63,8 @@ const Game = (props) => {
       break;
   }
   const handleClick = (i, j) => {
-    if (props.player === "") setMessage({ type: "error", content: "Bạn không phải là người chơi", open: true });
+    if (winning) setMessage({ type: "error", content: "Game đã kết thúc", open: true });
+    else if (props.player === "") setMessage({ type: "error", content: "Bạn không phải là người chơi", open: true });
     else if (props.player === player) setMessage({ type: "error", content: "Hãy chờ tới lượt của bạn", open: true });
     else updateBoard(i, j, props.player);
   };
@@ -124,9 +125,11 @@ const Game = (props) => {
               isTurn={roomInfo.players.X.id === props.userId ? props.player !== player : props.player === player}
               roomID={props.roomID}
               player={props.player}
+              waiting={(props.player !== "" && player) && (props.player !== player)}
               size={size}
               setMessage={setMessage}
               isOWner={roomInfo.players.X.id === props.userId}
+              timer = {roomInfo.timer}
               handleLeave={props.handleLeave}
               viewers={roomInfo.viewer}
               updateCoin={updateCoin}

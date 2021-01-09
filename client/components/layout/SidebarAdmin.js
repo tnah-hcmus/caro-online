@@ -26,6 +26,8 @@ import { Link } from "@material-ui/core";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 
 import IcAdmin from "../../assets/images/icon-admin.png";
+import { startLogout } from "../../action/auth/action";
+import {connect} from 'react-redux'
 
 const drawerWidth = 240;
 
@@ -95,7 +97,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SidebarAdmin({ onDrawerClose, open }) {
+const SidebarAdmin = ({ onDrawerClose, open, logout }) => {
   const classes = useStyles();
   const history = useHistory();
   const theme = useTheme();
@@ -127,7 +129,7 @@ export default function SidebarAdmin({ onDrawerClose, open }) {
     {
       icon: <ExitToAppIcon />,
       text: "Log out",
-      redirect: () => history.push("/admin/logout"),
+      redirect: () => {logout(); history.push("/")},
     },
   ];
 
@@ -181,3 +183,5 @@ export default function SidebarAdmin({ onDrawerClose, open }) {
     </Drawer>
   );
 }
+const mapDispatchToProps = {logout: startLogout}
+export default connect(null, mapDispatchToProps)(SidebarAdmin)

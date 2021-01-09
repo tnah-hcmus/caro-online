@@ -22,7 +22,7 @@ router.post("/api/admin/auth", auth, (req, res) => {
         const isRightPassword =
           user.adminInfo.id == username && (await bcrypt.compare(password, user.adminInfo.password));
         if (isRightPassword) {
-          const token = user.generateAdminSecretToken();
+          const token = await user.generateAdminSecretToken();
           res.status(200).send({ token });
         } else return res.status(401).send({ error: "Wrong password or username" });
       }

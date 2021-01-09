@@ -6,6 +6,7 @@ import CustomizedSnackbars from "../common/CustomizedSnackbars";
 import SettingsIcon from "@material-ui/icons/Settings";
 import SlowMotionVideoIcon from "@material-ui/icons/SlowMotionVideo";
 import BoxChat from "../chat";
+import {withRouter} from 'react-router-dom';
 const drawFlag = "___NO_BODY_WIN___";
 import Axios from "axios";
 
@@ -66,12 +67,16 @@ const GameReview = (props) => {
   const [step, setStep] = useState(0);
   const [intervalId, setIntervalId] = useState(0);
   const [delay, setDelay] = useState(2);
+  const [winType, setWinType] = useState(99);
+  const [chats, setChats] = useState([]);
   const size = 20;
   useEffect(() => {
     const gameId = props.match.params.id;
     const getMoveAndInitHistory = async () => {
       const game = await getListMove(gameId, token);
       const list = game.history;
+      setWinType(game.status);
+      setChats(game.chat)
       const customList = [{ x: null, y: null, player: null }].concat(list);
       setListMove(customList);
       const allBoard = list.reduce(
@@ -107,15 +112,6 @@ const GameReview = (props) => {
     }
   };
 
-  const getGameStatus = () => {
-    if (winning) {
-      if (winning.winner !== drawFlag) return "Winner: " + winning.winner;
-      else return "Two player draw!";
-    } else if (step >= size * size) {
-      return "Two player draw!";
-    } else return "Playing..";
-  };
-
   const viewGameAuto = () => {
     let id = null;
     let step = 0;
@@ -130,8 +126,30 @@ const GameReview = (props) => {
   const stopAuto = () => {
     clearInterval(intervalId);
   };
+  const winnerPrinter = (endType) => {
+    let result = null;
+    switch(endType) {
+      case 1:
+        result = "X win this game";
+        break;
+      case 2:
+        result = "Y win this game";
+        break;
+      case 3:
+        result = "Game draw";
+        break;
+      case 4: case 0:
+        result = "Game corrupted, two player leaved";
+        break;
+      default:
+        result = "Calculating";
+        break;
+    }
+    return result;
+  }
 
   const allMoveButton = () => {
+    console.log(listMove);
     const allMoves = listMove.map((step, i) => {
       let desc = i ? `Go to move #${i}; Tick at ${step.x}:${step.y} by ${step.player}` : "Go to game start";
       if (i === step) desc = <b>{desc}</b>;
@@ -196,6 +214,11 @@ const GameReview = (props) => {
                         fullWidth
                       />
                     </Grid>
+                    <Grid item xs={11} className={classes.button}>
+                      <Button variant="contained" color="secondary" fullWidth onClick={() => props.history.push(!props.location.pathname.includes('admin') ? '/' : '/admin/dashboard')}>
+                        Leave
+                      </Button>
+                    </Grid>
                   </Grid>
                 </Grid>
                 <Grid container item xs={12} className={classes.section}>
@@ -216,7 +239,12 @@ const GameReview = (props) => {
                     style={{ maxHeight: "50vh" }}
                   >
                     <Grid item xs={11}>
-                      {allMoveButton()}
+                      <ul>
+                        {allMoveButton()}
+                        <li key={'win-end'}>
+                          <button disabled = {true}>{winnerPrinter(winType)}</button>
+                        </li>
+                      </ul>                      
                     </Grid>
                   </Grid>
                 </Grid>
@@ -224,7 +252,7 @@ const GameReview = (props) => {
             </Grid>
             <CustomizedSnackbars message={message} />
           </Grid>
-          <BoxChat isReview={true} />
+          <BoxChat isReview={true} timeFlag = {step ? listMove[step].timestamp : 0} chats = {chats} isEnd = {step == (listMove.length -1)}/>
         </Grid>
       ) : (
         <p>Đang tải trận, vui lòng chờ</p>
@@ -232,4 +260,4 @@ const GameReview = (props) => {
     </>
   );
 };
-export default GameReview;
+export default withRouter(GameReview);

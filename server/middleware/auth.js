@@ -8,7 +8,7 @@ const auth = async (req, res, next) => {
   if (!data || !data._id) return res.status(401).send({ error: "Invalid token" });
   req.userId = data._id;
   req.token = token;
-  req.secretKey = tokens[1];
+  req.secretToken = tokens[1];
   next();
 };
 module.exports = auth;

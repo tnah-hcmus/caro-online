@@ -12,6 +12,8 @@ router.post('/api/auth/local', (req, res) => {
         res.status(401).send('Undefined error');
       } else if (!user.isVerified){
         res.status(401).json({ type: 'not-verified', error: 'Your account has not been verified.' });
+      }  else if (user.isBlocked){
+        res.status(401).json({ type: 'not-verified', error: 'Your account has been blocked.' });
       } else {
         const result = {
           id: user.gameId,

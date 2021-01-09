@@ -81,7 +81,7 @@ const ListRoom = (props) => {
   };
   const joinRoom = (id, userId, type) => {
     const item = props.rooms[id];
-    console.log(type);
+    console.log(type, id, item, props.rooms);
     if (item) {
       if (item.password && item.password !== "") {
         handleClickOpen();
@@ -103,9 +103,10 @@ const ListRoom = (props) => {
   };
   const timeOut = 10 * 1000;
   const randomRoom = (timeOutHandler) => {
-    const room = Object.values(props.rooms).find((item) => item.roomType === "hidden");
+    const room = Object.values(props.rooms).find((item) => (item.roomType === "hidden" && (!!item.players.X.id + !!item.players.Y.id) < 2));
     if (room) {
       joinRoom(room.id, props.userId, "PLAY");
+      WSSubject.sendJoinGame({roomID: room.id});
       clearTimeout(timeOutHandler);
     } else {
       const id = _createID();
