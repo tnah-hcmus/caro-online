@@ -2,11 +2,11 @@ import React, { useEffect } from "react";
 
 import Table from "../Table";
 import { Typography, Breadcrumbs, Link } from "@material-ui/core";
-import {makeStyles} from '@material-ui/core/styles';
-import {Home, PeopleAlt} from "@material-ui/icons";
+import { makeStyles } from "@material-ui/core/styles";
+import { Home, PeopleAlt } from "@material-ui/icons";
 import { Link as RouteLink } from "react-router-dom";
 import { connect } from "react-redux";
-import queryString from 'query-string'
+import queryString from "query-string";
 
 const useStyles = makeStyles((theme) => ({
   link: {
@@ -37,7 +37,7 @@ function ManageUser(props) {
       const stt = i + 1;
       const email = user.email;
       const name = user.name;
-      const verified = user.isVerified.toString() ? "True" : "False";
+      const verified = user.isVerified ? "True" : "False";
       const blocked = user.isBlocked ? "True" : "False";
       const actions = user._id;
       return { stt, email, name, verified, blocked, actions };
@@ -77,9 +77,9 @@ function ManageUser(props) {
     []
   );
   let users = props.usersList;
-  if(searchOptions) {
+  if (searchOptions) {
     const key = Object.keys(searchOptions)[0];
-    users = users.filter(item => item[key].includes(searchOptions[key]));
+    users = users.filter((item) => item[key].includes(searchOptions[key]));
   }
 
   const data = React.useMemo(() => generateData(users), [users]);
@@ -87,7 +87,7 @@ function ManageUser(props) {
   return (
     <div>
       <Breadcrumbs aria-label="breadcrumb">
-        <Link color="inherit" to="/admin" component={RouteLink} className={classes.link}>
+        <Link color="inherit" to="/admin/dashboard" component={RouteLink} className={classes.link}>
           <Home className={classes.icon} />
           <Typography variant="body1" style={{ color: "inherit" }}>
             Dashboard

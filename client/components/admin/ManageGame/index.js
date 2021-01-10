@@ -3,8 +3,8 @@ import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import Table from "../Table";
 import { Typography, Breadcrumbs, Link } from "@material-ui/core";
-import {makeStyles} from '@material-ui/core/styles';
-import {Home, Games} from "@material-ui/icons";
+import { makeStyles } from "@material-ui/core/styles";
+import { Home, Games } from "@material-ui/icons";
 import { Link as RouteLink } from "react-router-dom";
 import moment from "moment";
 
@@ -100,7 +100,7 @@ function ManageGame(props) {
   return (
     <div>
       <Breadcrumbs aria-label="breadcrumb">
-        <Link color="inherit" to="/admin" component={RouteLink} className={classes.link}>
+        <Link color="inherit" to="/admin/dashboard" component={RouteLink} className={classes.link}>
           <Home className={classes.icon} />
           <Typography variant="body1" style={{ color: "inherit" }}>
             Dashboard

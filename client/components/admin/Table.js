@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 
 import { useTable, useSortBy, usePagination } from "react-table";
 import { TablePagination, Button } from "@material-ui/core";
-import {makeStyles} from '@material-ui/core/styles';
+import { makeStyles } from "@material-ui/core/styles";
 import { useHistory } from "react-router-dom";
 import ConfirmModal from "../common/ConfirmModal";
-import {blockUser} from '../../action/admin/action'
-import {connect} from 'react-redux'
+import { blockUser } from "../../action/admin/action";
+import { connect } from "react-redux";
 
 function Table({ columns, data, blockUser, secret, token }) {
   const classes = useStyles();
@@ -73,7 +73,7 @@ function Table({ columns, data, blockUser, secret, token }) {
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {rows.map((row, i) => {
+          {page.map((row, i) => {
             prepareRow(row);
             return (
               <tr {...row.getRowProps()} className={classes.row}>
@@ -140,9 +140,9 @@ function Table({ columns, data, blockUser, secret, token }) {
 }
 const mapStateToProps = (state) => ({
   secret: state.user.secretKey,
-  token: state.auth.token
-})
-const mapDispatchToProps = {blockUser}
+  token: state.auth.token,
+});
+const mapDispatchToProps = { blockUser };
 export default connect(mapStateToProps, mapDispatchToProps)(Table);
 
 const useStyles = makeStyles({

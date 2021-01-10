@@ -1,7 +1,8 @@
 import React from "react";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
-import {AppBar, Toolbar, Typography, IconButton, Menu} from "@material-ui/core";
+import { AppBar, Toolbar, Typography, IconButton } from "@material-ui/core";
+import MenuIcon from "@material-ui/icons/Menu";
 import SearchUser from "../admin/SearchUser";
 
 const drawerWidth = 240;
@@ -49,7 +50,7 @@ function HeaderAdmin({ title, children, onDrawerOpen, open }) {
             [classes.hide]: open,
           })}
         >
-          <Menu />
+          <MenuIcon />
         </IconButton>
         <Typography variant="h6" noWrap>
           {title}

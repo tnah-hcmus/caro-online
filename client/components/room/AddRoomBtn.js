@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import {Button, Grid, TextField, Dialog, DialogActions, DialogTitle, DialogContent} from "@material-ui/core"
+import { Button, Grid, TextField, Dialog, DialogActions, DialogTitle, DialogContent } from "@material-ui/core";
 import Add from "@material-ui/icons/Add";
 import { addRoom } from "../../action/room/action";
 import { connect } from "react-redux";
@@ -23,6 +23,7 @@ const AddRoomBtn = (props) => {
   const passwordRef = useRef();
   const coinRef = useRef();
   const minTimer = 30;
+  const minCoins = 1;
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -33,11 +34,20 @@ const AddRoomBtn = (props) => {
   };
 
   const handleSubmit = () => {
-    setOpen(false);
     if (!props.busy) {
       const password = passwordRef.current.value || "";
-      const timer = Number(timerRef.current.value) || 30;
-      const coins = Number(coinRef.current.value) || 1;
+      const timer = Number(timerRef.current.value);
+      const coins = Number(coinRef.current.value);
+
+      if (coins < 1) {
+        props.setMessage({
+          type: "error",
+          content: "Cược tối thiểu là: " + minCoins + " coin.",
+          open: true,
+        });
+        return false;
+      }
+
       if (timer < minTimer) {
         props.setMessage({
           type: "error",
@@ -45,22 +55,20 @@ const AddRoomBtn = (props) => {
           open: true,
         });
         return false;
-      } else
+      } else {
+        setOpen(false);
         props.addRoom(props.userId, props.user.name, props.user.coins, password || null, timer, coins, (id) =>
           props.history.push("/room/" + id)
         );
-    } else props.setMessage({ type: "error", content: `You already in another room`, open: true });
+      }
+    } else {
+      props.setMessage({ type: "error", content: `You already in another room`, open: true });
+    }
   };
 
   return (
     <Grid item>
-      <Button
-        onClick={handleClickOpen}
-        variant="contained"
-        color="primary"
-        className={classes.button}
-        start={<Add />}
-      >
+      <Button onClick={handleClickOpen} variant="contained" color="primary" className={classes.button} start={<Add />}>
         Add new room
       </Button>
       <Dialog open={open} onClose={handleClose} className={classes.dialog}>
