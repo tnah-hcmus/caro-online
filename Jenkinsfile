@@ -10,7 +10,7 @@ pipeline {
 					excludes: '',
 					flattenFiles: false,
 					includes: 'D:\\jenkins\\users\\env\\**',
-					targetLocation: 'D:\\jenkins\\workspace\\CI-CD plus score"
+					targetLocation: "D:\\jenkins\\workspace\\CI-CD plus score"
 				)])
 			}
 		}
