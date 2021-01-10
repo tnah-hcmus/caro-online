@@ -1,24 +1,17 @@
 import React, { useState } from "react";
-import { Grid, makeStyles, Typography, Button } from "@material-ui/core";
-import SettingsIcon from "@material-ui/icons/Settings";
-import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
-import PanToolIcon from "@material-ui/icons/PanTool";
-import ThumbUpIcon from "@material-ui/icons/ThumbUp";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import FiberNewIcon from "@material-ui/icons/FiberNew";
-import InfoIcon from "@material-ui/icons/Info";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
+import { Grid, Typography, Button } from "@material-ui/core";
+import {makeStyles} from '@material-ui/core/styles';
+import {Settings, SupervisorAccount, PanTool, ThumbUp, ExitToApp, FiberNew, Info, } from "@material-ui/icons"
+import {Dialog, DialogActions, DialogContent, DialogTitle} from "@material-ui/core";
 import Countdown from "../Countdown";
 import { updateGameResult, newGame } from "../../../action/room/action";
 import { connect } from "react-redux";
 import WSObserver from "../../../socket/observer";
 import WSSubject from "../../../socket/subject";
 // IMPORT ICON
-import vsIcon from "../../../assets/images/icons8-vs-button.png";
-import vsIconReverse from "../../../assets/images/icons8-vs-button-reverse.png";
+const serverUrl = process.env.NODE_ENV === 'production' ? process.env.PROD_SERVER_URL : process.env.DEV_SERVER_URL;
+const vsIcon = serverUrl + "images/icons8-vs-button.png";
+const vsIconReverse = serverUrl + "images/icons8-vs-button-reverse.png";
 import ViewerDetail from "./ViewerDetail";
 import PlayerInfo from "./PlayerInfo";
 import FunctionalButton from "./FunctionalButton";
@@ -118,7 +111,7 @@ const Status = (props) => {
       <Grid container item xs={12} className={classes.section} style={{ padding: "15px 0 0" }}>
         <Grid item xs={12} container direction="row" className={classes.title}>
           <Grid item className={classes.icon}>
-            <InfoIcon />
+            <Info />
           </Grid>
           <Grid item>
             <Typography variant="h6">Info</Typography>
@@ -160,18 +153,18 @@ const Status = (props) => {
       <Grid container item xs={12} className={classes.section}>
         <Grid item xs={12} container direction="row" className={classes.title}>
           <Grid item className={classes.icon}>
-            <SettingsIcon />
+            <Settings />
           </Grid>
           <Grid item>
             <Typography variant="h6">Function</Typography>
           </Grid>
         </Grid>
         <Grid container item xs={12} justify="center" className={classes.statusWrapper}>
-          <FunctionalButton icon={<FiberNewIcon />} color="secondary" title={"New Game"} onPress={handleNewgame} />
-          <FunctionalButton icon={<ThumbUpIcon />} color="primary" title={"Please Draw"} onPress={requestDraw} />
-          <FunctionalButton icon={<PanToolIcon />} color="primary" title={"Give Up"} onPress={handleSurrender} />
+          <FunctionalButton icon={<FiberNew />} color="secondary" title={"New Game"} onPress={handleNewgame} />
+          <FunctionalButton icon={<ThumbUp />} color="primary" title={"Please Draw"} onPress={requestDraw} />
+          <FunctionalButton icon={<PanTool />} color="primary" title={"Give Up"} onPress={handleSurrender} />
           <FunctionalButton
-            icon={<ExitToAppIcon />}
+            icon={<ExitToApp />}
             color="secondary"
             title={"Leave Room"}
             onPress={() => props.handleLeave(props.player)}
@@ -182,7 +175,7 @@ const Status = (props) => {
       <Grid container item xs={12} className={classes.section}>
         <Grid item xs={12} container direction="row" className={classes.title}>
           <Grid item className={classes.icon}>
-            <SupervisorAccountIcon />
+            <SupervisorAccount />
           </Grid>
           <Grid item>
             <Typography variant="h6">Viewers</Typography>

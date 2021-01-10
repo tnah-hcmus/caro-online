@@ -2,30 +2,12 @@
 import React from "react";
 // @material-ui/core components
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import Drawer from "@material-ui/core/Drawer";
-import List from "@material-ui/core/List";
-import Typography from "@material-ui/core/Typography";
-import Divider from "@material-ui/core/Divider";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import MailIcon from "@material-ui/icons/Mail";
-import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import VpnKeyIcon from "@material-ui/icons/VpnKey";
-import PersonIcon from "@material-ui/icons/Person";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
-import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
+import {Drawer, List, Typography, Divider, ListItem, ListItemIcon, ListItemText, IconButton } from "@material-ui/core";
+import {ChevronLeft, ChevronRight, VpnKey, Person, ExitToApp, SupervisorAccount, SportsEsports} from "@material-ui/icons";
 import clsx from "clsx";
-
-import { Link } from "@material-ui/core";
 import { Link as RouterLink, useHistory } from "react-router-dom";
-
-import IcAdmin from "../../assets/images/icon-admin.png";
+const serverUrl = process.env.NODE_ENV === 'production' ? process.env.PROD_SERVER_URL : process.env.DEV_SERVER_URL;
+const IcAdmin = serverUrl + "images/icon-admin.png";
 import { startLogout } from "../../action/auth/action";
 import {connect} from 'react-redux'
 
@@ -104,12 +86,12 @@ const SidebarAdmin = ({ onDrawerClose, open, logout }) => {
 
   const dataList = [
     {
-      icon: <SupervisorAccountIcon />,
+      icon: <SupervisorAccount />,
       text: "Users",
       redirect: () => history.push("/admin/manageuser"),
     },
     {
-      icon: <SportsEsportsIcon />,
+      icon: <SportsEsports />,
       text: "Games",
       redirect: () => history.push("/admin/managegame"),
     },
@@ -117,17 +99,17 @@ const SidebarAdmin = ({ onDrawerClose, open, logout }) => {
 
   const actionsList = [
     {
-      icon: <VpnKeyIcon />,
+      icon: <VpnKey />,
       text: "Change password",
       redirect: () => history.push("/admin/changepassword"),
     },
     {
-      icon: <PersonIcon />,
+      icon: <Person />,
       text: "Edit profile",
       redirect: () => history.push("/admin/profile"),
     },
     {
-      icon: <ExitToAppIcon />,
+      icon: <ExitToApp />,
       text: "Log out",
       redirect: () => {logout(); history.push("/")},
     },
@@ -156,9 +138,9 @@ const SidebarAdmin = ({ onDrawerClose, open, logout }) => {
         </RouterLink>
         <IconButton onClick={onDrawerClose}>
           {theme.direction === "rtl" ? (
-            <ChevronRightIcon style={{ color: "white" }} />
+            <ChevronRight style={{ color: "white" }} />
           ) : (
-            <ChevronLeftIcon style={{ color: "white" }} />
+            <ChevronLeft style={{ color: "white" }} />
           )}
         </IconButton>
       </div>

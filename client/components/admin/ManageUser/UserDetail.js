@@ -1,12 +1,13 @@
-import React, { useEffect } from "react";
+import React from "react";
 
-import { makeStyles, Typography, Breadcrumbs, Link, Grid, Divider, TextField, Button } from "@material-ui/core";
-import HomeIcon from "@material-ui/icons/Home";
-import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
-import PersonIcon from "@material-ui/icons/Person";
+import { Typography, Breadcrumbs, Link, Grid, Divider, TextField, Button } from "@material-ui/core";
+import {makeStyles} from '@material-ui/core/styles';
+import {Home, PeopleAlt, Person} from "@material-ui/icons";
+console.log(Person);
 import { Link as RouteLink, useParams, useHistory } from "react-router-dom";
-import iconDinosaur from "../../../assets/images/icon-dinosaur.png";
-import iconMedal from "../../../assets/images/icon-medal.png";
+const serverUrl = process.env.NODE_ENV === 'production' ? process.env.PROD_SERVER_URL : process.env.DEV_SERVER_URL;
+const iconDinosaur = serverUrl + "images/icon-dinosaur.png";
+const iconMedal= serverUrl + "images/icon-medal.png";
 
 import { connect } from "react-redux";
 import moment from "moment";
@@ -70,19 +71,19 @@ const UserDetail = (props) => {
     <div>
       <Breadcrumbs aria-label="breadcrumb">
         <Link color="inherit" to="/admin" component={RouteLink} className={classes.link}>
-          <HomeIcon className={classes.icon} />
+          <Home className={classes.icon} />
           <Typography variant="body1" style={{ color: "inherit" }}>
             Dashboard
           </Typography>
         </Link>
         <Link color="inherit" to="/admin/manageuser" component={RouteLink} className={classes.link}>
-          <PeopleAltIcon className={classes.icon} />
+          <PeopleAlt className={classes.icon} />
           <Typography variant="body1" style={{ color: "inherit" }}>
             Manage User
           </Typography>
         </Link>
         <Typography variant="body1" color="textPrimary" className={classes.link}>
-          <PersonIcon className={classes.icon} />
+          <Person className={classes.icon} />
           User Detail
         </Typography>
       </Breadcrumbs>

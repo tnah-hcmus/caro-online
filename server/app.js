@@ -11,6 +11,7 @@ const socketServer = require("./socket/server");
 require("./db/db");
 
 const app = express();
+app.use('/images', express.static(path.join(__dirname, "../public/images")));
 app.use(express.static(path.join(__dirname, "../public/dist")));
 
 app.use(express.urlencoded({ extended: true }));

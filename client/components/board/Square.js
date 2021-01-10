@@ -1,6 +1,7 @@
 import React from "react";
-import XIcon from "../../assets/images/icons8-X.png";
-import OIcon from "../../assets/images/icons8-O.png";
+const serverUrl = process.env.NODE_ENV === 'production' ? process.env.PROD_SERVER_URL : process.env.DEV_SERVER_URL;
+const XIcon = serverUrl + "images/icons8-X.png";
+const OIcon = serverUrl + "images/icons8-O.png";
 const Square = (props) => {
   const winSquare =
     props.winning && props.winning.winArea.includes(props.j + props.i * props.size)

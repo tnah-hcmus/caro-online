@@ -1,8 +1,8 @@
 import React from "react";
 
-import { Grid, makeStyles } from "@material-ui/core";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
+import { Grid } from "@material-ui/core";
+import {makeStyles} from '@material-ui/core/styles';
+import {AccountCircle, FiberManualRecord} from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,10 +34,10 @@ const PlayerDetail =  (props) => {
     <Grid item xs={12}>
       <div className={classes.root}>
         <div className={classes.label}>
-          <AccountCircleIcon />
+          <AccountCircle />
           <div className={classes.info}>{props.name}</div>
         </div>
-        <FiberManualRecordIcon size="small" className={classes.status} />
+        <FiberManualRecord size="small" className={classes.status} />
       </div>
     </Grid>
   );

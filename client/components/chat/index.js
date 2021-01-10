@@ -1,11 +1,10 @@
 import React, { useRef, useEffect } from "react";
-import { Grid, makeStyles, Button, Typography } from "@material-ui/core";
-import SendIcon from "@material-ui/icons/Send";
-import ForumIcon from "@material-ui/icons/Forum";
+import { Grid, Button, Typography } from "@material-ui/core";
+import {makeStyles} from '@material-ui/core/styles';
+import {Send, Forum} from "@material-ui/icons/";
 import Message from "./message";
 import { addMessage } from "../../action/chat/action";
 import WSObserver from "../../socket/observer";
-import TextareaAutosize from "@material-ui/core/TextareaAutosize";
 
 import { connect } from "react-redux";
 
@@ -65,7 +64,7 @@ const BoxChat = (props) => {
     <Grid item container xs={3} className={classes.root}>
       <Grid item xs={12} container direction="row" className={classes.title}>
         <Grid item className={classes.icon}>
-          <ForumIcon />
+          <Forum />
         </Grid>
         <Grid item>
           <Typography variant="h6">Box Chat</Typography>
@@ -83,7 +82,7 @@ const BoxChat = (props) => {
           </Grid>
           <Grid item xs={4} style={{ margin: "auto", padding: 0 }}>
             <Button
-              startIcon={<SendIcon />}
+              start={<Send />}
               variant="contained"
               color="primary"
               disabled={props.isReview}

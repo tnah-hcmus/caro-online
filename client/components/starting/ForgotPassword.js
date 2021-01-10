@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Grid, makeStyles, TextField, Typography, Button, Dialog, DialogContent } from "@material-ui/core";
+import { Grid, TextField, Typography, Button, Dialog, DialogContent } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 import CustomizedSnackbars from "../common/CustomizedSnackbars";
-import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
+import SupervisorAccount from "@material-ui/icons/SupervisorAccount";
 import Avatar from "@material-ui/core/Avatar";
 import Axios from "axios";
 
@@ -36,7 +37,7 @@ const ForgotPasswordPanel = (props) => {
           <DialogContent>
             <Grid container direction="column" alignItems="center" className={classes.dialog}>
               <Avatar className={classes.avatar}>
-                <SupervisorAccountIcon />
+                <SupervisorAccount />
               </Avatar>
               <Typography variant="h5" color="initial">
                 WELCOME

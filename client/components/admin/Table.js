@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 
 import { useTable, useSortBy, usePagination } from "react-table";
-import { makeStyles, TablePagination, Button } from "@material-ui/core";
+import { TablePagination, Button } from "@material-ui/core";
+import {makeStyles} from '@material-ui/core/styles';
 import { useHistory } from "react-router-dom";
 import ConfirmModal from "../common/ConfirmModal";
 import {blockUser} from '../../action/admin/action'

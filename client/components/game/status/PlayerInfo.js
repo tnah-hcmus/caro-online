@@ -1,14 +1,14 @@
 import React from "react";
-import { Grid, Typography, makeStyles, withStyles } from "@material-ui/core";
-import Avatar from "@material-ui/core/Avatar";
-import Tooltip from "@material-ui/core/Tooltip";
+import { Grid, Typography, Avatar, Tooltip, Badge } from "@material-ui/core";
+import {makeStyles} from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 // IMPORT ICON
-import XIcon from "../../../assets/images/icons8-X.png";
-import OIcon from "../../../assets/images/icons8-O.png";
-import DinosaurIcon from "../../../assets/images/icon-dinosaur.png";
-import CrocodileIcon from "../../../assets/images/icon-crocodile.png";
-import MedalIcon from "../../../assets/images/icon-medal.png";
-import Badge from "@material-ui/core/Badge";
+const serverUrl = process.env.NODE_ENV === 'production' ? process.env.PROD_SERVER_URL : process.env.DEV_SERVER_URL;
+const DinosaurIcon = serverUrl + "images/icon-dinosaur.png";
+const CrocodileIcon= serverUrl + "images/icon-crocodile.png";
+const MedalIcon= serverUrl + "images/icon-medal.png";
+const XIcon = serverUrl + "images/icons8-X.png";
+const OIcon = serverUrl + "images/icons8-O.png";
 
 const StyledBadge = withStyles((theme) => ({
   badge: {

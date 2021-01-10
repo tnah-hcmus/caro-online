@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { Typography, Breadcrumbs, Link, makeStyles, Grid } from "@material-ui/core";
-import HomeIcon from "@material-ui/icons/Home";
+import React, { useEffect } from "react";
+import { Typography, Breadcrumbs, Link, Grid } from "@material-ui/core";
+import {makeStyles} from '@material-ui/core/styles';
+import {Home, PeopleAlt, Games} from "@material-ui/icons";
 import { getUsersList, getGamesList } from "../../action/admin/action";
 import { connect } from "react-redux";
-import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
-import GamesIcon from "@material-ui/icons/Games";
 import { Link as RouterLink } from "react-router-dom";
 
 import "./style.css";
@@ -42,7 +41,7 @@ const Dashboard = (props) => {
     <div className={classes.root}>
       <Breadcrumbs aria-label="breadcrumb">
         <Typography variant="body1" color="textPrimary" className={classes.link}>
-          <HomeIcon className={classes.icon} />
+          <Home className={classes.icon} />
           Dashboard
         </Typography>
       </Breadcrumbs>
@@ -55,7 +54,7 @@ const Dashboard = (props) => {
               <p>Users</p>
             </div>
             <div className="icon">
-              <PeopleAltIcon />
+              <PeopleAlt />
             </div>
             <Link to="/admin/manageuser" className="small-box-footer" component={RouterLink}>
               More info
@@ -70,7 +69,7 @@ const Dashboard = (props) => {
               <p>Games</p>
             </div>
             <div className="icon">
-              <GamesIcon />
+              <Games />
             </div>
             <Link to="/admin/managegame" className="small-box-footer" component={RouterLink}>
               More info

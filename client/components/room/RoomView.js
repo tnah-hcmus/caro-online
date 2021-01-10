@@ -7,8 +7,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  makeStyles,
 } from "@material-ui/core";
+import {makeStyles} from '@material-ui/core/styles';
 import Board from "../game";
 import BoxChat from "../chat";
 import { startGame, leaveRoom, leaveViewRoom } from "../../action/room/action";
@@ -16,9 +16,10 @@ import { updateInfo } from "../../action/user/action";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import CustomizedSnackbars from "../common/CustomizedSnackbars";
-import IcX from "../../assets/images/icons8-X.png";
-import IcO from "../../assets/images/icons8-O.png";
-import IcVs from "../../assets/images/icons8-vs-button.png";
+const serverUrl = process.env.NODE_ENV === 'production' ? process.env.PROD_SERVER_URL : process.env.DEV_SERVER_URL;
+const IcVs = serverUrl + 'images/icons8-vs-button.png';
+const IcX = serverUrl + "images/icons8-X.png";
+const IcO = serverUrl + "images/icons8-O.png";
 
 const useStyles = makeStyles({
   root: {

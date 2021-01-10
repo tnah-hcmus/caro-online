@@ -1,20 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
+import {IconButton, AppBar, Toolbar, Typography, Grow, MenuItem, Popper, Paper, MenuList, ClickAwayListener, Link} from "@material-ui/core";
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import MenuItem from "@material-ui/core/MenuItem";
-import Popper from "@material-ui/core/Popper";
-import Grow from "@material-ui/core/Grow";
-import Paper from "@material-ui/core/Paper";
-import MenuList from "@material-ui/core/MenuList";
-import ClickAwayListener from "@material-ui/core/ClickAwayListener";
-import { Link } from "@material-ui/core";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import {startLogout} from '../../action/auth/action';
-import iconLogo from "../../assets/images/icon-logo.png";
 import {connect} from 'react-redux'
 
 const useStyles = makeStyles((theme) => ({

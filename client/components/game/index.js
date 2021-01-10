@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Grid, makeStyles, Typography, Button } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
+import {makeStyles} from '@material-ui/core/styles';
 import BoardView from "../board/BoardView";
 import Status from "./status/GameStatus";
 import calculateWinner from "../../game-logic/calculateWinner";

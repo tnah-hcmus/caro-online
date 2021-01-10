@@ -1,15 +1,16 @@
 import React, {useState, useEffect} from "react";
-import { Grid, makeStyles, Typography } from "@material-ui/core";
-import Bg from "../../assets/images/bg-rank.jpg";
-import IcMedal from "../../assets/images/icon-medal.png";
-import IcDinosaur from "../../assets/images/icon-dinosaur.png";
-import IcCrocodile from "../../assets/images/icon-crocodile.png";
-import IcTop1 from "../../assets/images/top1.png";
-import IcTop2 from "../../assets/images/top2.png";
-import IcTop3 from "../../assets/images/top3.png";
-import IcTop5 from "../../assets/images/top5.png";
+import { Grid, Typography } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 import Axios from 'axios';
 import {connect} from 'react-redux';
+const serverUrl = process.env.NODE_ENV === 'production' ? process.env.PROD_SERVER_URL : process.env.DEV_SERVER_URL;
+const Bg = serverUrl+ 'images/bg-rank.jpg';
+const IcMedal = serverUrl + 'images/icon-medal.png';
+const IcDinosaur = serverUrl + 'images/icon-dinosaur.png';
+const IcTop1 = serverUrl + 'images/top1.png';
+const IcTop2 = serverUrl + 'images/top2.png';
+const IcTop3 = serverUrl + 'images/top3.png';
+const IcTop5 = serverUrl + 'images/top5.png';
 const getTopPlayerByMedal = (size, token) => {
     return Axios.get(
       "/api/users" + "?sortBy=coins" + "&start=0&end=" + size,

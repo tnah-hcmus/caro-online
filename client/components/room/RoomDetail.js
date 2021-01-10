@@ -1,11 +1,7 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Card from "@material-ui/core/Card";
-import CardHeader from "@material-ui/core/CardHeader";
-import CardActions from "@material-ui/core/CardActions";
-import Avatar from "@material-ui/core/Avatar";
+import {Grid, Card, CardHeader, CardActions, Avatar} from "@material-ui/core";
 import { red } from "@material-ui/core/colors";
-import { Grid } from "@material-ui/core";
 
 import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
@@ -48,9 +44,9 @@ const RoomDetail = (props) => {
             </Avatar>
           }
           //   action={
-          //     <IconButton aria-label="settings">
-          //       <MoreVertIcon />
-          //     </IconButton>
+          //     <Button aria-label="settings">
+          //       <MoreVert />
+          //     </Button>
           //   }
           title={"Room ID: " + props.id + " | Cược: " + props.coins}
           subheader={props.players + "/2 player"}

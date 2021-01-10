@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import { Grid, makeStyles, TextField, Typography, Button, Dialog, DialogContent } from "@material-ui/core";
+import { Grid, TextField, Typography, Button, Dialog, DialogContent, Avatar } from "@material-ui/core";
+import {makeStyles} from '@material-ui/core/styles';
 import { startLoginAdmin } from "../../action/auth/action";
 import { connect } from "react-redux";
 import CustomizedSnackbars from "../common/CustomizedSnackbars";
-import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
-import Avatar from "@material-ui/core/Avatar";
-import Link from "@material-ui/core/Link";
+import SupervisorAccount from "@material-ui/icons/SupervisorAccount";
 import {withRouter} from 'react-router-dom'
 
 const AdminLoginPanel = (props) => {
@@ -26,7 +25,7 @@ const AdminLoginPanel = (props) => {
           <DialogContent>
             <Grid container direction="column" alignItems="center" className={classes.dialog}>
               <Avatar className={classes.avatar}>
-                <SupervisorAccountIcon />
+                <SupervisorAccount />
               </Avatar>
               <Typography variant="h5" color="initial">
                 WELCOME

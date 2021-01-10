@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Typography, TextField, Button, Breadcrumbs, Link, makeStyles } from "@material-ui/core";
-import Divider from "@material-ui/core/Divider";
-import HomeIcon from "@material-ui/icons/Home";
-import PersonIcon from "@material-ui/icons/Person";
+import { Grid, Typography, TextField, Button, Breadcrumbs, Link, Divider } from "@material-ui/core";
+import {Home, Edit, Person} from "@material-ui/icons";
+import {makeStyles} from '@material-ui/core/styles';
 import { Link as RouteLink } from "react-router-dom";
-import iconMedal from "../../assets/images/icon-medal.png";
-import iconDinosaur from "../../assets/images/icon-dinosaur.png";
-import EditIcon from "@material-ui/icons/Edit";
+const serverUrl = process.env.NODE_ENV === 'production' ? process.env.PROD_SERVER_URL : process.env.DEV_SERVER_URL;
+const iconDinosaur = serverUrl + "images/icon-dinosaur.png";
+const iconMedal= serverUrl + "images/icon-medal.png";
 import { updateName } from "../../action/user/action";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
@@ -107,11 +106,11 @@ const Profile = ({ user, updateName, token, userId, history }) => {
         <Grid item xs={12}>
           <Breadcrumbs aria-label="breadcrumb">
             <Link color="inherit" to="/" component={RouteLink} className={classes.link}>
-              <HomeIcon className={classes.icon} />
+              <Home className={classes.icon} />
               Home
             </Link>
             <Typography color="textPrimary" className={classes.link}>
-              <PersonIcon className={classes.icon} />
+              <Person className={classes.icon} />
               Profile
             </Typography>
           </Breadcrumbs>
@@ -194,7 +193,7 @@ const Profile = ({ user, updateName, token, userId, history }) => {
               />
             </Grid>
             <Grid item style={{ margin: "auto 0", cursor: "pointer" }} onClick={() => setIsEditing(!isEditing)}>
-              <EditIcon />
+              <Edit />
             </Grid>
           </Grid>
           <Grid item container spacing={1} xs={12}>
@@ -214,7 +213,7 @@ const Profile = ({ user, updateName, token, userId, history }) => {
               />
             </Grid>
             <Grid item style={{ margin: "auto 0", cursor: "pointer" }} onClick={() => setIsEditing(!isEditing)}>
-              <EditIcon />
+              <Edit />
             </Grid>
           </Grid>
         </Grid>

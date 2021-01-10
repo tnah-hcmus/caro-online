@@ -1,9 +1,6 @@
 import React from "react";
-import { Grid, Typography, makeStyles } from "@material-ui/core";
-import Avatar from "@material-ui/core/Avatar";
-import DinosaurIcon from "../../../assets/images/icon-dinosaur.png";
-import CrocodileIcon from "../../../assets/images/icon-crocodile.png";
-import MedalIcon from "../../../assets/images/icon-medal.png";
+import { Grid, Typography } from "@material-ui/core";
+
 const History = ({ step }) => {
   return (
     <Grid container item xs={12} direction="row">

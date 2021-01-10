@@ -1,14 +1,9 @@
 import React, { useState } from "react";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Link from "@material-ui/core/Link";
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
+import {Button, TextField, Link, Grid, Box, Typography} from "@material-ui/core"
 import { makeStyles } from "@material-ui/core/styles";
 import Copyright from "../common/Copyright";
-import Typography from "@material-ui/core/Typography";
 import CustomizedSnackbars from "../common/CustomizedSnackbars";
-import FacebookIcon from "@material-ui/icons/Facebook";
+import Facebook from "@material-ui/icons/Facebook";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -107,7 +102,7 @@ const SignUpPanel = (props) => {
         </Button>
         <Button
           href={'/auth/facebook'}
-          startIcon={<FacebookIcon color="primary" style={{ fontSize: 28 }} />}
+          startIcon={<Facebook color="primary" style={{ fontSize: 28 }} />}
           fullWidth
           variant="contained"
           color="default"

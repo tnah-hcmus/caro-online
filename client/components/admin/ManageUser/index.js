@@ -1,11 +1,10 @@
 import React, { useEffect } from "react";
 
 import Table from "../Table";
-import { makeStyles, Typography, Breadcrumbs, Link } from "@material-ui/core";
-import HomeIcon from "@material-ui/icons/Home";
-import PeopleAltIcon from "@material-ui/icons/PeopleAlt";
+import { Typography, Breadcrumbs, Link } from "@material-ui/core";
+import {makeStyles} from '@material-ui/core/styles';
+import {Home, PeopleAlt} from "@material-ui/icons";
 import { Link as RouteLink } from "react-router-dom";
-
 import { connect } from "react-redux";
 import queryString from 'query-string'
 
@@ -89,13 +88,13 @@ function ManageUser(props) {
     <div>
       <Breadcrumbs aria-label="breadcrumb">
         <Link color="inherit" to="/admin" component={RouteLink} className={classes.link}>
-          <HomeIcon className={classes.icon} />
+          <Home className={classes.icon} />
           <Typography variant="body1" style={{ color: "inherit" }}>
             Dashboard
           </Typography>
         </Link>
         <Typography variant="body1" color="textPrimary" className={classes.link}>
-          <PeopleAltIcon className={classes.icon} />
+          <PeopleAlt className={classes.icon} />
           Manage User
         </Typography>
       </Breadcrumbs>

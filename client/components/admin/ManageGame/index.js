@@ -2,9 +2,9 @@ import React, { useEffect } from "react";
 
 import { connect } from "react-redux";
 import Table from "../Table";
-import { makeStyles, Typography, Breadcrumbs, Link } from "@material-ui/core";
-import HomeIcon from "@material-ui/icons/Home";
-import GamesIcon from "@material-ui/icons/Games";
+import { Typography, Breadcrumbs, Link } from "@material-ui/core";
+import {makeStyles} from '@material-ui/core/styles';
+import {Home, Games} from "@material-ui/icons";
 import { Link as RouteLink } from "react-router-dom";
 import moment from "moment";
 
@@ -101,13 +101,13 @@ function ManageGame(props) {
     <div>
       <Breadcrumbs aria-label="breadcrumb">
         <Link color="inherit" to="/admin" component={RouteLink} className={classes.link}>
-          <HomeIcon className={classes.icon} />
+          <Home className={classes.icon} />
           <Typography variant="body1" style={{ color: "inherit" }}>
             Dashboard
           </Typography>
         </Link>
         <Typography variant="body1" color="textPrimary" className={classes.link}>
-          <GamesIcon className={classes.icon} />
+          <Games className={classes.icon} />
           Manage Game
         </Typography>
       </Breadcrumbs>

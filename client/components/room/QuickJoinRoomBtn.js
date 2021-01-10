@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
-import { Grid } from "@material-ui/core";
-import SearchIcon from "@material-ui/icons/Search";
+import { Grid, Button } from "@material-ui/core";
+import Search from "@material-ui/icons/Search";
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -26,7 +25,7 @@ const QuickJoinRoomBtn = ({onPress, timeOut, setMessage}) => {
   return (
     <Grid item>
       <Button
-        startIcon={<SearchIcon />}
+        startIcon={<Search />}
         variant="contained"
         color="primary"
         className={classes.button}

@@ -1,18 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import InputBase from "@material-ui/core/InputBase";
-import Divider from "@material-ui/core/Divider";
-import IconButton from "@material-ui/core/IconButton";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import SearchIcon from "@material-ui/icons/Search";
-import { Typography } from "@material-ui/core";
-import Popper from "@material-ui/core/Popper";
-import Grow from "@material-ui/core/Grow";
-import MenuItem from "@material-ui/core/MenuItem";
-import MenuList from "@material-ui/core/MenuList";
-import ClickAwayListener from "@material-ui/core/ClickAwayListener";
-import CheckIcon from "@material-ui/icons/Check";
+import {Paper, InputBase, Divider, IconButton, Typography, Popper, Grow, MenuItem, MenuList, ClickAwayListener } from "@material-ui/core";
+import {ExpandMore, Search} from "@material-ui/icons"
 import qs from 'query-string';
 import {withRouter} from 'react-router-dom';
 
@@ -105,7 +94,7 @@ const SearchUser = (props) => {
         <Typography variant="body1" color="initial">
           {option}
         </Typography>
-        <ExpandMoreIcon />
+        <ExpandMore />
       </IconButton>
       <Popper className={classes.popper} open={open} anchorEl={anchorRef.current} placement="bottom-end" transition>
         {({ TransitionProps }) => (
@@ -122,7 +111,7 @@ const SearchUser = (props) => {
         )}
       </Popper>
       <IconButton className={classes.iconButtonMenu} aria-label="search" onClick = {handleSearch}>
-        <SearchIcon />
+        <Search />
       </IconButton>
     </Paper>
   );

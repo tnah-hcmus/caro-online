@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Grid, makeStyles, TextField, Button, Typography } from "@material-ui/core";
+import { Grid,  TextField, Button, Typography } from "@material-ui/core";
+import {makeStyles} from '@material-ui/core/styles';
+import {Settings, SlowMotionVideo} from "@material-ui/icons";
 import BoardView from "../board/BoardView";
 import calculateWinner from "../../game-logic/calculateWinner";
 import CustomizedSnackbars from "../common/CustomizedSnackbars";
-import SettingsIcon from "@material-ui/icons/Settings";
-import SlowMotionVideoIcon from "@material-ui/icons/SlowMotionVideo";
 import BoxChat from "../chat";
 import {withRouter} from 'react-router-dom';
-const drawFlag = "___NO_BODY_WIN___";
 import Axios from "axios";
 
 const useStyles = makeStyles({
@@ -183,7 +182,7 @@ const GameReview = (props) => {
                 <Grid container item xs={12} className={classes.section} style={{ padding: "15px 0 0" }}>
                   <Grid item xs={12} container direction="row" className={classes.title}>
                     <Grid item className={classes.icon}>
-                      <SettingsIcon />
+                      <Settings />
                     </Grid>
                     <Grid item>
                       <Typography variant="h6">Function</Typography>
@@ -221,7 +220,7 @@ const GameReview = (props) => {
                 <Grid container item xs={12} className={classes.section}>
                   <Grid item xs={12} container direction="row" className={classes.title}>
                     <Grid item className={classes.icon}>
-                      <SlowMotionVideoIcon />
+                      <SlowMotionVideo />
                     </Grid>
                     <Grid item>
                       <Typography variant="h6">Steps</Typography>
