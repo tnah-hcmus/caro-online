@@ -15,7 +15,7 @@ import ForgotPasswordPanel from "../components/starting/ForgotPassword";
 import Profile from "../components/player/Profile";
 import ChangePassword from "../components/starting/ChangePassword";
 import AdminLayout from "../components/layout/AdminLayout";
-import Dashboard from "../components/admin/dashboard";
+import Dashboard from "../components/admin/Dashboard";
 import ManageUser from "../components/admin/ManageUser";
 import ManageGame from "../components/admin/ManageGame";
 import RankChart from "../components/rankchart";
