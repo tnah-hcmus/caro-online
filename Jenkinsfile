@@ -1,8 +1,5 @@
 pipeline {
     agent any
-    environment {
-        HEROKU_API_KEY='c8c87ad2-a453-47c4-818d-4fec2397fabe'
-    }
     stages {
 		stage('Install') {
 			steps {
