@@ -9,7 +9,7 @@ pipeline {
 			    fileOperations([fileCopyOperation(
 					excludes: '',
 					flattenFiles: false,
-					includes: 'D:\\jenkins\\users\\env\\**',
+					includes: 'D:\\jenkins\\users\\env\\.env',
 					targetLocation: "D:\\jenkins\\workspace\\CI-CD plus score"
 				)])
 			}
