@@ -59,6 +59,7 @@ const getListMove = (id, token) => {
 const GameReview = (props) => {
   const classes = useStyles();
   const token = props.history.location.state?.token || null;
+  const viewAllChat = props.history.location.state?.chatView || false;
   const [message, setMessage] = useState();
   const [history, setHistory] = useState([]);
   const [listMove, setListMove] = useState([]);
@@ -248,7 +249,7 @@ const GameReview = (props) => {
             </Grid>
             <CustomizedSnackbars message={message} />
           </Grid>
-          <BoxChat isReview={true} timeFlag = {step ? listMove[step].timestamp : 0} chats = {chats} isEnd = {step == (listMove.length -1)}/>
+          <BoxChat isReview={true} timeFlag = {step ? listMove[step].timestamp : 0} chats = {chats} isEnd = {step == (listMove.length -1)} viewAllChat = {viewAllChat} id = {props.match.params.id}/>
         </Grid>
       ) : (
         <p>Đang tải trận, vui lòng chờ</p>

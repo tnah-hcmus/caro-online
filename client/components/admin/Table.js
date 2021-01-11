@@ -85,7 +85,7 @@ function Table({ columns, data, blockUser, secret, token }) {
                           {cell.row.original.tableType == "game" ? (
                             <div className={classes.actions}>
                               <Button
-                                onClick={() => history.push(`/admin/managegame/${cell.value}`)}
+                                onClick={() => history.push(`/admin/managegame/${cell.value}`, {chatView: true, token})}
                                 variant="contained"
                                 size="small"
                                 color="primary"

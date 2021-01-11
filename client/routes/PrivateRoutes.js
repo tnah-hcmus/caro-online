@@ -35,7 +35,7 @@ const PrivateRoutes = (props) => {
             <Route path="/admin/manageuser/:id" component={UserDetail} />
             <Route path="/admin/managegame" component={ManageGame} exact />
             <Route path="/admin/review/:id" component={GameReview} />
-            <Route path="/admin/managegame/:id" component={GameDetail} />
+            <Route path="/admin/managegame/:id" component={GameReview} />
             <Route path="/admin/profile" component={Profile} />
             <Route path="/admin/changepassword" component={ChangePassword} />
             <Route path="/404" component={NotFound} />
