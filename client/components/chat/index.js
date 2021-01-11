@@ -7,6 +7,7 @@ import { addMessage } from "../../action/chat/action";
 import WSObserver from "../../socket/observer";
 
 import { connect } from "react-redux";
+import moment from "moment";
 
 const useStyles = makeStyles({
   root: {
@@ -46,11 +47,39 @@ const useStyles = makeStyles({
 
 const BoxChat = (props) => {
   const chatRef = useRef();
+  let a = null;
+  let url = null;
+  const filename = "caro_" + props.id + ".txt";
   const allMessages = props.isReview ? props.chats.map(item => {
     if((item.timestamp < props.timeFlag) || props.isEnd) {
       return {message: item.message, owner: item.owner, isMyMessage: item.owner == props.name}
     }
   }).filter(item => item) : (props.chat[props.roomID] || []);
+  useEffect(() => {
+    const endLine = "\r\n";
+    if(props.isReview) {
+      const data = props.chats.reduce((textData, item) => {
+        textData += moment(item.timestamp).format("DD-MM-YYYY hh:mm:ss");
+        textData += "  ";
+        textData += item.owner;
+        textData += ": "
+        textData += item.message;
+        textData += endLine;
+        console.log(textData, item);
+        return textData;
+      },"");
+      const BOM = new Uint8Array([0xEF,0xBB,0xBF]);
+      const file = new Blob([BOM, data], {type: "txt;charset=UTF-8"});
+      a = document.createElement("a")
+      url = URL.createObjectURL(file);
+      a.href = url;
+      document.body.appendChild(a);
+    }
+    return () => {
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }
+  }, []);
   if(!props.isReview) WSObserver.startListenUpdateChat(props.addMessage);
   const handleChat = () => {
     if(!props.isReview) {
@@ -76,22 +105,51 @@ const BoxChat = (props) => {
             return <Message key={i} isMyMessage={item.isMyMessage} message={item.message} owner={item.owner} />;
           })}
         </Grid>
-        <Grid container item xs={12} alignItems="flex-end" direction="row" className={classes.input}>
-          <Grid item xs={8} style={{ padding: "0 10px" }}>
-            <textarea id="message" className={classes.inputBtn} ref={chatRef} disabled={props.isReview} />
-          </Grid>
-          <Grid item xs={4} style={{ margin: "auto", padding: 0 }}>
-            <Button
-              start={<Send />}
-              variant="contained"
-              color="primary"
-              disabled={props.isReview}
-              onClick={handleChat}
-            >
-              Send
-            </Button>
-          </Grid>
-        </Grid>
+        
+
+          {
+            !props.viewAllChat 
+            ?
+            <Grid container item xs={12} alignItems="flex-end" direction="row" className={classes.input}>
+              <Grid item xs={8} style={{ padding: "0 10px" }}>
+              <textarea id="message" className={classes.inputBtn} ref={chatRef} disabled={props.isReview} />
+              </Grid> 
+              <Grid item xs={4} style={{ margin: "auto", padding: 0 }}>
+                <Button
+                  start={<Send />}
+                  variant="contained"
+                  color="primary"
+                  disabled={props.isReview}
+                  onClick={handleChat}
+                >
+                  Send
+                </Button>
+              </Grid>
+            </Grid>
+            :
+            <Grid container item xs={12} alignItems="flex-end" direction="row" className={classes.input}>
+              <Grid item xs={6} style={{ padding: "0 10px" }}>
+                <Button
+                    start={<Send />}
+                    variant="contained"
+                    color="primary"
+                    onClick={() => { a.download = filename; a.click()}}
+                >
+                  Download chat
+                </Button>
+              </Grid>
+              <Grid item xs={6} style={{ padding: "0 10px" }}>
+                <Button
+                    start={<Send />}
+                    variant="contained"
+                    color="primary"
+                    onClick={() => {a.click()}}
+                >
+                  View chat
+                </Button>
+              </Grid>
+           </Grid>
+          }            
       </Grid>
     </Grid>
   );
