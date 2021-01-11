@@ -43,9 +43,10 @@ router
         const users = await User.find();
         if (!Object.keys(req.query).length) {
           if (req.adminAuth.status === 200) res.status(200).send(users);
-          else res.status(req.adminAuth.status).send({
-            error: req.adminAuth.error
-          });
+          else
+            res.status(req.adminAuth.status).send({
+              error: req.adminAuth.error,
+            });
         } else {
           let { sortBy, start, end } = req.query;
           if (User.schema.paths[sortBy]) {
@@ -57,6 +58,7 @@ router
                   return {
                     id: item.gameId,
                     email: item.email,
+                    name: item.name,
                     role: item.role,
                     coins: item.coins,
                     win: item.win,
