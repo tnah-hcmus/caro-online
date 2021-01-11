@@ -2,14 +2,22 @@
 import React from "react";
 // @material-ui/core components
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import {Drawer, List, Typography, Divider, ListItem, ListItemIcon, ListItemText, IconButton } from "@material-ui/core";
-import {ChevronLeft, ChevronRight, VpnKey, Person, ExitToApp, SupervisorAccount, SportsEsports} from "@material-ui/icons";
+import { Drawer, List, Typography, Divider, ListItem, ListItemIcon, ListItemText, IconButton } from "@material-ui/core";
+import {
+  ChevronLeft,
+  ChevronRight,
+  VpnKey,
+  Person,
+  ExitToApp,
+  SupervisorAccount,
+  SportsEsports,
+} from "@material-ui/icons";
 import clsx from "clsx";
 import { Link as RouterLink, useHistory } from "react-router-dom";
-const serverUrl = process.env.NODE_ENV === 'production' ? process.env.PROD_SERVER_URL : process.env.DEV_SERVER_URL;
+const serverUrl = process.env.NODE_ENV === "production" ? process.env.PROD_SERVER_URL : process.env.DEV_SERVER_URL;
 const IcAdmin = serverUrl + "images/icon-admin.png";
 import { startLogout } from "../../action/auth/action";
-import {connect} from 'react-redux'
+import { connect } from "react-redux";
 
 const drawerWidth = 240;
 
@@ -98,20 +106,23 @@ const SidebarAdmin = ({ onDrawerClose, open, logout }) => {
   ];
 
   const actionsList = [
-    {
-      icon: <VpnKey />,
-      text: "Change password",
-      redirect: () => history.push("/admin/changepassword"),
-    },
-    {
-      icon: <Person />,
-      text: "Edit profile",
-      redirect: () => history.push("/admin/profile"),
-    },
+    // {
+    //   icon: <VpnKey />,
+    //   text: "Change password",
+    //   redirect: () => history.push("/admin/changepassword"),
+    // },
+    // {
+    //   icon: <Person />,
+    //   text: "Edit profile",
+    //   redirect: () => history.push("/admin/profile"),
+    // },
     {
       icon: <ExitToApp />,
       text: "Log out",
-      redirect: () => {logout(); history.push("/")},
+      redirect: () => {
+        logout();
+        history.push("/");
+      },
     },
   ];
 
@@ -164,6 +175,6 @@ const SidebarAdmin = ({ onDrawerClose, open, logout }) => {
       </List>
     </Drawer>
   );
-}
-const mapDispatchToProps = {logout: startLogout}
-export default connect(null, mapDispatchToProps)(SidebarAdmin)
+};
+const mapDispatchToProps = { logout: startLogout };
+export default connect(null, mapDispatchToProps)(SidebarAdmin);

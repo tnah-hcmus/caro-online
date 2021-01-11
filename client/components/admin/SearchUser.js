@@ -1,9 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import {Paper, InputBase, Divider, IconButton, Typography, Popper, Grow, MenuItem, MenuList, ClickAwayListener } from "@material-ui/core";
-import {ExpandMore, Search} from "@material-ui/icons"
-import qs from 'query-string';
-import {withRouter} from 'react-router-dom';
+import {
+  Paper,
+  InputBase,
+  TextField,
+  Divider,
+  IconButton,
+  Typography,
+  Popper,
+  Grow,
+  MenuItem,
+  MenuList,
+  ClickAwayListener,
+} from "@material-ui/core";
+import { ExpandMore, Search } from "@material-ui/icons";
+import qs from "query-string";
+import { withRouter } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -74,21 +86,29 @@ const SearchUser = (props) => {
 
   const handleSearch = () => {
     const searchContent = searchRef.current.value;
-    if(searchContent) {
-      const query = {[option]: searchContent}
+    if (searchContent) {
+      const query = { [option]: searchContent };
       props.history.replace({
-        pathname: '/admin/manageuser', 
-        search: qs.stringify(query)
-      })
-      searchRef.current.value = "";
-      setOption("email");
+        pathname: "/admin/manageuser",
+        search: qs.stringify(query),
+      });
+      // searchRef.current.value = "";
+      // setOption("email");
+    } else {
+      props.history.push("/admin/manageuser");
     }
-  }
-
+  };
 
   return (
-    <Paper component="form" className={classes.root}>
-      <InputBase className={classes.input} placeholder="Search Users" inputRef = {searchRef}/>
+    <Paper
+      component="form"
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSearch();
+      }}
+      className={classes.root}
+    >
+      <InputBase className={classes.input} placeholder="Search Users" inputRef={searchRef} />
       <Divider className={classes.divider} orientation="vertical" />
       <IconButton className={classes.iconButton} aria-label="menu" ref={anchorRef} onClick={handleToggle}>
         <Typography variant="body1" color="initial">
@@ -110,10 +130,10 @@ const SearchUser = (props) => {
           </Grow>
         )}
       </Popper>
-      <IconButton className={classes.iconButtonMenu} aria-label="search" onClick = {handleSearch}>
+      <IconButton className={classes.iconButtonMenu} aria-label="search" onClick={handleSearch}>
         <Search />
       </IconButton>
     </Paper>
   );
-}
+};
 export default withRouter(SearchUser);
