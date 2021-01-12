@@ -6,6 +6,7 @@ export default (state = {}, action) => {
         ...action.payload,
       };
     case UPDATE_INFO:
+      console.log('update', action.payload);
       state[action.payload.property] = action.payload.newData;
       return {
         ...state,

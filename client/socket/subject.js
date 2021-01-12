@@ -15,6 +15,17 @@ class WSSubject {
   sendMessage(message) {
     WS.pushData("send-chat", message);
   }
+  logOut(userId) {
+    WS.pushData('send-disconnect-request', userId);
+    setTimeout(() => WS.socket = null, 1000);
+  }
+  updateName(name) {
+    WS.pushData('update-name', name);
+  }
+  reUpdate() {
+    console.log('push')
+    WS.pushData('re-update');
+  }
   sendGameData(data) {
     WS.pushData("send-game-data", data);
   }

@@ -1,6 +1,7 @@
 import { LOGIN, LOGOUT, JOIN, UPDATE_TOKEN } from "./type";
 import { initInfo, getInfo, updateInfo, clearInfo } from "../user/action";
 import Axios from "axios";
+import WSSubject from '../../socket/subject';
 export const login = (id, token) => ({
   type: LOGIN,
   payload: { id, token, inRoom: false },
@@ -114,9 +115,11 @@ export const changePassword = (oldPass, newPass, id, token) => {
       });
   };
 };
-export const startLogout = () => {
+export const startLogout = (userId, history) => {
   return (dispatch) => {
     dispatch(logout());
+    history.push('/');
     dispatch(clearInfo());
+    WSSubject.logOut(userId);
   }
 }

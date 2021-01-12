@@ -62,6 +62,7 @@ const Game = (props) => {
       break;
   }
   const updateCoin = (winner) => {
+    console.log("update coin", winner);
     if (props.player !== "") props.updateUserAfterGame(roomInfo.coins, winner == props.player);
     if (winner == "X") {
       props.updateCoins(props.roomID, "X", roomInfo.players.X.coins + roomInfo.coins);

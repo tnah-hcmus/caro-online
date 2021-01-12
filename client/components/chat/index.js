@@ -76,8 +76,8 @@ const BoxChat = (props) => {
       document.body.appendChild(a);
     }
     return () => {
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
+      if(a) document.body.removeChild(a);
+      if(url) window.URL.revokeObjectURL(url);
     }
   }, []);
   if(!props.isReview) WSObserver.startListenUpdateChat(props.addMessage);

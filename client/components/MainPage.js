@@ -10,11 +10,20 @@ import ListPlayer from "./player/ListPlayer";
 
 const MainPage = (props) => {
   const [user, setUser] = useState([]);
+  console.log('reset')
   useEffect(() => {
-    WSClient.connect(props.userId);
+    console.log("reload");
+    if(WSClient.isNull()) {
+      console.log("true")
+      WSClient.connect(props.userId);
+    }
+    else {
+      console.log('false');
+      WSClient.reUpdate();
+    }
     WSObserver.startListenUpdateUser(setUser);
     return () => WSClient.unsubscribe("update-user");
-  }, []);
+  });
 
   return (
     <>

@@ -26,7 +26,7 @@ module.exports = () => {
     plugins: [
       new webpack.HashedModuleIdsPlugin(),
       new webpack.DefinePlugin(envKeys),
-      new BundleAnalyzerPlugin(),
+      //new BundleAnalyzerPlugin(),
       new webpack.ContextReplacementPlugin(
         /moment[\/\\]locale$/,
         /vi/

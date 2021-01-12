@@ -4,6 +4,9 @@ class WSClient {
   constructor() {
     this.socket = null;
   }
+  isNull() {
+    return !!this.socket;
+  }
   connect(userId) {
     if(!this.socket) {
       const serverUrl = process.env.NODE_ENV === 'production' ? process.env.PROD_SERVER_URL : process.env.DEV_SERVER_URL;

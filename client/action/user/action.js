@@ -1,5 +1,6 @@
 import { INIT_INFO, UPDATE_INFO, CLEAR_INFO, SET_USERS_LIST } from "./type";
 import Axios from "axios";
+import WSSubject from '../../socket/subject';
 export const initInfo = ({ name, email, coins, win, lose, draw, total, role, games }) => ({
   type: INIT_INFO,
   payload: { name, email, coins, win, lose, draw, total, role, games, total: games.length },
@@ -50,6 +51,7 @@ export const updateName = (name, token, id) => {
       }
     )
       .then(() => {
+        WSSubject.updateName(name);
         dispatch(updateInfo("name", name));
       })
       .catch((e) => {
@@ -60,9 +62,15 @@ export const updateName = (name, token, id) => {
 export const updateUserAfterGame = (coins, isWin) => {
   return (dispatch, getState) => {
     const user = getState().user;
-    dispatch(updateInfo("coins", user.coins + coins));
-    if (isWin) dispatch(updateInfo("win", user.win + 1));
-    else dispatch(updateInfo("lose", user.lose + 1));
+    
+    if (isWin) {
+      dispatch(updateInfo("coins", user.coins + coins));
+      dispatch(updateInfo("win", user.win + 1));
+    }
+    else {
+      dispatch(updateInfo("coins", user.coins - coins));
+      dispatch(updateInfo("lose", user.lose + 1));
+    }
   };
 };
 

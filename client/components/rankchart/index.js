@@ -28,7 +28,7 @@ const RankChart = (props) => {
   const [topUser, setTopUser] = useState([]);
   useEffect(() => {
     const fetchTopUser = async () => {
-      const users = await getTopPlayerByMedal(5, props.token);
+      const users = (await getTopPlayerByMedal(5, props.token)).concat({name: props.name, coins: props.coins});
       setTopUser(users);
     };
     fetchTopUser();
@@ -104,6 +104,8 @@ const RankChart = (props) => {
 const mapStateToProps = (state) => {
   return {
     token: state.auth.token,
+    name: state.user.name,
+    coins: state.user.coins
   };
 };
 export default connect(mapStateToProps)(RankChart);

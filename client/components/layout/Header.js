@@ -3,6 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import {IconButton, AppBar, Toolbar, Typography, Grow, MenuItem, Popper, Paper, MenuList, ClickAwayListener, Link} from "@material-ui/core";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import { Link as RouterLink, useHistory } from "react-router-dom";
+import {withRouter} from 'react-router-dom';
 import {startLogout} from '../../action/auth/action';
 import {connect} from 'react-redux'
 
@@ -59,7 +60,7 @@ const Header = (props) => {
   }, [open]);
 
   const handleSignout = () => {
-    props.logout();
+    props.logout(props.id, props.history);
   };
 
   return (
@@ -109,10 +110,11 @@ const Header = (props) => {
 const mapStateToProps = (state) => {
   return {
     name: state.user.name,
-    role: state.user.role
+    role: state.user.role,
+    id: state.auth.id
   };
 };
 const mapDispatchToProps = {
   logout: startLogout
 }
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Header));

@@ -9,6 +9,41 @@ module.exports = function(app) {
         if(user) return user.name;
         else return 'Anonymous';
     }
+    const updateInfo = (id, newName) => {
+      userPool[id].name = newName;
+      let listUser = Object.keys(userPool).reduce((listUser, key) => [...listUser, userPool[key].name], []);
+      io.sockets.emit('update-user', listUser);
+    }
+    const deleteUser = (id) => {
+      delete userPool[id];
+      let listUser = Object.keys(userPool).reduce((listUser, key) => [...listUser, userPool[key].name], []);
+      io.sockets.emit('update-user', listUser);
+    }
+    const updateCoins = async (result, room, game) => {
+      if(room) {
+        console.log(result);
+        game.status = result;
+        if (result == 1) game.winner = `X: ${room.X.name}`;
+        else if (result == 2) game.winner = `O: ${room.Y.name}`;
+        else game.winner = `None`;
+        console.log(game);
+        game.save();
+        const current = await Room.findOne({roomID: room.roomID});
+        const [userX, userY] = await Promise.all([User.findOne({gameId: current.X.id}), User.findOne({gameId: current.Y.id})]);
+        userX.updateAfterGame(result == 1 ? 1 : 0, room.coins, result == 3);
+        userY.updateAfterGame(result == 2 ? 1 : 0, room.coins, result == 3); 
+        if(result == 1) {
+          current.X.coins += room.coins;
+          current.Y.coins -= room.coins;
+        } else if(result == 2) {
+          current.X.coins -= room.coins;
+          current.Y.coins += room.coins;
+        } else {
+        }
+        await current.save();  
+        console.log(current);
+      }
+    }
     //set up socket
     const server = require('http').createServer(app);
     const options = { origins: '*:*'};
@@ -16,6 +51,7 @@ module.exports = function(app) {
     let userPool = {};
 
     io.on('connection', async (socket) => { 
+        console.log('new socket');
         //on first connection     
         const userId = socket.handshake.query.userId;
         const name = await getUserInfo(userId);
@@ -25,14 +61,16 @@ module.exports = function(app) {
         io.sockets.emit('update-user', listUser);
         //on disconnect
         socket.on('disconnect', () => {     
-            const i = userPool[userId].id.indexOf(socket);
-            userPool[userId].id = userPool[userId].id.splice(i, 1);
-            if(!userPool[userId].id.length) {
-                delete userPool[userId];
-                listUser = Object.keys(userPool).reduce((listUser, key) => listUser.push(userPool[key].name), []);
-                io.sockets.emit('update-user', listUser); 
-            }
+          deleteUser(userId);
         });
+        socket.on('update-name', (newName) => {
+          updateInfo(userId, newName);
+        })
+        socket.on('re-update', () => {
+          let listUser = Object.keys(userPool).reduce((listUser, key) => [...listUser, userPool[key].name], []);
+          console.log('update', listUser)
+          io.sockets.emit('update-user', listUser);
+        })
         socket.on('send-room-data', data => {
             socket.broadcast.emit('new-room-data', data);
         }) 
@@ -61,8 +99,8 @@ module.exports = function(app) {
                   socket.to(id).emit("new-game-data", data);
                   const {x, y, player, status} = data;
                   if(status) {
-                    game.status = (status.winner == "X") ? 1 : 2;
-                    game.winner = `${status.winner}: ${room[status.winner].name}`;
+                    room = await Room.findOne({roomID: id});
+                    await updateCoins(status.winner == 'X' ? 1 : 2, room, game);
                   }
                   game.history.push({x, y, player, timestamp: Date.now()});
                   await game.save();
@@ -99,28 +137,9 @@ module.exports = function(app) {
               });
               socket.on("send-result-data", async (data) => {
                 const {result} = data;
-                socket.to(id).emit("new-result-data", data);
                 room = await Room.findOne({roomID: id});
-                if(room) {
-                  game.status = result;
-                  if (result == 1) game.winner = `X: ${room.X.name}`;
-                  else if (result == 2) game.winner = `O: ${room.Y.name}`;
-                  else game.winner = `None`;
-                  game.save();
-                  const current = await Room.findOne({roomID: room.roomID});
-                  const [userX, userY] = await Promise.all([User.findOne({gameId: current.X.id}), User.findOne({gameId: current.Y.id})]);
-                  userX.updateAfterGame(result == 1 ? 1 : 0, room.coins, result == 3);
-                  userY.updateAfterGame(result == 2 ? 1 : 0, room.coins, result == 3); 
-                  if(result == 1) {
-                    current.X.coins += room.coins;
-                    current.Y.coins -= room.coins;
-                  } else if(result == 2) {
-                    current.X.coins -= room.coins;
-                    current.Y.coins += room.coins;
-                  } else {
-                  }
-                  current.save();  
-                }           
+                await updateCoins(result, room, game);
+                socket.to(id).emit("new-result-data", data);                           
               })
               socket.on("send-game-reply", async (data) => {
                 const {accept, type} = data;
@@ -184,8 +203,9 @@ module.exports = function(app) {
               
         });
         //on send disconnect
-        socket.on('send-disconnect-request', () => {
-            socket.disconnect(true);           
+        socket.on('send-disconnect-request', (id) => {
+          deleteUser(id);
+          socket.disconnect(true);           
         });
     });
     server.listen(process.env.PORT);

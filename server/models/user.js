@@ -194,6 +194,7 @@ userSchema.methods.updateAfterGame = async function (operator, number, isDraw) {
     this.coins -= number;
   }
   await this.save();
+  console.log(this.coins);
 };
 
 userSchema.statics.findByCredentials = async (email, password) => {
