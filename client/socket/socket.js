@@ -5,7 +5,7 @@ class WSClient {
     this.socket = null;
   }
   isNull() {
-    return !!this.socket;
+    return !this.socket;
   }
   connect(userId) {
     if(!this.socket) {

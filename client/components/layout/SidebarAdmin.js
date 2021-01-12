@@ -17,12 +17,8 @@ import { Link as RouterLink, useHistory } from "react-router-dom";
 const serverUrl = process.env.NODE_ENV === "production" ? process.env.PROD_SERVER_URL : process.env.DEV_SERVER_URL;
 const IcAdmin = serverUrl + "images/icon-admin.png";
 import { startLogout } from "../../action/auth/action";
-<<<<<<< HEAD
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
-=======
-import { connect } from "react-redux";
->>>>>>> be5507f0a21f4e5ebc50b14eac9271785441b678
 
 const drawerWidth = 240;
 
@@ -124,14 +120,7 @@ const SidebarAdmin = ({ onDrawerClose, open, logout, id }) => {
     {
       icon: <ExitToApp />,
       text: "Log out",
-<<<<<<< HEAD
       redirect: () => {logout(id, history);},
-=======
-      redirect: () => {
-        logout();
-        history.push("/");
-      },
->>>>>>> be5507f0a21f4e5ebc50b14eac9271785441b678
     },
   ];
 
@@ -184,7 +173,6 @@ const SidebarAdmin = ({ onDrawerClose, open, logout, id }) => {
       </List>
     </Drawer>
   );
-<<<<<<< HEAD
 }
 const mapStateToProps = (state) => {
   return {
@@ -193,8 +181,3 @@ const mapStateToProps = (state) => {
 };
 const mapDispatchToProps = {logout: startLogout}
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(SidebarAdmin))
-=======
-};
-const mapDispatchToProps = { logout: startLogout };
-export default connect(null, mapDispatchToProps)(SidebarAdmin);
->>>>>>> be5507f0a21f4e5ebc50b14eac9271785441b678

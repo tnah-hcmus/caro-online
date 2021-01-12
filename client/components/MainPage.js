@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Copyright from "./common/Copyright";
 import WSClient from "../socket/socket";
 import WSObserver from "../socket/observer";
+import WSSubject from "../socket/subject";
 import { connect } from "react-redux";
 import { Grid } from "@material-ui/core";
 
@@ -10,20 +11,16 @@ import ListPlayer from "./player/ListPlayer";
 
 const MainPage = (props) => {
   const [user, setUser] = useState([]);
-  console.log('reset')
   useEffect(() => {
-    console.log("reload");
     if(WSClient.isNull()) {
-      console.log("true")
       WSClient.connect(props.userId);
     }
     else {
-      console.log('false');
-      WSClient.reUpdate();
+      WSSubject.reUpdate();
     }
     WSObserver.startListenUpdateUser(setUser);
     return () => WSClient.unsubscribe("update-user");
-  });
+  }, []);
 
   return (
     <>
