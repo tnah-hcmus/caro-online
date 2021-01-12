@@ -1,13 +1,13 @@
 import React from "react";
 
 import { Typography, Breadcrumbs, Link, Grid, Divider, TextField, Button } from "@material-ui/core";
-import {makeStyles} from '@material-ui/core/styles';
-import {Home, PeopleAlt, Person} from "@material-ui/icons";
+import { makeStyles } from "@material-ui/core/styles";
+import { Home, PeopleAlt, Person } from "@material-ui/icons";
 console.log(Person);
 import { Link as RouteLink, useParams, useHistory } from "react-router-dom";
-const serverUrl = process.env.NODE_ENV === 'production' ? process.env.PROD_SERVER_URL : process.env.DEV_SERVER_URL;
+const serverUrl = process.env.NODE_ENV === "production" ? process.env.PROD_SERVER_URL : process.env.DEV_SERVER_URL;
 const iconDinosaur = serverUrl + "images/icon-dinosaur.png";
-const iconMedal= serverUrl + "images/icon-medal.png";
+const iconMedal = serverUrl + "images/icon-medal.png";
 
 import { connect } from "react-redux";
 import moment from "moment";
@@ -18,8 +18,8 @@ const useStyles = makeStyles((theme) => ({
   },
   icon: {
     marginRight: theme.spacing(0.5),
-    width: 30,
-    height: 30,
+    width: 22,
+    height: 22,
   },
   label: {
     minWidth: 85,
@@ -295,10 +295,10 @@ const UserDetail = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({ 
-  usersList: state.admin.userList, 
+const mapStateToProps = (state) => ({
+  usersList: state.admin.userList,
   gamesList: state.admin.gameList,
-  token: state.auth.token
+  token: state.auth.token,
 });
 
 export default connect(mapStateToProps)(UserDetail);

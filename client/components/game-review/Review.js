@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Grid,  TextField, Button, Typography } from "@material-ui/core";
-import {makeStyles} from '@material-ui/core/styles';
-import {Settings, SlowMotionVideo} from "@material-ui/icons";
+import { Grid, TextField, Button, Typography } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import { Settings, SlowMotionVideo } from "@material-ui/icons";
 import BoardView from "../board/BoardView";
 import calculateWinner from "../../game-logic/calculateWinner";
 import CustomizedSnackbars from "../common/CustomizedSnackbars";
 import BoxChat from "../chat";
-import {withRouter} from 'react-router-dom';
+import Loading from "../common/Loading";
+import { withRouter } from "react-router-dom";
 import Axios from "axios";
 
 const useStyles = makeStyles({
@@ -76,7 +77,7 @@ const GameReview = (props) => {
       const game = await getListMove(gameId, token);
       const list = game.history;
       setWinType(game.status);
-      setChats(game.chat)
+      setChats(game.chat);
       const customList = [{ x: null, y: null, player: null }].concat(list);
       setListMove(customList);
       const allBoard = list.reduce(
@@ -126,7 +127,7 @@ const GameReview = (props) => {
   };
   const winnerPrinter = (endType) => {
     let result = null;
-    switch(endType) {
+    switch (endType) {
       case 1:
         result = "X win this game";
         break;
@@ -136,7 +137,8 @@ const GameReview = (props) => {
       case 3:
         result = "Game draw";
         break;
-      case 4: case 0:
+      case 4:
+      case 0:
         result = "Game corrupted, two player leaved";
         break;
       default:
@@ -144,7 +146,7 @@ const GameReview = (props) => {
         break;
     }
     return result;
-  }
+  };
 
   const allMoveButton = () => {
     const allMoves = listMove.map((step, i) => {
@@ -163,7 +165,7 @@ const GameReview = (props) => {
     <>
       {history.length ? (
         <Grid container direction="row" justify="flex-start" alignItems="flex-start" alignContent="stretch">
-          <Grid container item xs={12} md={9} className={classes.root}>
+          <Grid container item xs={12} md={viewAllChat ? 12 : 9} className={classes.root}>
             <Grid item xs={8} className={classes.board}>
               <BoardView
                 squares={history[step].squares}
@@ -212,7 +214,14 @@ const GameReview = (props) => {
                       />
                     </Grid>
                     <Grid item xs={11} className={classes.button}>
-                      <Button variant="contained" color="secondary" fullWidth onClick={() => props.history.push(!props.location.pathname.includes('admin') ? '/' : '/admin/dashboard')}>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        fullWidth
+                        onClick={() =>
+                          props.history.push(!props.location.pathname.includes("admin") ? "/" : "/admin/dashboard")
+                        }
+                      >
                         Leave
                       </Button>
                     </Grid>
@@ -238,10 +247,10 @@ const GameReview = (props) => {
                     <Grid item xs={11}>
                       <ul>
                         {allMoveButton()}
-                        <li key={'win-end'}>
-                          <button disabled = {true}>{winnerPrinter(winType)}</button>
+                        <li key={"win-end"}>
+                          <button disabled={true}>{winnerPrinter(winType)}</button>
                         </li>
-                      </ul>                      
+                      </ul>
                     </Grid>
                   </Grid>
                 </Grid>
@@ -249,10 +258,17 @@ const GameReview = (props) => {
             </Grid>
             <CustomizedSnackbars message={message} />
           </Grid>
-          <BoxChat isReview={true} timeFlag = {step ? listMove[step].timestamp : 0} chats = {chats} isEnd = {step == (listMove.length -1)} viewAllChat = {viewAllChat} id = {props.match.params.id}/>
+          <BoxChat
+            isReview={true}
+            timeFlag={step ? listMove[step].timestamp : 0}
+            chats={chats}
+            isEnd={step == listMove.length - 1}
+            viewAllChat={viewAllChat}
+            id={props.match.params.id}
+          />
         </Grid>
       ) : (
-        <p>Đang tải trận, vui lòng chờ</p>
+        <Loading />
       )}
     </>
   );

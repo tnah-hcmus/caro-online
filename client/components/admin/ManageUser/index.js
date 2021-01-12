@@ -79,7 +79,7 @@ function ManageUser(props) {
   let users = props.usersList;
   if (searchOptions) {
     const key = Object.keys(searchOptions)[0];
-    users = users.filter((item) => item[key].includes(searchOptions[key]));
+    users = users.filter((item) => item[key].toLowerCase().includes(searchOptions[key].toLowerCase()));
   }
 
   const data = React.useMemo(() => generateData(users), [users]);
