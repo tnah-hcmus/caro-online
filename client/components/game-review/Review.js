@@ -163,11 +163,13 @@ const GameReview = (props) => {
 
   return (
     <>
+      <CustomizedSnackbars message={message} />
       {history.length ? (
         <Grid container direction="row" justify="flex-start" alignItems="flex-start" alignContent="stretch">
           <Grid container item xs={12} md={viewAllChat ? 12 : 9} className={classes.root}>
             <Grid item xs={8} className={classes.board}>
               <BoardView
+                viewAllChat={viewAllChat}
                 squares={history[step].squares}
                 size={size}
                 handleClick={() => {
@@ -209,7 +211,18 @@ const GameReview = (props) => {
                         size="small"
                         id="time"
                         type="number"
-                        onChange={(e) => setDelay(e.target.value)}
+                        value={delay}
+                        onChange={(e) => {
+                          if (e.target.value < 1 || e.target.value > 10) {
+                            setMessage({
+                              type: "error",
+                              content: "Delay phải nằm trong khoản 1s đến 10s !!!",
+                              open: true,
+                            });
+                            return;
+                          }
+                          setDelay(e.target.value);
+                        }}
                         fullWidth
                       />
                     </Grid>
@@ -242,7 +255,7 @@ const GameReview = (props) => {
                     xs={12}
                     justify="center"
                     className={classes.statusWrapper}
-                    style={{ maxHeight: "50vh" }}
+                    style={{ maxHeight: "50vh", overflowY: "scroll" }}
                   >
                     <Grid item xs={11}>
                       <ul>

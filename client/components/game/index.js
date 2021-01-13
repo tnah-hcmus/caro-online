@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Grid } from "@material-ui/core";
-import {makeStyles} from '@material-ui/core/styles';
+import { makeStyles } from "@material-ui/core/styles";
 import BoardView from "../board/BoardView";
 import Status from "./status/GameStatus";
 import calculateWinner from "../../game-logic/calculateWinner";
@@ -13,6 +13,7 @@ import WSSubject from "../../socket/subject";
 import WSObserver from "../../socket/observer";
 import { connect } from "react-redux";
 import CustomizedSnackbars from "../common/CustomizedSnackbars";
+import Loading from "../common/Loading";
 const drawFlag = "___NO_BODY_WIN___";
 
 const useStyles = makeStyles({
@@ -93,7 +94,7 @@ const Game = (props) => {
       squares[id] = player;
       const isWin = calculateWinner(id, squares, squares[id], size);
       if (isWin) {
-        console.log("update coin in update Board")
+        console.log("update coin in update Board");
         updateCoin(isWin.winner);
       }
       props.addBoard(props.roomID, squares, isWin, player);
@@ -132,12 +133,12 @@ const Game = (props) => {
               isTurn={roomInfo.players.X.id === props.userId ? props.player !== player : props.player === player}
               roomID={props.roomID}
               player={props.player}
-              waiting={(props.player !== "" && player) && (props.player !== player)}
+              waiting={props.player !== "" && player && props.player !== player}
               size={size}
               setMessage={setMessage}
               isOWner={roomInfo.players.X.id === props.userId}
-              timer = {roomInfo.timer}
-              lastTimestamp = {timestamp}
+              timer={roomInfo.timer}
+              lastTimestamp={timestamp}
               handleLeave={props.handleLeave}
               viewers={roomInfo.viewer}
               updateCoin={updateCoin}
@@ -146,7 +147,7 @@ const Game = (props) => {
           <CustomizedSnackbars message={message} />
         </Grid>
       ) : (
-        <p>Đang tải trận, vui lòng chờ</p>
+        <Loading />
       )}
     </>
   );

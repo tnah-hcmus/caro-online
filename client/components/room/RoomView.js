@@ -1,14 +1,6 @@
 import React, { useState } from "react";
-import {
-  Grid,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from "@material-ui/core";
-import {makeStyles} from '@material-ui/core/styles';
+import { Grid, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 import Board from "../game";
 import BoxChat from "../chat";
 import { startGame, leaveRoom, leaveViewRoom } from "../../action/room/action";
@@ -16,8 +8,8 @@ import { updateInfo } from "../../action/user/action";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import CustomizedSnackbars from "../common/CustomizedSnackbars";
-const serverUrl = process.env.NODE_ENV === 'production' ? process.env.PROD_SERVER_URL : process.env.DEV_SERVER_URL;
-const IcVs = serverUrl + 'images/icons8-vs-button.png';
+const serverUrl = process.env.NODE_ENV === "production" ? process.env.PROD_SERVER_URL : process.env.DEV_SERVER_URL;
+const IcVs = serverUrl + "images/icons8-vs-button.png";
 const IcX = serverUrl + "images/icons8-X.png";
 const IcO = serverUrl + "images/icons8-O.png";
 
@@ -45,6 +37,9 @@ const useStyles = makeStyles({
   icon: {
     maxHeight: 50,
     margin: 5,
+  },
+  game: {
+    // width: "100vw",
   },
 });
 
@@ -76,10 +71,17 @@ const RoomView = (props) => {
     else props.leaveViewRoom(props.roomID, props.id, () => props.history.push("/"));
   };
   return (
-    <Grid container direction="row" justify="flex-start" alignItems="flex-start" alignContent="stretch">
+    <Grid
+      container
+      className={classes.game}
+      direction="row"
+      justify="flex-start"
+      alignItems="flex-start"
+      alignContent="stretch"
+    >
       {start ? (
         <>
-          <Board player={playerStatus} handleLeave={handleLeave}/>
+          <Board player={playerStatus} handleLeave={handleLeave} />
           <BoxChat roomID={props.roomID} />
         </>
       ) : (
@@ -98,16 +100,15 @@ const RoomView = (props) => {
             </div>
           </DialogContent>
           <DialogActions className={classes.actions}>
-            {current && current.players.X && current.players.Y && current.players.X.id === props.id 
-            ? (
+            {current && current.players.X && current.players.Y && current.players.X.id === props.id ? (
               current.players.Y.id && current.players.X.id ? (
                 <>
-                <Button onClick={startGame} size="large" variant="contained" color="primary">
-                  Start
-                </Button>
-                <Button onClick={() => handleLeave(playerStatus)} size="large" variant="contained" color="primary">
+                  <Button onClick={startGame} size="large" variant="contained" color="primary">
+                    Start
+                  </Button>
+                  <Button onClick={() => handleLeave(playerStatus)} size="large" variant="contained" color="primary">
                     Leave room
-                </Button>
+                  </Button>
                 </>
               ) : (
                 <>
@@ -119,7 +120,11 @@ const RoomView = (props) => {
               )
             ) : (
               <>
-                <p>{!current.players.X && !current.players.Y ? 'Cả 2 người chơi trong phòng đã thoát trận': 'Chờ chủ phòng bắt đầu trận'}</p>
+                <p>
+                  {!current.players.X && !current.players.Y
+                    ? "Cả 2 người chơi trong phòng đã thoát trận"
+                    : "Chờ chủ phòng bắt đầu trận"}
+                </p>
                 <Button onClick={() => handleLeave(playerStatus)} size="large" variant="contained" color="primary">
                   Leave room
                 </Button>

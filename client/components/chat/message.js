@@ -1,6 +1,6 @@
 import React from "react";
-import { Grid, Typography} from "@material-ui/core";
-import {makeStyles} from '@material-ui/core/styles';
+import { Grid, Typography } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 const useStyles = makeStyles({
   root: {
     padding: "5px 10px",
@@ -17,10 +17,10 @@ const useStyles = makeStyles({
   },
 });
 
-const Message = ({message, isMyMessage, owner}) => {
+const Message = ({ message, isMyMessage, owner }) => {
   const classes = useStyles();
   return (
-    <Grid container className={classes.root} justify={isMyMessage && "flex-end"}>
+    <Grid container className={classes.root} justify={isMyMessage ? "flex-end" : ""}>
       {!isMyMessage && (
         <Grid item xs={12}>
           <Typography variant="subtitle2" color="initial">

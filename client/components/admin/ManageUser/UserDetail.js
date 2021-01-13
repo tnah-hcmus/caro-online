@@ -282,7 +282,7 @@ const UserDetail = (props) => {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => history.push("/admin/review/" + game._id, { token: props.token })}
+                  onClick={() => history.push("/admin/managegame/" + game._id, { chatView: true, token: props.token })}
                 >
                   View detail
                 </Button>

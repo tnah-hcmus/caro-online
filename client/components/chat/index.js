@@ -26,7 +26,7 @@ const useStyles = makeStyles({
   input: {
     padding: 4,
     borderTop: "1px solid #bababa",
-    height: 50,
+    // height: 50,
   },
   inputBtn: {
     height: 30,
@@ -80,9 +80,9 @@ const BoxChat = (props) => {
       document.body.appendChild(a);
     }
     return () => {
-      if(a) document.body.removeChild(a);
-      if(url) window.URL.revokeObjectURL(url);
-    }
+      if (a) document.body.removeChild(a);
+      if (url) window.URL.revokeObjectURL(url);
+    };
   }, []);
   if (!props.isReview) WSObserver.startListenUpdateChat(props.addMessage);
   const handleChat = () => {

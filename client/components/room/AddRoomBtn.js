@@ -23,6 +23,7 @@ const AddRoomBtn = (props) => {
   const passwordRef = useRef();
   const coinRef = useRef();
   const minTimer = 30;
+  const maxTimer = 50;
   const minCoins = 1;
 
   const handleClickOpen = () => {
@@ -48,10 +49,19 @@ const AddRoomBtn = (props) => {
         return false;
       }
 
-      if (timer < minTimer) {
+      if (coins > props.user.coins) {
         props.setMessage({
           type: "error",
-          content: "Thời gian suy nghĩ quá ngắn, thời gian suy nghĩ tối thiểu phải tối thiểu " + minTimer + " giây.",
+          content: "Bạn chỉ có " + props.user.coins + " coins.",
+          open: true,
+        });
+        return false;
+      }
+
+      if (timer < minTimer || timer > maxTimer) {
+        props.setMessage({
+          type: "error",
+          content: "Thời gian suy nghĩ phải nằm trong khoảng " + minTimer + " đến " + maxTimer + " giây",
           open: true,
         });
         return false;
