@@ -64,7 +64,7 @@ const ListRoom = (props) => {
   useEffect(() => {
     WSClient.connect(props.userId);
     WSObserver.startListenUpdateRoomData(props.updateRoomData);
-    console.log(ignoreID)
+    console.log(ignoreID);
     props.fetchRoom(props.token, ignoreID || props.busy);
   }, []);
   const afterJoin = (id, userId, password, type) => {
@@ -104,7 +104,7 @@ const ListRoom = (props) => {
     const room = Object.values(props.rooms).find((item) => ((!!item.players.X.id + !!item.players.Y.id) < 2));
     if (room) {
       joinRoom(room.id, props.userId, "PLAY");
-      WSSubject.sendJoinGame({roomID: room.id});
+      WSSubject.sendJoinGame({ roomID: room.id });
       clearTimeout(timeOutHandler);
     } else {
       const id = _createID();
@@ -115,7 +115,7 @@ const ListRoom = (props) => {
           setMessage({ type: "error", content: "Tạm thời không tìm thấy đối thủ, vui lòng thử lại sau", open: true })
         );
       }, timeOut);
-      setTimer(timerID)
+      setTimer(timerID);
       WSObserver.startListenQuickGame(() => props.history.push("/room/" + id), id, [timeOutHandler, timerID], setTimer);
     }
   };
@@ -130,12 +130,18 @@ const ListRoom = (props) => {
           joinRoom={(id, userId) => joinRoom(id, userId, "PLAY")}
           setMessage={setMessage}
         />
-        {props.busy && !timer ?
-          <Button variant="contained" color="primary" className={classes.button} onClick = {() => props.history.push("/room/" + props.busy)} >
-            Back to room
-          </Button>
-          : null
-        }
+        {props.busy && !timer ? (
+          <Grid item>
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.button}
+              onClick={() => props.history.push("/room/" + props.busy)}
+            >
+              Back to room
+            </Button>
+          </Grid>
+        ) : null}
       </Grid>
       <Grid container item xs={12} spacing={2} className={classes.room}>
         {Object.values(props.rooms)
@@ -185,7 +191,7 @@ const mapStateToProps = (state) => {
     rooms: state.room,
     user: state.user,
     token: state.auth.token,
-    busy: state.auth.inRoom
+    busy: state.auth.inRoom,
   };
 };
 const mapDispatchToProps = {
