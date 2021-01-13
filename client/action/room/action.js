@@ -16,7 +16,7 @@ const _createID = () => {
 
 export const addNewRoom = (id, playerID, playerName, playerCoins, password, timer, coins, roomType) => ({
   type: ADD_ROOM,
-  payload: { id , players: {X: {id: playerID, name: playerName, coins: playerCoins}, Y: {id: null, name: null}}, status: (roomType === 'hidden' ? 1 : 0), password, timer, result: 0, coins, roomType },
+  payload: { id , players: {X: {id: playerID, name: playerName, coins: playerCoins}, Y: {id: null, name: null}}, status: (roomType === 'quick' ? 1 : 0), password, timer, result: 0, coins, roomType },
 });
 
 export const initRoom = (data) => ({
@@ -59,7 +59,7 @@ export const addRoom = (playerID, playerName, playerCoins, passwordRaw, timerRaw
     dispatch(joinState(id));
     if(callback) callback(id);
     WSSubject.joinChannel(id, playerID, playerName, playerCoins, roomType, timer, coins, password);
-    WSSubject.sendRoomData({type: 'CREATE', roomID: null, property: null, newData: { id , players: {X: {id: playerID, name: playerName, coins: playerCoins}, Y: {id: null, name: null}}, status: (type === 'hidden' ? 1 : 0), password, timer, coins, roomType } })
+    WSSubject.sendRoomData({type: 'CREATE', roomID: null, property: null, newData: { id , players: {X: {id: playerID, name: playerName, coins: playerCoins}, Y: {id: null, name: null}}, status: (type === 'quick' ? 1 : 0), password, timer, coins, roomType } })
   };
 };
 
@@ -202,6 +202,8 @@ export const joinRoom = (id, playerID, playerName, playerCoins, password) => {
       if (user.coins < room[id].coins) return {status: false, msg: `This room need ${room[id].coins} coin${room[id].coins > 1 ? 's' : ''} to play. You just have only ${user.coins} coins`};
       if(room[id].players.X.id && room[id].players.Y.id) return {status: false, msg: `Phòng đã đủ số lượng người chơi`};
       if(room[id].password == '' || room[id].password == password) {
+        console.log(room[id])
+        if(room[id].roomType == "quick") WSSubject.sendJoinGame({roomID: id});
         dispatch(addPlayer(id, playerID, playerName, playerCoins));
         dispatch(joinState(id));
         WSSubject.joinChannel(id, playerID, playerName, playerCoins);

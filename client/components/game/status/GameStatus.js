@@ -23,10 +23,13 @@ const Status = (props) => {
   const [open, setOpen] = useState(false);
   const [requestType, setRequestType] = useState({ type: null, content: null });
   const [timer, setTimer] = useState(0);
+  const timePass = Math.round((Date.now() - props.lastTimestamp)/1000);
+  console.log(timePass, props.lastTimestamp);
   useEffect(() => {
     const [count] = useCounter(props.roomID);
+    console.log("Time update", props.waiting, props.winning, props.lastTimestamp, timePass);
     if(!props.waiting && !props.winning && props.player) {
-      const timerId = setTimeout((count > 2 ? handleTimeOutWaiting : applyDraw), (props.timer+3)*1000);
+      const timerId = setTimeout((count > 2 ? handleTimeOutWaiting : applyDraw), (props.timer+10)*1000);
       setTimer(timer);
       return () => clearTimeout(timerId);
     } else if (props.winning) {
@@ -170,7 +173,7 @@ const Status = (props) => {
             />
           </Grid>
           <Grid item xs={12} className={classes.countdown}>
-            {(props.waiting && !props.winning && props.player) ? <Countdown time={props.timer - (Math.round((Date.now() - props.lastTimestamp)/1000))} onTimeOut={handleTimeOut} reset = {props.waiting} /> : null}
+            {(props.waiting && !props.winning && props.player) ? <Countdown time={props.timer - timePass} onTimeOut={handleTimeOut} reset = {props.waiting} /> : null}
             <Typography variant="h6">{props.status}</Typography>
           </Grid>
         </Grid>

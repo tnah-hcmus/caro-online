@@ -30,6 +30,7 @@ class WSSubject {
     WS.pushData("send-game-data", data);
   }
   sendJoinGame(data) {
+    console.log('sent')
     WS.pushData("send-join-game", data);
   }
   sendRoomData(data) {

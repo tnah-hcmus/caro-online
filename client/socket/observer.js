@@ -38,6 +38,7 @@ class WSObserver {
     WS.onNewData("new-join-game", (data) => {
       const { roomID } = data;
       if(id === roomID) {
+        console.log(id, roomID, "oke");
         goToGame(roomID);
         WS.unsubscribe("new-join-game");
         for(const item of timeOutHandlers) clearTimeout(item);

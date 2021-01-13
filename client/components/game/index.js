@@ -36,7 +36,6 @@ const useStyles = makeStyles({
 const Game = (props) => {
   const classes = useStyles();
   const [canView, setCanView] = useState(props.player !== "");
-  console.log("can view from Game", canView);
   const [message, setMessage] = useState();
   const size = 20;
   const roomInfo = props.rooms[props.roomID];
@@ -46,26 +45,33 @@ const Game = (props) => {
     player = null,
     timestamp = 0;
   if (!props.history) {
-    props.createBoard(props.roomID, size, props.player);
-    current = Array(size * size).fill(null);
-  } else {
-    step = props.history.length - 1;
-    winning = props.history[step].status;
-    current = props.history[step].squares;
-    player = props.history[step].player;
-    timestamp = props.history[step].timestamp;
-  }
-  switch (roomInfo.result) {
-    case 1:
-      winning = { winArea: [], winner: "X" };
-      break;
-    case 2:
-      winning = { winArea: [], winner: "O" };
-      break;
-    case 3:
-      winning = { winArea: [], winner: drawFlag };
-      break;
-  }
+      props.createBoard(props.roomID, size, props.player);
+      current = Array(size * size).fill(null);
+    } else {
+      step = props.history.length - 1;
+      winning = props.history[step].status;
+      current = props.history[step].squares;
+      player = props.history[step].player;
+      timestamp = props.history[step].timestamp;
+    }
+    switch (roomInfo.result) {
+      case 1:
+        winning = { winArea: [], winner: "X" };
+        break;
+      case 2:
+        winning = { winArea: [], winner: "O" };
+        break;
+      case 3:
+        winning = { winArea: [], winner: drawFlag };
+        break;
+    }
+  useEffect(() => {
+    if(props.history) {
+      winning = props.history[step].status;
+      timestamp = props.history[step].timestamp;
+    }
+  }, [props.history])
+  
   const updateCoin = (winner) => {
     if (props.player !== "") props.updateUserAfterGame(roomInfo.coins, winner == props.player);
     if (winner == "X") {

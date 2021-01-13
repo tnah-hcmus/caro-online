@@ -4,7 +4,7 @@ export default (state = {}, action) => {
       case INIT_ROOM:
         console.log("init")
         const init = action.payload.data.reduce((local, item) => {
-          local[item.roomID] = { id: item.roomID , players: {X: {id: item.X.id, name: item.X.name, coins: item.X.coins}, Y: {id: item.Y.id, name: item.Y.name, coins: item.Y.coins}}, status: (item.roomType === 'hidden' ? 1 : 0), password: item.password, timer: item.timer, result: 0, roomType: item.roomType, coins: item.coins };
+          local[item.roomID] = { id: item.roomID , players: {X: {id: item.X.id, name: item.X.name, coins: item.X.coins}, Y: {id: item.Y.id, name: item.Y.name, coins: item.Y.coins}}, status: (item.roomType === 'quick' ? 1 : 0), password: item.password, timer: item.timer, result: 0, roomType: item.roomType, coins: item.coins };
           return local;
         }, {});
         return {...init};

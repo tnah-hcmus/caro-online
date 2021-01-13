@@ -69,8 +69,12 @@ const ListRoom = (props) => {
   }, []);
   const afterJoin = (id, userId, password, type) => {
     let result = null;
-    if (type === "VIEW") result = props.viewRoom(id, userId, props.user.name, password || null);
-    else if (type === "PLAY") result = props.joinRoom(id, userId, props.user.name, props.user.coins, password || null);
+    if(!props.busy) {
+      if (type === "VIEW") result = props.viewRoom(id, userId, props.user.name, password || null);
+      else if (type === "PLAY") result = props.joinRoom(id, userId, props.user.name, props.user.coins, password || null);
+    } else {
+      result = {status: false, msg: "Bạn đang ở trong room"};
+    }
     if (result.status) callbackSuccess(id);
     else callbackFailure(result.msg);
   };
@@ -97,14 +101,14 @@ const ListRoom = (props) => {
   };
   const timeOut = 10 * 1000;
   const randomRoom = (timeOutHandler) => {
-    const room = Object.values(props.rooms).find((item) => (item.roomType === "hidden" && (!!item.players.X.id + !!item.players.Y.id) < 2));
+    const room = Object.values(props.rooms).find((item) => ((!!item.players.X.id + !!item.players.Y.id) < 2));
     if (room) {
       joinRoom(room.id, props.userId, "PLAY");
       WSSubject.sendJoinGame({roomID: room.id});
       clearTimeout(timeOutHandler);
     } else {
       const id = _createID();
-      props.addRoom(props.userId, props.user.name, props.user.coins, null, 30, 1, null, "hidden", id);
+      props.addRoom(props.userId, props.user.name, props.user.coins, null, 30, 1, null, "quick", id);
       const timerID = setTimeout(() => {
         //hết thời gian chờ trận;
         props.leaveRoom(id, "X", () =>
@@ -135,7 +139,6 @@ const ListRoom = (props) => {
       </Grid>
       <Grid container item xs={12} spacing={2} className={classes.room}>
         {Object.values(props.rooms)
-          .filter((item) => item.roomType !== "hidden")
           .map((item, i) => (
             <RoomDetail
               id={item.id}

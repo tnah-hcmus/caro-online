@@ -69,7 +69,9 @@ const RoomView = (props) => {
   };
   const handleLeave = (player) => {
     console.log(player);
-    if (player !== "") props.leaveRoom(props.roomID, player, (ignore) => props.history.push("/", { ignore }));
+    if (player !== "") {
+      props.leaveRoom(props.roomID, player, (ignore) => props.history.push("/", { ignore }));
+    }
     else props.leaveViewRoom(props.roomID, props.id, () => props.history.push("/"));
   };
   return (
