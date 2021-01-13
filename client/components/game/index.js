@@ -40,7 +40,8 @@ const Game = (props) => {
   let step = 0,
     winning = null,
     current = [],
-    player = null;
+    player = null,
+    timestamp = 0;
   if (!props.history) {
     props.createBoard(props.roomID, size, props.player);
     current = Array(size * size).fill(null);
@@ -49,6 +50,7 @@ const Game = (props) => {
     winning = props.history[step].status;
     current = props.history[step].squares;
     player = props.history[step].player;
+    timestamp = props.history[step].timestamp;
   }
   switch (roomInfo.result) {
     case 1:
@@ -62,8 +64,8 @@ const Game = (props) => {
       break;
   }
   const updateCoin = (winner) => {
-    console.log("update coin", winner);
     if (props.player !== "") props.updateUserAfterGame(roomInfo.coins, winner == props.player);
+    console.log(winner);
     if (winner == "X") {
       props.updateCoins(props.roomID, "X", roomInfo.players.X.coins + roomInfo.coins);
       props.updateCoins(props.roomID, "Y", roomInfo.players.Y.coins - roomInfo.coins);
@@ -90,7 +92,10 @@ const Game = (props) => {
     else {
       squares[id] = player;
       const isWin = calculateWinner(id, squares, squares[id], size);
-      if (isWin) updateCoin(isWin.winner);
+      if (isWin) {
+        console.log("update coin in update Board")
+        updateCoin(isWin.winner);
+      }
       props.addBoard(props.roomID, squares, isWin, player);
       WSSubject.sendGameData({ roomID: props.roomID, squares, status: isWin, player, x: i, y: j });
     }
@@ -132,6 +137,7 @@ const Game = (props) => {
               setMessage={setMessage}
               isOWner={roomInfo.players.X.id === props.userId}
               timer = {roomInfo.timer}
+              lastTimestamp = {timestamp}
               handleLeave={props.handleLeave}
               viewers={roomInfo.viewer}
               updateCoin={updateCoin}

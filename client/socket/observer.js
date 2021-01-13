@@ -12,6 +12,7 @@ class WSObserver {
   }
   startListenGameResult(updateCoins) {
     WS.onNewData("new-result-data", (data) => {
+      console.log("update coin in listen game result")
       const { result } = data;
       if(result == 1) updateCoins("X");
       if(result == 2) updateCoins("O");
@@ -33,22 +34,28 @@ class WSObserver {
       else errHandle({type: "error", content: "Đối thủ không đồng ý yêu cầu của bạn", open: true });
     })
   }
-  startListenQuickGame(goToGame, id, timeOutHandlers) {
+  startListenQuickGame(goToGame, id, timeOutHandlers, setTimer) {
     WS.onNewData("new-join-game", (data) => {
       const { roomID } = data;
       if(id === roomID) {
         goToGame(roomID);
         WS.unsubscribe("new-join-game");
         for(const item of timeOutHandlers) clearTimeout(item);
+        setTimer(0);
       };
     })
   }
   startListenUpdateGameData(updateGameData, canView, setCanView, updateCoins) {
     WS.onNewData("new-game-data", (data) => {
+      console.log("on new data", data)
       const { roomID, squares, status, player} = data;
       updateGameData(roomID, squares, status, player);
-      if(status) updateCoins(status.winner);
+      if(status) {
+        console.log("update coin in load game datA")
+        updateCoins(status.winner);
+      }
       if(!canView) {
+        console.log(canView)
         setCanView(true);
       }
     });

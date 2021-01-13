@@ -71,6 +71,7 @@ const RoomView = (props) => {
     }
   };
   const handleLeave = (player) => {
+    console.log(player);
     if (player !== "") props.leaveRoom(props.roomID, player, (ignore) => props.history.push("/", { ignore }));
     else props.leaveViewRoom(props.roomID, props.id, () => props.history.push("/"));
   };
@@ -78,7 +79,7 @@ const RoomView = (props) => {
     <Grid container direction="row" justify="flex-start" alignItems="flex-start" alignContent="stretch">
       {start ? (
         <>
-          <Board player={playerStatus} handleLeave={handleLeave} />
+          <Board player={playerStatus} handleLeave={handleLeave}/>
           <BoxChat roomID={props.roomID} />
         </>
       ) : (
@@ -86,7 +87,7 @@ const RoomView = (props) => {
           <DialogContent className={classes.root}>
             <div className={classes.infoPlayer}>
               <img src={IcX} alt="O" width={24} height={24} />
-              <div>{(current.players.X && current.players.X.name) || "You"}</div>
+              <div>{(current.players.X && current.players.X.name) || "Chưa xác định"}</div>
             </div>
             <div className={classes.icon}>
               <img height={50} width={50} src={IcVs} />
@@ -97,11 +98,17 @@ const RoomView = (props) => {
             </div>
           </DialogContent>
           <DialogActions className={classes.actions}>
-            {current && current.players.X.id === props.id ? (
+            {current && current.players.X && current.players.Y && current.players.X.id === props.id 
+            ? (
               current.players.Y.id && current.players.X.id ? (
+                <>
                 <Button onClick={startGame} size="large" variant="contained" color="primary">
                   Start
                 </Button>
+                <Button onClick={() => handleLeave(playerStatus)} size="large" variant="contained" color="primary">
+                    Leave room
+                </Button>
+                </>
               ) : (
                 <>
                   <p>Chờ đối thủ vào trận</p>
@@ -112,7 +119,7 @@ const RoomView = (props) => {
               )
             ) : (
               <>
-                <p>Chờ chủ phòng bắt đầu trận</p>
+                <p>{!current.players.X && !current.players.Y ? 'Cả 2 người chơi trong phòng đã thoát trận': 'Chờ chủ phòng bắt đầu trận'}</p>
                 <Button onClick={() => handleLeave(playerStatus)} size="large" variant="contained" color="primary">
                   Leave room
                 </Button>

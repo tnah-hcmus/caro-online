@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Grid, Typography, Button } from "@material-ui/core";
 import {makeStyles} from '@material-ui/core/styles';
 import {Settings, SupervisorAccount, PanTool, ThumbUp, ExitToApp, FiberNew, Info, } from "@material-ui/icons"
@@ -22,6 +22,17 @@ const Status = (props) => {
   const [request, setRequest] = useState(0);
   const [open, setOpen] = useState(false);
   const [requestType, setRequestType] = useState({ type: null, content: null });
+  const [timer, setTimer] = useState(0);
+  useEffect(() => {
+    if(!props.waiting && !props.winning && props.player) {
+      const timerId = setTimeout(handleTimeOutWaiting, (props.timer+3)*1000);
+      setTimer(timer);
+      return () => clearTimeout(timerId);
+    } else if (props.winning) {
+      clearTimeout(timer);
+      setTimer(0);
+    }
+  }, [props.lastTimestamp, props.winning])
   const handleClose = () => setOpen(false);
   const handleDecline = () => {
     WSSubject.sendGameReply({ accept: false, type: requestType.type });
@@ -47,8 +58,21 @@ const Status = (props) => {
   };
   WSObserver.startListenGameRequest(handleShowRequestPopup);
   const handleTimeOut = () => {
-    props.setMessage({ type: "error", content: `Time's Up !!!`, open: true });
-    props.updateGameResult(props.roomID, (props.player !== "X" ? 1 : 2));
+    if(!props.winning) {
+      props.setMessage({ type: "error", content: `Time's Up !!!`, open: true });
+      console.log("update coin in handle timout")
+      props.updateCoin(props.player !== "X" ? "X" : "O");
+      props.updateGameResult(props.roomID, (props.player !== "X" ? 1 : 2));
+    }    
+  };
+  const handleTimeOutWaiting = () => {
+    console.log("Timeout", props.winning)
+    if(!props.winning) {
+      props.setMessage({ type: "error", content: `Opponent's time is up`, open: true });
+      console.log("update coin in handle waiting")
+      props.updateCoin(props.player === "X" ? "X" : "O");
+      props.updateGameResult(props.roomID, (props.player === "X" ? 1 : 2));
+    }    
   };
   const handleNewgame = () => {
     if (!props.player || props.player == "")
@@ -103,6 +127,7 @@ const Status = (props) => {
       props.setMessage({ type: "error", content: `Only player can use this function`, open: true });
     else if (!props.winning) {
       props.updateGameResult(props.roomID, props.player !== "X" ? 1 : 2);
+      console.log("update coin in surrender")
       props.updateCoin(props.player !== "X" ? "X" : "O");
     } else props.setMessage({ type: "error", content: `Game has been end, you can't surrender anymore`, open: true });
   };
@@ -144,7 +169,7 @@ const Status = (props) => {
             />
           </Grid>
           <Grid item xs={12} className={classes.countdown}>
-            {props.waiting && !props.winning ? <Countdown time={props.timer} onTimeOut={handleTimeOut} reset = {props.waiting} /> : null}
+            {(props.waiting && !props.winning && props.player) ? <Countdown time={props.timer - (Math.round((Date.now() - props.lastTimestamp)/1000))} onTimeOut={handleTimeOut} reset = {props.waiting} /> : null}
             <Typography variant="h6">{props.status}</Typography>
           </Grid>
         </Grid>

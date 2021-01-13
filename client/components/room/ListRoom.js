@@ -51,6 +51,7 @@ const ListRoom = (props) => {
   const [data, setData] = useState({ id: null, userId: null });
   const [message, setMessage] = useState(null);
   const ignoreID = props.history.location.state?.ignore || null;
+  const [timer, setTimer] = useState(0);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -103,13 +104,14 @@ const ListRoom = (props) => {
     } else {
       const id = _createID();
       props.addRoom(props.userId, props.user.name, props.user.coins, null, 30, 1, null, "hidden", id);
-      const timer = setTimeout(() => {
+      const timerID = setTimeout(() => {
         //hết thời gian chờ trận;
         props.leaveRoom(id, "X", () =>
           setMessage({ type: "error", content: "Tạm thời không tìm thấy đối thủ, vui lòng thử lại sau", open: true })
         );
       }, timeOut);
-      WSObserver.startListenQuickGame(() => props.history.push("/room/" + id), id, [timeOutHandler, timer]);
+      setTimer(timerID)
+      WSObserver.startListenQuickGame(() => props.history.push("/room/" + id), id, [timeOutHandler, timerID], setTimer);
     }
   };
 
@@ -123,6 +125,12 @@ const ListRoom = (props) => {
           joinRoom={(id, userId) => joinRoom(id, userId, "PLAY")}
           setMessage={setMessage}
         />
+        {props.busy && !timer ?
+          <Button variant="contained" color="primary" className={classes.button} onClick = {() => props.history.push("/room/" + props.busy)} >
+            Back to room
+          </Button>
+          : null
+        }
       </Grid>
       <Grid container item xs={12} spacing={2} className={classes.room}>
         {Object.values(props.rooms)
@@ -173,6 +181,7 @@ const mapStateToProps = (state) => {
     rooms: state.room,
     user: state.user,
     token: state.auth.token,
+    busy: state.auth.inRoom
   };
 };
 const mapDispatchToProps = {

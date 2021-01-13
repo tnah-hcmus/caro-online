@@ -68,7 +68,7 @@ export const startLoginThirdParty = (token, history) => {
       .then((res) => {
         const user = res.data;
         dispatch(login(user.id, user.accessToken));
-        dispatch(initInfo({ name: user.name, email: user.email }));
+        dispatch(initInfo(user));
         history.push("/");
       })
       .catch((e) => {

@@ -4,21 +4,21 @@ export default (state = {}, action) => {
     case CREATE_BOARD:
       const { size } = action.payload;
       if (!state[action.payload.roomID]) {
-        state[action.payload.roomID] = [{ squares: Array(size * size).fill(null), status: null, player: null }];
+        state[action.payload.roomID] = [{ squares: Array(size * size).fill(null), status: null, player: null, timestamp: Date.now() }];
       }
       return {
         ...state,
       };
     case ADD_BOARD:
-      const { squares, status, player } = action.payload;
+      const { squares, status, player, timestamp } = action.payload;
       if (state[action.payload.roomID]) {
-        state[action.payload.roomID] = state[action.payload.roomID].concat({ squares, status, player });
+        state[action.payload.roomID] = state[action.payload.roomID].concat({ squares, status, player, timestamp });
       }
       return {
         ...state,
       };
     case RESET_GAME:
-      if (state[action.payload.roomID]) state[action.payload.roomID] =  [{ squares: Array(action.payload.size * action.payload.size).fill(null), status: null, player: null }];
+      if (state[action.payload.roomID]) state[action.payload.roomID] =  [{ squares: Array(action.payload.size * action.payload.size).fill(null), status: null, player: null, timestamp: Date.now() }];
       return {
         ...state
       };

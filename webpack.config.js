@@ -15,6 +15,7 @@ const envKeys = Object.keys(env).reduce((prev, next) => {
 module.exports = () => {
   return {
     mode: "production",
+    devtool: 'eval-cheap-source-map',
     entry: {
       main: "./client/app.js",
     },

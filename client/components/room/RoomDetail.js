@@ -24,8 +24,9 @@ const RoomDetail = (props) => {
   const join = () => {
     if (!props.busy) {
       props.joinRoom(props.id, props.userId);
-    } else if (props.players >= 2) {
-      props.setMessage({ type: "error", content: "Phòng đã đủ số lượng người chơi", open: true });
+      if (props.players >= 2) {
+        props.setMessage({ type: "error", content: "Phòng đã đủ số lượng người chơi", open: true });
+      }
     } else
       props.setMessage({
         type: "error",

@@ -2,17 +2,20 @@ import React, { useState, useEffect } from "react";
 import { Typography } from "@material-ui/core";
 
 const Countdown = (props) => {
-  const { time, onTimeOut, reset } = props;
+  let { time, onTimeOut } = props;
+  if(time < 0) onTimeOut = null;
   const [currentCount, setCount] = useState(time);
 
   const timer = () => setCount(currentCount - 1);
   useEffect(() => {
+    if(onTimeOut) {
       if (currentCount <= 0) {
         onTimeOut();
         return;
       }
       const run = setInterval(timer, 1000);
       return () => clearInterval(run);
+    }      
   }, [currentCount]);
 
   

@@ -36,8 +36,8 @@ const AddRoomBtn = (props) => {
   const handleSubmit = () => {
     if (!props.busy) {
       const password = passwordRef.current.value || "";
-      const timer = Number(timerRef.current.value);
-      const coins = Number(coinRef.current.value);
+      const timer = Number(timerRef.current.value) || 30;
+      const coins = Number(coinRef.current.value) || 1;
 
       if (coins < 1) {
         props.setMessage({
