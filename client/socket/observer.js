@@ -46,6 +46,7 @@ class WSObserver {
     })
   }
   startListenUpdateGameData(updateGameData, canView, setCanView, updateCoins) {
+    console.log("new-listen", setCanView)
     WS.onNewData("new-game-data", (data) => {
       console.log("on new data", data)
       const { roomID, squares, status, player} = data;
@@ -55,7 +56,7 @@ class WSObserver {
         updateCoins(status.winner);
       }
       if(!canView) {
-        console.log(canView)
+        console.log("canView in data", canView)
         setCanView(true);
       }
     });

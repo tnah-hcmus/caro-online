@@ -53,6 +53,8 @@ const RoomView = (props) => {
     else if (current.players.Y.id === props.id) playerStatus = "O";
   } else current = { players: { X: null, Y: null }, status: 0 };
   const [start, setStart] = useState(!!current.status);
+  console.log(current);
+  console.log(start, current.status);
   if (!!start !== !!current.status) setStart(!!current.status);
   const startGame = () => {
     if (current) {

@@ -64,7 +64,8 @@ const ListRoom = (props) => {
   useEffect(() => {
     WSClient.connect(props.userId);
     WSObserver.startListenUpdateRoomData(props.updateRoomData);
-    props.fetchRoom(props.token, ignoreID);
+    console.log(ignoreID)
+    props.fetchRoom(props.token, ignoreID || props.busy);
   }, []);
   const afterJoin = (id, userId, password, type) => {
     let result = null;

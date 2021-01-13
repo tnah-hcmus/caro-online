@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import BoardView from "../board/BoardView";
@@ -11,6 +11,7 @@ import { updateUserAfterGame } from "../../action/user/action";
 
 import WSSubject from "../../socket/subject";
 import WSObserver from "../../socket/observer";
+import WSClient from '../../socket/socket';
 import { connect } from "react-redux";
 import CustomizedSnackbars from "../common/CustomizedSnackbars";
 import Loading from "../common/Loading";
@@ -35,6 +36,7 @@ const useStyles = makeStyles({
 const Game = (props) => {
   const classes = useStyles();
   const [canView, setCanView] = useState(props.player !== "");
+  console.log("can view from Game", canView);
   const [message, setMessage] = useState();
   const size = 20;
   const roomInfo = props.rooms[props.roomID];
@@ -66,7 +68,6 @@ const Game = (props) => {
   }
   const updateCoin = (winner) => {
     if (props.player !== "") props.updateUserAfterGame(roomInfo.coins, winner == props.player);
-    console.log(winner);
     if (winner == "X") {
       props.updateCoins(props.roomID, "X", roomInfo.players.X.coins + roomInfo.coins);
       props.updateCoins(props.roomID, "Y", roomInfo.players.Y.coins - roomInfo.coins);
@@ -76,15 +77,19 @@ const Game = (props) => {
       props.updateCoins(props.roomID, "Y", roomInfo.players.Y.coins + roomInfo.coins);
     }
   };
-  WSObserver.startListenUpdateGameData(props.addBoard, canView, setCanView, updateCoin);
+  
   const handleClick = (i, j) => {
     if (winning) setMessage({ type: "error", content: "Game đã kết thúc", open: true });
     else if (props.player === "") setMessage({ type: "error", content: "Bạn không phải là người chơi", open: true });
     else if (props.player === player) setMessage({ type: "error", content: "Hãy chờ tới lượt của bạn", open: true });
     else updateBoard(i, j, props.player);
   };
-
+  useEffect(() => {
+    WSObserver.startListenUpdateGameData(props.addBoard, canView, setCanView, updateCoin);
+    return () => WSClient.unsubscribe('new-game-data');
+  }, [])
   WSObserver.startListenGameResult(updateCoin);
+  
   const updateBoard = (i, j, player) => {
     const id = i * size + j;
     const squares = current.slice();

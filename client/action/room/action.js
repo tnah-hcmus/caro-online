@@ -25,12 +25,16 @@ export const initRoom = (data) => ({
 })
 
 export const fetchRoom = (token, ignore) => {
-  return(dispatch) => {
+  return(dispatch, getState) => {
+    const state = getState();
+    const roomID = state.auth.inRoom;
+    const rooms = state.room;
     if(!ignore)
     Axios.get("/api/rooms", {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then((res) => {
+        if(roomID) res.data.push(rooms[roomID]);
         dispatch(initRoom(res.data));
     })
     .catch((e) => {
@@ -122,6 +126,7 @@ export const startGame = (id) => {
 }
 
 export const newGame = (id, size) => {
+  console.log("new game")
   return (dispatch) => {
     WSSubject.sendRoomData({type: 'UPDATE', roomID: id, property: 'result', newData: 0 });    
     WSSubject.sendRoomData({type: 'SPECIFIC', roomID: id, property: 'GAME_RESET', newData: {size} })
@@ -143,6 +148,7 @@ export const leaveRoom = (roomID, player, callback) => {
     const state = getState();
     const rooms = state.room;
     const userId = rooms[roomID].players[player].id;
+    console.log("leaveroom", rooms[roomID]);
     if(rooms[roomID]) {
       if(rooms[roomID].players.X.id && rooms[roomID].players.Y.id) {
         let newData = rooms[roomID].players;
@@ -161,6 +167,7 @@ export const leaveRoom = (roomID, player, callback) => {
       }
       else {
         WSSubject.sendRoomData({type: 'DELETE', roomID , property: null, newData: null});
+        console.log("remove room")
         dispatch(removeRoom(roomID));
         dispatch(joinState(null));
         setTimeout(() => {

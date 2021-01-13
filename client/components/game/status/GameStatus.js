@@ -16,7 +16,7 @@ import ViewerDetail from "./ViewerDetail";
 import PlayerInfo from "./PlayerInfo";
 import FunctionalButton from "./FunctionalButton";
 import { withRouter } from "react-router-dom";
-
+import {useCounter} from './Counter';
 const Status = (props) => {
   const classes = useStyles();
   const [request, setRequest] = useState(0);
@@ -24,15 +24,16 @@ const Status = (props) => {
   const [requestType, setRequestType] = useState({ type: null, content: null });
   const [timer, setTimer] = useState(0);
   useEffect(() => {
+    const [count] = useCounter(props.roomID);
     if(!props.waiting && !props.winning && props.player) {
-      const timerId = setTimeout(handleTimeOutWaiting, (props.timer+3)*1000);
+      const timerId = setTimeout((count > 2 ? handleTimeOutWaiting : applyDraw), (props.timer+3)*1000);
       setTimer(timer);
       return () => clearTimeout(timerId);
     } else if (props.winning) {
       clearTimeout(timer);
       setTimer(0);
     }
-  }, [props.lastTimestamp, props.winning])
+  }, [props.lastTimestamp, props.winning]);
   const handleClose = () => setOpen(false);
   const handleDecline = () => {
     WSSubject.sendGameReply({ accept: false, type: requestType.type });
