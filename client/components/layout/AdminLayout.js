@@ -3,7 +3,7 @@ import { CssBaseline } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import HeaderAdmin from "./HeaderAdmin";
 import SidebarAdmin from "./SidebarAdmin";
-const serverUrl = process.env.NODE_ENV === 'production' ? process.env.PROD_SERVER_URL : process.env.DEV_SERVER_URL;
+const serverUrl = process.env.NODE_ENV === "production" ? process.env.PROD_SERVER_URL : process.env.DEV_SERVER_URL;
 const bgImage = serverUrl + "images/sidebar.jpg";
 
 const drawerWidth = 240;
@@ -38,7 +38,7 @@ export default function AdminLayout({ children }) {
   const [open, setOpen] = React.useState(true);
 
   const handleDrawerOpen = () => setOpen(true);
-  const handleDrawerClose = () => setOpen(false);
+  const handleDrawerClose = () => setOpen(true);
 
   return (
     <div className={classes.root}>

@@ -1,7 +1,7 @@
 import { LOGIN, LOGOUT, JOIN, UPDATE_TOKEN } from "./type";
 import { initInfo, getInfo, updateInfo, clearInfo } from "../user/action";
 import Axios from "axios";
-import WSSubject from '../../socket/subject';
+import WSSubject from "../../socket/subject";
 export const login = (id, token) => ({
   type: LOGIN,
   payload: { id, token, inRoom: false },
@@ -30,7 +30,7 @@ export const startLogin = (email, password, setMessage) => {
         dispatch(getInfo(user.accessToken));
         //setMessage({ type: "success", content: `Login Successfully !!!`, open: true });
       })
-      .catch((e) => {;
+      .catch((e) => {
         const error = e.response && e.response.data && e.response.data.error;
         setMessage({ type: "error", content: `${error || e.response.statusText}`, open: true });
       });
@@ -83,7 +83,11 @@ export const startSignUp = (data, setMessage) => {
         const user = res.data;
         dispatch(login(user.id, user.token));
         dispatch(getInfo(user.accessToken));
-        setMessage({ type: "success", content: `Signup Successfully !!!`, open: true });
+        setMessage({
+          type: "success",
+          content: `Signup Successfully, Please check your email to verify account !!!`,
+          open: true,
+        });
       })
       .catch((e) => {
         const error = e.response && e.response.data && e.response.data.error;
@@ -118,8 +122,8 @@ export const changePassword = (oldPass, newPass, id, token) => {
 export const startLogout = (userId, history) => {
   return (dispatch) => {
     dispatch(logout());
-    history.push('/');
+    history.push("/");
     dispatch(clearInfo());
     WSSubject.logOut(userId);
-  }
-}
+  };
+};
