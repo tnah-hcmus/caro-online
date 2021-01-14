@@ -11,7 +11,7 @@ import { updateUserAfterGame } from "../../action/user/action";
 
 import WSSubject from "../../socket/subject";
 import WSObserver from "../../socket/observer";
-import WSClient from '../../socket/socket';
+import WSClient from "../../socket/socket";
 import { connect } from "react-redux";
 import CustomizedSnackbars from "../common/CustomizedSnackbars";
 import Loading from "../common/Loading";
@@ -20,6 +20,7 @@ const drawFlag = "___NO_BODY_WIN___";
 const useStyles = makeStyles({
   root: {
     // margin: "15px 5px",
+    width: "fit-content",
   },
   board: {
     marginTop: 20,
@@ -29,7 +30,8 @@ const useStyles = makeStyles({
     boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
   },
   status: {
-    padding: "0px 10px 0 30px",
+    padding: "0px 10px 0 25px",
+    width: 325,
   },
 });
 
@@ -45,33 +47,33 @@ const Game = (props) => {
     player = null,
     timestamp = 0;
   if (!props.history) {
-      props.createBoard(props.roomID, size, props.player);
-      current = Array(size * size).fill(null);
-    } else {
-      step = props.history.length - 1;
-      winning = props.history[step].status;
-      current = props.history[step].squares;
-      player = props.history[step].player;
-      timestamp = props.history[step].timestamp;
-    }
-    switch (roomInfo.result) {
-      case 1:
-        winning = { winArea: [], winner: "X" };
-        break;
-      case 2:
-        winning = { winArea: [], winner: "O" };
-        break;
-      case 3:
-        winning = { winArea: [], winner: drawFlag };
-        break;
-    }
+    props.createBoard(props.roomID, size, props.player);
+    current = Array(size * size).fill(null);
+  } else {
+    step = props.history.length - 1;
+    winning = props.history[step].status;
+    current = props.history[step].squares;
+    player = props.history[step].player;
+    timestamp = props.history[step].timestamp;
+  }
+  switch (roomInfo.result) {
+    case 1:
+      winning = { winArea: [], winner: "X" };
+      break;
+    case 2:
+      winning = { winArea: [], winner: "O" };
+      break;
+    case 3:
+      winning = { winArea: [], winner: drawFlag };
+      break;
+  }
   useEffect(() => {
-    if(props.history) {
+    if (props.history) {
       winning = props.history[step].status;
       timestamp = props.history[step].timestamp;
     }
-  }, [props.history])
-  
+  }, [props.history]);
+
   const updateCoin = (winner) => {
     if (props.player !== "") props.updateUserAfterGame(roomInfo.coins, winner == props.player);
     if (winner == "X") {
@@ -83,7 +85,7 @@ const Game = (props) => {
       props.updateCoins(props.roomID, "Y", roomInfo.players.Y.coins + roomInfo.coins);
     }
   };
-  
+
   const handleClick = (i, j) => {
     if (winning) setMessage({ type: "error", content: "Game đã kết thúc", open: true });
     else if (props.player === "") setMessage({ type: "error", content: "Bạn không phải là người chơi", open: true });
@@ -92,10 +94,10 @@ const Game = (props) => {
   };
   useEffect(() => {
     WSObserver.startListenUpdateGameData(props.addBoard, canView, setCanView, updateCoin);
-    return () => WSClient.unsubscribe('new-game-data');
-  }, [])
+    return () => WSClient.unsubscribe("new-game-data");
+  }, []);
   WSObserver.startListenGameResult(updateCoin);
-  
+
   const updateBoard = (i, j, player) => {
     const id = i * size + j;
     const squares = current.slice();
@@ -125,8 +127,8 @@ const Game = (props) => {
   return (
     <>
       {canView ? (
-        <Grid container item xs={12} md={9} className={classes.root}>
-          <Grid item xs={8} className={classes.board}>
+        <Grid container item className={classes.root}>
+          <Grid className={classes.board}>
             <BoardView
               squares={current}
               size={size}
@@ -135,7 +137,7 @@ const Game = (props) => {
               setMessage={setMessage}
             />
           </Grid>
-          <Grid item xs={4} className={classes.status}>
+          <Grid className={classes.status}>
             <Status
               X={roomInfo.players.X}
               O={roomInfo.players.Y}

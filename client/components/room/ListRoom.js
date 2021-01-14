@@ -69,11 +69,12 @@ const ListRoom = (props) => {
   }, []);
   const afterJoin = (id, userId, password, type) => {
     let result = null;
-    if(!props.busy) {
+    if (!props.busy) {
       if (type === "VIEW") result = props.viewRoom(id, userId, props.user.name, password || null);
-      else if (type === "PLAY") result = props.joinRoom(id, userId, props.user.name, props.user.coins, password || null);
+      else if (type === "PLAY")
+        result = props.joinRoom(id, userId, props.user.name, props.user.coins, password || null);
     } else {
-      result = {status: false, msg: "Bạn đang ở trong room"};
+      result = { status: false, msg: "Bạn đang ở trong room" };
     }
     if (result.status) callbackSuccess(id);
     else callbackFailure(result.msg);
@@ -101,7 +102,7 @@ const ListRoom = (props) => {
   };
   const timeOut = 10 * 1000;
   const randomRoom = (timeOutHandler) => {
-    const room = Object.values(props.rooms).find((item) => ((!!item.players.X.id + !!item.players.Y.id) < 2));
+    const room = Object.values(props.rooms).find((item) => !!item.players.X.id + !!item.players.Y.id < 2);
     if (room) {
       joinRoom(room.id, props.userId, "PLAY");
       WSSubject.sendJoinGame({ roomID: room.id });
@@ -131,7 +132,7 @@ const ListRoom = (props) => {
           setMessage={setMessage}
         />
         {props.busy && !timer ? (
-          <Grid item>
+          <Grid item style={{ margin: "auto 10px" }}>
             <Button
               variant="contained"
               color="primary"
@@ -144,21 +145,20 @@ const ListRoom = (props) => {
         ) : null}
       </Grid>
       <Grid container item xs={12} spacing={2} className={classes.room}>
-        {Object.values(props.rooms)
-          .map((item, i) => (
-            <RoomDetail
-              id={item.id}
-              key={i}
-              players={!!item.players.X.id + !!item.players.Y.id}
-              userId={props.userId}
-              view={!!item.viewer}
-              joinRoom={(id, userId) => joinRoom(id, userId, "PLAY")}
-              viewRoom={(id, userId) => joinRoom(id, userId, "VIEW")}
-              name={props.user.name}
-              coins={item.coins}
-              setMessage={setMessage}
-            />
-          ))}
+        {Object.values(props.rooms).map((item, i) => (
+          <RoomDetail
+            id={item.id}
+            key={i}
+            players={!!item.players.X.id + !!item.players.Y.id}
+            userId={props.userId}
+            view={!!item.viewer}
+            joinRoom={(id, userId) => joinRoom(id, userId, "PLAY")}
+            viewRoom={(id, userId) => joinRoom(id, userId, "VIEW")}
+            name={props.user.name}
+            coins={item.coins}
+            setMessage={setMessage}
+          />
+        ))}
       </Grid>
       <Dialog open={open} onClose={handleClose} className={classes.dialog}>
         <DialogTitle id="form-dialog-title">Join room</DialogTitle>

@@ -12,6 +12,7 @@ import moment from "moment";
 const useStyles = makeStyles({
   root: {
     padding: 15,
+    width: 300,
   },
   content: {
     borderRadius: "12px",
@@ -94,7 +95,7 @@ const BoxChat = (props) => {
   };
   const classes = useStyles();
   return (
-    <Grid item container xs={3} className={classes.root}>
+    <Grid item container className={classes.root}>
       <Grid item xs={12} container direction="row" className={classes.title}>
         <Grid item className={classes.icon}>
           <Forum />
