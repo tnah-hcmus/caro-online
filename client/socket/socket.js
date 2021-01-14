@@ -9,7 +9,7 @@ class WSClient {
   }
   connect(userId) {
     if(!this.socket) {
-      const serverUrl = process.env.NODE_ENV === 'production' ? process.env.PROD_SERVER_URL : process.env.DEV_SERVER_URL;
+      const serverUrl = process.env.NODE_ENV == 'production' ? process.env.PROD_SERVER_URL : process.env.DEV_SERVER_URL;
         this.socket = io.connect(serverUrl, {
             query: "userId=" + userId,
             secure: true,
