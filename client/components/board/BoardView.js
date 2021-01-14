@@ -13,6 +13,7 @@ const BoardView = (props) => {
                 value={square}
                 i={i}
                 j={j}
+                size = {props.size}
                 winning={props.winning}
                 handleClick={props.handleClick}
               />
