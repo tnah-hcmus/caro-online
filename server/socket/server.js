@@ -166,6 +166,7 @@ module.exports = function(app) {
                   room = await Room.findOne({roomID: id});
                   if(room) {
                     if((userId == room.X.id) && !room.Y.id) {
+                        console.log(room);
                         room.playerX = null;
                         await Room.deleteOne({roomID: id});
                         room = null;
